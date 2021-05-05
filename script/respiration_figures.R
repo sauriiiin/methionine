@@ -21,10 +21,13 @@ library(growthcurver)
 library(rstatix)
 library(gtools)
 
-load("~/R/Projects/methionine/data/methionine_respiration_colonysizes.RData")
-load("~/R/Projects/methionine/data/methionine_respiration_growthcurve.RData")
+out_path <- "~/R/Projects/methionine/data"
 fig_path <- "~/R/Projects/methionine/figures"
 res_path <- "~/R/Projects/methionine/results"
+
+expt.name <- "resp_1_2"
+
+load(sprintf("%s/%s/colonysizes.RData", out_path, expt.name))
 
 ##### FIGURE SIZE
 one.c <- 90 #single column
@@ -65,7 +68,7 @@ all.gc <- data %>%
         strip.text = element_text(size = txt,
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")))
-ggsave(sprintf("%s/RESPIRATION_ALL_GROWTH_CURVES_PROBLEM.jpg",fig_path), all.gc,
+ggsave(sprintf("%s/%s/ALL_GROWTH_CURVES_PROBLEM.jpg",fig_path, expt.name), all.gc,
        height = 300, width = 600, units = 'mm',
        dpi = 600)
 
@@ -90,7 +93,7 @@ all.gc <- data[!(data$hours %in% c(46.23, 87.35, 25.88, 16.75, 54.36, 37.13)),] 
         strip.text = element_text(size = txt,
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")))
-ggsave(sprintf("%s/RESPIRATION_ALL_GROWTH_CURVES.jpg",fig_path), all.gc,
+ggsave(sprintf("%s/%s/ALL_GROWTH_CURVES.jpg",fig_path, expt.name), all.gc,
        height = 300, width = 600, units = 'mm',
        dpi = 600)
 
@@ -120,7 +123,7 @@ plot.cs.vio <- data[data$hours %in% c(174.43, 327.88),] %>%
         strip.text = element_text(size = txt,
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")))
-ggsave(sprintf("%s/RESPIRATION_COLONY_SIZE_VIOLIN.jpg",fig_path), plot.cs.vio,
+ggsave(sprintf("%s/%s/COLONY_SIZE_VIOLIN.jpg",fig_path, expt.name), plot.cs.vio,
        height = 200, width = 150, units = 'mm',
        dpi = 600)  
 
@@ -159,7 +162,7 @@ anova.res$strain2 <- factor(anova.res$strain2,
 anova.res$condition <- factor(anova.res$condition,
                               levels = c('SD+MET+Glucose','SD-MET+Glucose','SD+MET+EtOH','SD-MET+EtOH','SD+MET-URA+Glucose'))
 
-write.csv(anova.res, file = sprintf('%s/RESPIRATION_COLONY_SIZE_ANOVA_RESULTS.csv', res_path))
+write.csv(anova.res, file = sprintf('%s/%s/COLONY_SIZE_ANOVA_RESULTS.csv', res_path, expt.name))
 
 plot.anova.res <- ggplot(anova.res) +
   geom_tile(aes(x = strain1, y = strain2, fill = between <= 0.05),
@@ -182,10 +185,65 @@ plot.anova.res <- ggplot(anova.res) +
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")),
         panel.grid = element_blank())
-ggsave(sprintf("%s/RESPIRATION_COLONY_SIZE_ANOVA.jpg",fig_path), plot.anova.res,
+ggsave(sprintf("%s/%s/COLONY_SIZE_ANOVA.jpg",fig_path, expt.name), plot.anova.res,
        height = 200, width = 150, units = 'mm',
        dpi = 600)  
 
+##### DATA FOR GROWTH CURVE ANALYSIS
+data <- data[!(data$hours %in% c(46.23, 87.35, 25.88, 16.75, 54.36, 37.13)) &
+               data$orf_name != 'BOR',]
+
+data.gc <- data %>%
+  group_by(condition, orf_name, bio_rep, hours) %>%
+  summarise(average = median(average, na.rm = T)) %>%
+  data.frame()
+
+data.pred <- NULL
+col.names <- NULL
+for (o in unique(data.gc$orf_name)) {
+  for (c in unique(data.gc$condition[data.gc$orf_name == o])) {
+    for (b in unique(data.gc$bio_rep[data.gc$orf_name == o & data.gc$condition == c])) {
+      temp <- data.gc[data.gc$orf_name == o & data.gc$condition == c & data.gc$bio_rep == b,]
+      # if (sum(log(temp$average) < 5) <= 5) {
+      lo <- loess.smooth(temp$hours, log(temp$average),
+                         span = 0.6, evaluation = 500, degree = 2,
+                         family = 'gaussian')
+      data.pred <- cbind(data.pred,exp(lo$y))
+      col.names <- cbind(col.names,paste(o,c,b,sep = ','))
+      
+      temp.plot <- ggplot() +
+        geom_line(data = data.frame(lo), aes(x = x, y = y)) +
+        geom_point(data = temp, aes(x = hours, y = log(average)), shape = 1) +
+        labs(y = 'Log( Colony Size (pixels) )',
+             x = 'Time (hours)',
+             title = paste(o,c,b,sep = ' | ')) +
+        theme_linedraw() +
+        theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+              axis.title = element_text(size = titles),
+              axis.text = element_text(size = txt),
+              legend.title = element_text(size = titles),
+              legend.text = element_text(size = txt),
+              legend.position = 'bottom',
+              legend.key.size = unit(3, "mm"),
+              legend.box.spacing = unit(0.5,"mm"),
+              strip.text = element_text(size = txt,
+                                        face = 'bold',
+                                        margin = margin(0.1,0,0.1,0, "mm"))) +
+        coord_cartesian(ylim = c(3,9))
+      ggsave(sprintf("%s/%s/growthcurves/%s_%s_%s.jpg",fig_path, expt.name, o, c, b), temp.plot,
+             height = 100, width = 100, units = 'mm',
+             dpi = 600)
+      # }
+    }
+  }
+}
+data.pred <- cbind(lo$x, data.pred)
+data.pred <- data.frame(data.pred)
+colnames(data.pred) <- c('Time',col.names)
+head(data.pred)
+
+##### SAVE GROWTH CURVE DATA
+save(data.pred, file = sprintf("%s/%s/growthcurve.RData", out_path, expt.name))
 
 ##### GROWTH CURVE ANALYSIS
 data.pred <- data.pred[,colSums(log(data.pred[,-1]) < 5) <= 300]
@@ -209,7 +267,7 @@ gc.res$orf_name <- factor(gc.res$orf_name,
 gc.res$condition <- factor(gc.res$condition,
                            levels = c('SD+MET+Glucose','SD-MET+Glucose','SD+MET+EtOH','SD-MET+EtOH','SD+MET-URA+Glucose'))
 
-write.csv(gc.res, file = sprintf('%s/RESPIRATION_GROWTH_CURVE_RESULTS.csv', res_path))
+write.csv(gc.res, file = sprintf('%s/%s/GROWTH_CURVE_RESULTS.csv', res_path, expt.name))
 
 plot.gc.auc <- gc.res[gc.res$n > 1,] %>%
   ggplot(aes(x = orf_name, y = auc_e)) +
@@ -264,7 +322,7 @@ plot.gc.res <- ggpubr::ggarrange(plot.gc.tgen, plot.gc.auc,
           ncol = 2,
           common.legend = T, legend = 'bottom')
 
-ggsave(sprintf("%s/RESPIRATION_GROWTH_CURVES_RESULTS.jpg",fig_path), plot.gc.res,
+ggsave(sprintf("%s/%s/GROWTH_CURVES_RESULTS.jpg", fig_path, expt.name), plot.gc.res,
        height = 200, width = 150, units = 'mm',
        dpi = 600)
 
@@ -306,7 +364,7 @@ gc.ttest.res$strain2 <- factor(gc.ttest.res$strain2,
 gc.ttest.res$condition <- factor(gc.ttest.res$condition,
                               levels = c('SD+MET+Glucose','SD-MET+Glucose','SD+MET+EtOH','SD-MET+EtOH','SD+MET-URA+Glucose'))
 
-write.csv(gc.ttest.res, file = sprintf('%s/RESPIRATION_GROWTH_CURVE_TTEST_RESULTS.csv', res_path))
+write.csv(gc.ttest.res, file = sprintf('%s/%s/GROWTH_CURVE_TTEST_RESULTS.csv', res_path, expt.name))
 
 plot.ttest.res.dt <- ggplot(gc.ttest.res) +
   geom_tile(aes(x = strain1, y = strain2, fill = dt_p <= 0.05),
@@ -357,7 +415,7 @@ plot.ttest.res.auc <- ggplot(gc.ttest.res) +
 plot.gc.ttest.res <- ggpubr::ggarrange(plot.ttest.res.dt, plot.ttest.res.auc,
                                  ncol = 2,
                                  common.legend = T, legend = 'bottom')
-ggsave(sprintf("%s/RESPIRATION_GROWTH_CURVES_TTEST.jpg",fig_path), plot.gc.ttest.res,
+ggsave(sprintf("%s/%s/GROWTH_CURVES_TTEST.jpg",fig_path, expt.name), plot.gc.ttest.res,
        height = 200, width = 150, units = 'mm',
        dpi = 600)
 
