@@ -15,10 +15,10 @@ expt.name <- "jakes"
 
 ##### GATHER AND CLEAN DATA FROM SQL
 tables <- rbind(c('jakes_mutants_pilot_MiM_Glu_384_JPEG_edge', 'jakes_mutants_pilot_pos2coor', 'jakes_mutants_pilot_pos2orf_name', 'pilot', 'SD-MET+Glucose'),
-                c('jakes_mutants_c1_MiM_Glu_Binar_384_CLEAN_edge', 'jakes_mutants_pos2coor', 'jakes_mutants_pos2orf_name', 'attempt1', 'SD-MET+Glucose'),
-                c('jakes_mutants_c1_YPDA_Binar_384_CLEAN_edge', 'jakes_mutants_pos2coor', 'jakes_mutants_pos2orf_name', 'attempt1', 'YPDA'),
-                c('jakes_mutants_c2_MiM_Glu_Binar_384_CLEAN_edge', 'jakes_mutants_pos2coor', 'jakes_mutants_pos2orf_name', 'attempt2', 'SD-MET+Glucose'),
-                c('jakes_mutants_c2_YPDA_Binar_384_CLEAN_edge', 'jakes_mutants_pos2coor', 'jakes_mutants_pos2orf_name', 'attempt2', 'YPDA'))
+                c('jakes_mutants_c1_MiM_Glu_Binar_384_CLEAN_edge', 'jakes_mutants_pos2coor', 'jakes_mutants_pos2orf_name', 'copy1', 'SD-MET+Glucose'),
+                c('jakes_mutants_c1_YPDA_Binar_384_CLEAN_edge', 'jakes_mutants_pos2coor', 'jakes_mutants_pos2orf_name', 'copy1', 'YPDA'),
+                c('jakes_mutants_c2_MiM_Glu_Binar_384_CLEAN_edge', 'jakes_mutants_pos2coor', 'jakes_mutants_pos2orf_name', 'copy2', 'SD-MET+Glucose'),
+                c('jakes_mutants_c2_YPDA_Binar_384_CLEAN_edge', 'jakes_mutants_pos2coor', 'jakes_mutants_pos2orf_name', 'copy2', 'YPDA'))
 
 data <- NULL
 for (i in seq(1,dim(tables)[1])) {
