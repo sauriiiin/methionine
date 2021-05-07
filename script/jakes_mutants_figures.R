@@ -184,6 +184,43 @@ ggsave(sprintf("%s/%s/COLONY_SIZE_DENSITY.jpg",fig_path, expt.name), plot.cs.den
        height = 200, width = 150, units = 'mm',
        dpi = 600)  
 
+##### T_0 and T_Final
+head(data[data$hours < 10,])
+plot.t0tf.cor <- merge(data[data$hours < 10,], data[data$hours > 10,],
+      by = c('attempt','pos','plate','row','col','orf_name','bio_rep','condition'),
+      suffixes = c(".t_0",".t_final")) %>%
+  ggplot(aes(x = average.t_final, y = average.t_0)) +
+  geom_point(size = 1) +
+  geom_smooth(method = 'lm') +
+  stat_cor(method = 'spearman', size = 1.2) +
+  labs(x = 'T_Final Colony Size (pixels)',
+       y = 'T_0 Colony Size (pixels)') +
+  facet_wrap(.~attempt*condition*orf_name, ncol = 12) +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm")))
+ggsave(sprintf("%s/%s/COLONY_SIZE_T0TF_CORR.jpg",fig_path, expt.name), plot.t0tf.cor,
+       height = 200, width = 300, units = 'mm',
+       dpi = 600)
+
+
+data$time[data$hours < 10] <- 't_0'
+data$time[is.na(data$time)] <- 't_final'
+
+data[!(data$condition == 'YPDA' & data$hours > 100),] %>%
+  ggplot(aes(x = orf_name, y = average, fill = time)) +
+  geom_boxplot(outlier.shape = NA) +
+  stat_compare_means(paired = T, size = 1.2, label = 'p.signif', angle = 90, hjust = 0.5) +
+  facet_wrap(.~attempt*condition)
 
 ##### ANOVA AND EFFECT SIZE
 strain.pairs <- permutations(n = length(unique(data$orf_name)), r = 2,
@@ -261,7 +298,7 @@ plot.anova.res <- ggplot(anova.res[!(anova.res$condition == 'YPDA' & anova.res$h
         panel.grid = element_blank())
 ggsave(sprintf("%s/%s/COLONY_SIZE_ANOVA.jpg",fig_path, expt.name), plot.anova.res,
        height = 200, width = 150, units = 'mm',
-       dpi = 600)  
+       dpi = 600) 
 
 ##### EFFECT SIZE OF CS DIFFERENCES
 anova.res$time[anova.res$hours == 0] <- 't_0'
@@ -517,3 +554,38 @@ ggsave(sprintf("%s/%s/COLONY_SIZE_ALLbyALL_RELATIVE_CS_3.jpg",fig_path, expt.nam
        plot.rcs.all.res.media,
        height = 100, width = 150, units = 'mm',
        dpi = 600)
+
+
+head(effsize.res)
+plot.rcs.t0tf.cor <- merge(effsize.res[effsize.res$time == 't_0',], effsize.res[!(effsize.res$condition == 'YPDA' & effsize.res$hours > 100) & 
+                                                                                  effsize.res$time == 't_final',],
+      by = c('attempt','condition','strain1','bio_rep1','strain2','bio_rep2'),
+      suffixes = c('.t_0','.t_final')) %>%
+  filter(strain2 == 'FY4') %>%
+  ggplot(aes(x = relative_cs.t_final, y = relative_cs.t_0)) +
+  geom_point(size = 1) +
+  geom_smooth(method = 'lm') +
+  stat_cor(method = 'spearman', size = 1.2, label.x = 0.4) +
+  labs(x = 'T_Final Relative Colony Size',
+       y = 'T_0 Relative Colony Size') +
+  # facet_wrap(.~condition, ncol = 12) +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm")))
+ggsave(sprintf("%s/%s/COLONY_SIZE_T0TF_CORR2.jpg",fig_path, expt.name), plot.rcs.t0tf.cor,
+       height = 60, width = 60, units = 'mm',
+       dpi = 600)
+
+
+
+
+
