@@ -20,6 +20,8 @@ library(locfit)
 library(growthcurver)
 library(rstatix)
 library(gtools)
+library(locfit)
+library(growthrates)
 
 out_path <- "~/R/Projects/methionine/data"
 fig_path <- "~/R/Projects/methionine/figures"
@@ -39,16 +41,18 @@ titles <- 7
 txt <- 5
 lbls <- 9
 
+##### LEVELS
+strain.levels = c('FY4', 'FY4_pet', 'FY4-met15del', 'FY4-met15del_pet', 'BY4742', 'BY4742_pet', 'BY4741', 'BY4741_pet')
+condition.levels = c('SD+MET+Glucose','SD-MET+Glucose','SD+MET+EtOH','SD-MET+EtOH','SD+MET-URA+Glucose')
+
 ##### ALL GROWTH CURVES
 data <- data[data$orf_name != 'BOR',]
-data$orf_name <- factor(data$orf_name,
-                          levels = c('FY4', 'FY4_pet', 'FY4-met15del', 'FY4-met15del_pet', 'BY4742', 'BY4742_pet', 'BY4741', 'BY4741_pet'))
-data$condition <- factor(data$condition,
-                           levels = c('SD+MET+Glucose','SD-MET+Glucose','SD+MET+EtOH','SD-MET+EtOH','SD+MET-URA+Glucose'))
+data$orf_name <- factor(data$orf_name, levels = strain.levels)
+data$condition <- factor(data$condition, levels = condition.levels)
 
 all.gc <- data %>%
   ggplot(aes(x = hours, y = average, col = bio_rep)) +
-  geom_point() +
+  geom_point(size = 0.5) +
   geom_smooth(method = 'loess') +
   scale_x_continuous(breaks = unique(data$hours), minor_breaks = NULL) +
   scale_color_discrete(name = 'Biological Replicate') +
@@ -59,7 +63,7 @@ all.gc <- data %>%
   theme_linedraw() +
   theme(axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
-        axis.text.x = element_text(size = txt - 2, angle = 90),
+        axis.text.x = element_text(size = 2, angle = 90, hjust = 0.5, vjust = 0.5),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
         legend.position = 'bottom',
@@ -69,7 +73,7 @@ all.gc <- data %>%
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")))
 ggsave(sprintf("%s/%s/ALL_GROWTH_CURVES_PROBLEM.jpg",fig_path, expt.name), all.gc,
-       height = 300, width = 600, units = 'mm',
+       height = 200, width = 400, units = 'mm',
        dpi = 600)
 
 ## CLEANED OUT PROBLEM HOURS
@@ -84,7 +88,6 @@ all.gc <- data[!(data$hours %in% c(46.23, 87.35, 25.88, 16.75, 54.36, 37.13)),] 
   theme_linedraw() +
   theme(axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
-        axis.text.x = element_text(size = txt - 2, angle = 90),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
         legend.position = 'bottom',
@@ -94,13 +97,14 @@ all.gc <- data[!(data$hours %in% c(46.23, 87.35, 25.88, 16.75, 54.36, 37.13)),] 
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")))
 ggsave(sprintf("%s/%s/ALL_GROWTH_CURVES.jpg",fig_path, expt.name), all.gc,
-       height = 300, width = 600, units = 'mm',
+       height = 200, width = 400, units = 'mm',
        dpi = 600)
 
 ##### COLONY SIZE COMPARISONS
 data[data$hours %in% c(174.43, 327.88),] %>%
   group_by(condition, hours, orf_name, bio_rep) %>%
-  count()
+  count() %>%
+  data.frame()
 
 plot.cs.vio <- data[data$hours %in% c(174.43, 327.88),] %>%
   ggplot(aes(x = orf_name, y = average)) +
@@ -152,15 +156,12 @@ colnames(anova.res) <- c('condition','hours','strain1','strain2','between','with
 anova.res <- data.frame(anova.res, stringsAsFactors = F)
 anova.res$between <- as.numeric(anova.res$between)
 anova.res$within <- as.numeric(anova.res$within)
-# anova.res$between <- p.adjust(anova.res$between, method = 'BH')
-# anova.res$within <- p.adjust(anova.res$within, method = 'BH')
+anova.res$between <- p.adjust(anova.res$between, method = 'BH')
+anova.res$within <- p.adjust(anova.res$within, method = 'BH')
 
-anova.res$strain1 <- factor(anova.res$strain1,
-                            levels = c('FY4', 'FY4_pet', 'FY4-met15del', 'FY4-met15del_pet', 'BY4742', 'BY4742_pet', 'BY4741', 'BY4741_pet'))
-anova.res$strain2 <- factor(anova.res$strain2,
-                            levels = c('FY4', 'FY4_pet', 'FY4-met15del', 'FY4-met15del_pet', 'BY4742', 'BY4742_pet', 'BY4741', 'BY4741_pet'))
-anova.res$condition <- factor(anova.res$condition,
-                              levels = c('SD+MET+Glucose','SD-MET+Glucose','SD+MET+EtOH','SD-MET+EtOH','SD+MET-URA+Glucose'))
+anova.res$strain1 <- factor(anova.res$strain1, levels = strain.levels)
+anova.res$strain2 <- factor(anova.res$strain2, levels = strain.levels)
+anova.res$condition <- factor(anova.res$condition, levels = condition.levels)
 
 write.csv(anova.res, file = sprintf('%s/%s/COLONY_SIZE_ANOVA_RESULTS.csv', res_path, expt.name))
 
@@ -189,12 +190,76 @@ ggsave(sprintf("%s/%s/COLONY_SIZE_ANOVA.jpg",fig_path, expt.name), plot.anova.re
        height = 200, width = 150, units = 'mm',
        dpi = 600)  
 
+## VIOLIN + ANOVA
+plot.cs.vio.anova <- data[data$hours == 327.88,] %>%
+  ggplot(aes(x = orf_name, y = average)) +
+  geom_violin(aes(fill = bio_rep),lwd = 0.1) +
+  geom_point(data = anova.res[anova.res$strain2 == 'FY4' &
+                                anova.res$between <= 0.05 &
+                                anova.res$hours == 327.88,],
+             aes(x = strain1, y = 5000), shape = 8, size = 1, col = 'red') +
+  scale_fill_discrete(name = 'Biological Replicate') +
+  facet_wrap(.~condition*hours, nrow = 1) +
+  labs(x = 'Strain',
+       y = 'Colony Size (pixels)') +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm")))
+ggsave(sprintf("%s/%s/COLONY_SIZE_VIOLIN_ANOVA.jpg",fig_path, expt.name), plot.cs.vio.anova,
+       height = 80, width = 200, units = 'mm',
+       dpi = 600) 
+
+## COLONY SIZE DATA SUMMARY
+data.sum <- data %>%
+  group_by(condition, hours, orf_name, bio_rep) %>%
+  summarise(average = median(average, na.rm = T)) %>%
+  data.frame()
+
+plot.cs.sum.ttest <- data.sum %>%
+  filter(hours == 327.88) %>%
+  ggplot(aes(x = orf_name, y = average)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(aes(col = bio_rep), size = 1.2) +
+  stat_compare_means(method = 't.test', ref.group = 'FY4',
+                     size = 1, label = 'p.signif', label.y = 4000) +
+  scale_color_discrete(name = 'Biological Replicate') +
+  facet_wrap(.~condition*hours, nrow = 1) +
+  labs(x = 'Strain',
+       y = 'Median Colony Size (pixels)') +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm")))
+ggsave(sprintf("%s/%s/COLONY_SIZE_TTEST.jpg",fig_path, expt.name), plot.cs.sum.ttest,
+       height = 80, width = 200, units = 'mm',
+       dpi = 600) 
+
+
 ##### DATA FOR GROWTH CURVE ANALYSIS
 data <- data[!(data$hours %in% c(46.23, 87.35, 25.88, 16.75, 54.36, 37.13)) &
                data$orf_name != 'BOR',]
 
 data.gc <- data %>%
-  group_by(condition, orf_name, bio_rep, hours) %>%
+  group_by(condition, orf_name, bio_rep, pos, hours) %>%
   summarise(average = median(average, na.rm = T)) %>%
   data.frame()
 
@@ -203,55 +268,76 @@ col.names <- NULL
 for (o in unique(data.gc$orf_name)) {
   for (c in unique(data.gc$condition[data.gc$orf_name == o])) {
     for (b in unique(data.gc$bio_rep[data.gc$orf_name == o & data.gc$condition == c])) {
-      temp <- data.gc[data.gc$orf_name == o & data.gc$condition == c & data.gc$bio_rep == b,]
-      # if (sum(log(temp$average) < 5) <= 5) {
-      lo <- loess.smooth(temp$hours, log(temp$average),
-                         span = 0.6, evaluation = 500, degree = 2,
-                         family = 'gaussian')
-      data.pred <- cbind(data.pred,exp(lo$y))
-      col.names <- cbind(col.names,paste(o,c,b,sep = ','))
-      
-      temp.plot <- ggplot() +
-        geom_line(data = data.frame(lo), aes(x = x, y = y)) +
-        geom_point(data = temp, aes(x = hours, y = log(average)), shape = 1) +
-        labs(y = 'Log( Colony Size (pixels) )',
-             x = 'Time (hours)',
-             title = paste(o,c,b,sep = ' | ')) +
-        theme_linedraw() +
-        theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
-              axis.title = element_text(size = titles),
-              axis.text = element_text(size = txt),
-              legend.title = element_text(size = titles),
-              legend.text = element_text(size = txt),
-              legend.position = 'bottom',
-              legend.key.size = unit(3, "mm"),
-              legend.box.spacing = unit(0.5,"mm"),
-              strip.text = element_text(size = txt,
-                                        face = 'bold',
-                                        margin = margin(0.1,0,0.1,0, "mm"))) +
-        coord_cartesian(ylim = c(3,9))
-      ggsave(sprintf("%s/%s/growthcurves/%s_%s_%s.jpg",fig_path, expt.name, o, c, b), temp.plot,
-             height = 100, width = 100, units = 'mm',
-             dpi = 600)
-      # }
+      for (p in unique(data.gc$pos[data.gc$orf_name == o & data.gc$condition == c & data.gc$bio_rep == b])) {
+        temp <- data.gc[data.gc$orf_name == o & data.gc$condition == c &
+                          data.gc$bio_rep == b & data.gc$pos == p,]
+        if (sum(is.na(temp$average)) <= 5) {
+          lo <- loess.smooth(temp$hours, log(temp$average),
+                             span = 0.6, evaluation = 100, degree = 2,
+                             family = 'gaussian')
+          data.pred <- cbind(data.pred,exp(lo$y))
+          col.names <- cbind(col.names,paste(o,c,b,p,sep = ','))
+          
+          # temp.plot <- ggplot() +
+          #   geom_line(data = data.frame(lo), aes(x = x, y = y)) +
+          #   geom_point(data = temp, aes(x = hours, y = log(average)), shape = 1) +
+          #   labs(y = 'Log( Colony Size (pixels) )',
+          #        x = 'Time (hours)',
+          #        title = paste(o,c,b,sep = ' | ')) +
+          #   theme_linedraw() +
+          #   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+          #         axis.title = element_text(size = titles),
+          #         axis.text = element_text(size = txt),
+          #         legend.title = element_text(size = titles),
+          #         legend.text = element_text(size = txt),
+          #         legend.position = 'bottom',
+          #         legend.key.size = unit(3, "mm"),
+          #         legend.box.spacing = unit(0.5,"mm"),
+          #         strip.text = element_text(size = txt,
+          #                                   face = 'bold',
+          #                                   margin = margin(0.1,0,0.1,0, "mm"))) +
+          #   coord_cartesian(ylim = c(3,9))
+          # ggsave(sprintf("%s/%s/growthcurves/%s_%s_%s.jpg",fig_path, expt.name, o, c, b), temp.plot,
+          #        height = 100, width = 100, units = 'mm',
+          #        dpi = 600)
+        }
+      }
     }
   }
 }
 data.pred <- cbind(lo$x, data.pred)
 data.pred <- data.frame(data.pred)
 colnames(data.pred) <- c('Time',col.names)
-head(data.pred)
+# head(data.pred)
 
 ##### SAVE GROWTH CURVE DATA
-save(data.pred, file = sprintf("%s/%s/growthcurve.RData", out_path, expt.name))
+save(data.pred, file = sprintf("%s/%s/growthcurve2.RData", out_path, expt.name))
 
 ##### GROWTH CURVE ANALYSIS
-data.pred <- data.pred[,colSums(log(data.pred[,-1]) < 5) <= 300]
+data.pred <- data.pred[,colSums(log(data.pred[,-1]) < 5) <= 70]
 # data.pred[,-1] <- log(data.pred[,-1])
+gc.gr.res <- NULL
+for (i in 2:dim(data.pred)[2]) {
+  fit0 <- fit_easylinear(data.pred$Time, data.pred[,i], h = 20, quota = 1);
+  
+  temp_res <- data.frame(colnames(data.pred[i]), maxgr = coef(fit0)[[3]],
+                         dtime = log(2)/coef(fit0)[[3]], ltime = coef(fit0)[[4]])
+  gc.gr.res <- rbind(gc.gr.res, temp_res)
+}
+gc.gr.res <- data.frame(gc.gr.res)
+colnames(gc.gr.res) <- c('sample','gr','dtime','lag')
+temp <- str_split(gc.gr.res$sample, ',', simplify = T)
+colnames(temp) <- c('orf_name','condition','bio_rep','pos')
+gc.gr.res <- cbind(temp, gc.gr.res)
+head(gc.gr.res)
+
 gc.res <- SummarizeGrowthByPlate(data.pred)
 temp <- str_split(gc.res$sample, ',', simplify = T)
-colnames(temp) <- c('orf_name','condition','bio_rep')
+colnames(temp) <- c('orf_name','condition','bio_rep','pos')
 gc.res <- cbind(temp, gc.res)
+head(gc.res)
+
+gc.res <- merge(gc.res, gc.gr.res, by = c('sample','orf_name','condition','bio_rep','pos'))
 head(gc.res)
 
 temp.count <- gc.res %>%
@@ -259,20 +345,21 @@ temp.count <- gc.res %>%
   count() %>% 
   data.frame()
 gc.res <- merge(gc.res, temp.count, by = c('orf_name', 'condition'))
+head(gc.res)
 
+gc.res$pos <- as.numeric(as.character(gc.res$pos))
 gc.res$orf_name <- as.character(gc.res$orf_name)
 gc.res$condition <- as.character(gc.res$condition)
-gc.res$orf_name <- factor(gc.res$orf_name,
-                          levels = c('FY4', 'FY4_pet', 'FY4-met15del', 'FY4-met15del_pet', 'BY4742', 'BY4742_pet', 'BY4741', 'BY4741_pet'))
-gc.res$condition <- factor(gc.res$condition,
-                           levels = c('SD+MET+Glucose','SD-MET+Glucose','SD+MET+EtOH','SD-MET+EtOH','SD+MET-URA+Glucose'))
+gc.res$orf_name <- factor(gc.res$orf_name, levels = strain.levels)
+gc.res$condition <- factor(gc.res$condition, levels = condition.levels)
 
-write.csv(gc.res, file = sprintf('%s/%s/GROWTH_CURVE_RESULTS.csv', res_path, expt.name))
+write.csv(gc.res, file = sprintf('%s/%s/GROWTH_CURVE_RESULTS2.csv', res_path, expt.name))
 
-plot.gc.auc <- gc.res[gc.res$n > 1,] %>%
+plot.gc.auc <- gc.res[gc.res$n > 200,] %>%
   ggplot(aes(x = orf_name, y = auc_e)) +
-  geom_boxplot(outlier.shape = NA) +
   geom_jitter(aes(col = bio_rep)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_violin(fill = 'transparent') +
   # stat_compare_means(method = 't.test', ref.group = 'FY4', label = "p.signif") +
   scale_color_discrete(name = 'Biological Replicate') +
   facet_wrap(.~condition, nrow = 5) +
@@ -294,15 +381,16 @@ plot.gc.auc <- gc.res[gc.res$n > 1,] %>%
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")))
 
-plot.gc.tgen <- gc.res[gc.res$n > 1,] %>%
-  ggplot(aes(x = orf_name, y = t_gen)) +
-  geom_boxplot(outlier.shape = NA) +
+plot.gc.tgen <- gc.res[gc.res$n > 200 & gc.res$t_gen <= 500,] %>%
+  ggplot(aes(x = orf_name, y = gr)) +
   geom_jitter(aes(col = bio_rep)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_violin(fill = 'transparent') +
   scale_color_discrete(name = 'Biological Replicate') +
-  facet_wrap(.~condition, nrow = 5) +
+  facet_wrap(.~condition, nrow = 5, scales = 'free_y') +
   labs(x = 'Strain',
-       y = 'DT (hours)',
-       title = 'Doubling Time (DT)') +
+       y = 'Rate of Change in Colony Size (pix/hours)',
+       title = 'Growth Rate') +
   # coord_flip() +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
@@ -321,9 +409,35 @@ plot.gc.tgen <- gc.res[gc.res$n > 1,] %>%
 plot.gc.res <- ggpubr::ggarrange(plot.gc.tgen, plot.gc.auc,
           ncol = 2,
           common.legend = T, legend = 'bottom')
-
-ggsave(sprintf("%s/%s/GROWTH_CURVES_RESULTS.jpg", fig_path, expt.name), plot.gc.res,
+ggsave(sprintf("%s/%s/GROWTH_CURVES_RESULTS2.jpg", fig_path, expt.name), plot.gc.res,
        height = 200, width = 150, units = 'mm',
+       dpi = 600)
+
+## CORR BETWEEN AUC AND GROWTH RATE
+plot.auc.gr.corr <- ggplot(gc.res[gc.res$n > 200 & abs(gc.res$dtime) <= 500,], 
+       aes(x = auc_e, y = log(2)/dtime)) + 
+  geom_point(aes(col = orf_name, shape = condition)) +
+  stat_cor(method = 'spearman') +
+  geom_smooth(method = 'lm') +
+  labs(x = 'Area Under the Curve',
+       y = 'Growth Rate') +
+  scale_shape_discrete(name = 'Condition') +
+  scale_color_discrete(name = 'Strain') +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'right',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm")))
+ggsave(sprintf("%s/%s/GROWTH_CURVES_AUC_GR_CORR.jpg", fig_path, expt.name),
+       plot.auc.gr.corr,
+       height = 120, width = 150, units = 'mm',
        dpi = 600)
 
 ## AUC AND DT T.TESTS
@@ -332,7 +446,8 @@ strain.pairs <- permutations(n = length(unique(data$orf_name)), r = 2,
                              repeats.allowed = F) %>%
   data.frame(stringsAsFactors = F)
 
-gc.ttest.res <- NULL
+# gc.ttest.res <- NULL
+gc.anova.res <- NULL
 for (c in unique(gc.res$condition)) {
   for (i in seq(1,dim(strain.pairs)[1])) {
     o1 <- strain.pairs[i,1]
@@ -340,38 +455,62 @@ for (c in unique(gc.res$condition)) {
     
     if (length(gc.res$t_gen[gc.res$condition == c & gc.res$orf_name == o1]) > 1 &
         length(gc.res$t_gen[gc.res$condition == c & gc.res$orf_name == o2]) > 1) {
-      res.ttest.t_gen <- t.test(gc.res$t_gen[gc.res$condition == c & gc.res$orf_name == o1],
-                          gc.res$t_gen[gc.res$condition == c & gc.res$orf_name == o2])
-      res.ttest.auc_e <- t.test(gc.res$auc_e[gc.res$condition == c & gc.res$orf_name == o1],
-                                gc.res$auc_e[gc.res$condition == c & gc.res$orf_name == o2])
-      gc.ttest.res <- rbind(gc.ttest.res, cbind(c, o1, o2,
-                                                res.ttest.t_gen$p.value,
-                                                res.ttest.auc_e$p.value))
-
+      res.aov.gr <- gc.res[gc.res$condition == c & gc.res$orf_name %in% c(o1, o2),] %>%
+        anova_test(gr ~ orf_name * bio_rep)
+      res.aov.t_gen <- gc.res[gc.res$condition == c & gc.res$orf_name %in% c(o1, o2),] %>%
+        anova_test(t_gen ~ orf_name * bio_rep)
+      res.aov.auc_e <- gc.res[gc.res$condition == c & gc.res$orf_name %in% c(o1, o2),] %>%
+        anova_test(auc_e ~ orf_name * bio_rep)
+      
+      gc.anova.res <- rbind(gc.anova.res, cbind(c, h, o1, o2,
+                                          res.aov.gr$p[res.aov.gr$Effect == 'orf_name'],
+                                          res.aov.gr$p[res.aov.gr$Effect == 'orf_name:bio_rep'],
+                                          res.aov.t_gen$p[res.aov.t_gen$Effect == 'orf_name'],
+                                          res.aov.t_gen$p[res.aov.t_gen$Effect == 'orf_name:bio_rep'],
+                                          res.aov.auc_e$p[res.aov.auc_e$Effect == 'orf_name'],
+                                          res.aov.auc_e$p[res.aov.auc_e$Effect == 'orf_name:bio_rep']))
     }
   }
 }
-
-colnames(gc.ttest.res) <- c('condition','strain1','strain2','dt_p','auc_p')
+colnames(gc.ttest.res) <- c('condition','strain1','strain2','dt_p','tgen_p','auc_p')
 gc.ttest.res <- data.frame(gc.ttest.res, stringsAsFactors = F)
 gc.ttest.res$dt_p <- as.numeric(gc.ttest.res$dt_p)
+gc.ttest.res$tgen_p <- as.numeric(gc.ttest.res$tgen_p)
 gc.ttest.res$auc_p <- as.numeric(gc.ttest.res$auc_p)
 
-gc.ttest.res$strain1 <- factor(gc.ttest.res$strain1,
-                            levels = c('FY4', 'FY4_pet', 'FY4-met15del', 'FY4-met15del_pet', 'BY4742', 'BY4742_pet', 'BY4741', 'BY4741_pet'))
-gc.ttest.res$strain2 <- factor(gc.ttest.res$strain2,
-                            levels = c('FY4', 'FY4_pet', 'FY4-met15del', 'FY4-met15del_pet', 'BY4742', 'BY4742_pet', 'BY4741', 'BY4741_pet'))
-gc.ttest.res$condition <- factor(gc.ttest.res$condition,
-                              levels = c('SD+MET+Glucose','SD-MET+Glucose','SD+MET+EtOH','SD-MET+EtOH','SD+MET-URA+Glucose'))
+gc.ttest.res$strain1 <- factor(gc.ttest.res$strain1, levels = strain.levels)
+gc.ttest.res$strain2 <- factor(gc.ttest.res$strain2, levels = strain.levels)
+gc.ttest.res$condition <- factor(gc.ttest.res$condition, levels = condition.levels)
 
-write.csv(gc.ttest.res, file = sprintf('%s/%s/GROWTH_CURVE_TTEST_RESULTS.csv', res_path, expt.name))
+colnames(gc.anova.res) <- c('condition','hours','strain1','strain2',
+                         'gr_between','gr_within','t_gen_between','t_gen_within','auc_e_between','auc_e_within')
+gc.anova.res <- data.frame(gc.anova.res, stringsAsFactors = F)
+gc.anova.res$gr_between <- as.numeric(gc.anova.res$gr_between)
+gc.anova.res$gr_within <- as.numeric(gc.anova.res$gr_within)
+gc.anova.res$t_gen_between <- as.numeric(gc.anova.res$t_gen_between)
+gc.anova.res$t_gen_within <- as.numeric(gc.anova.res$t_gen_within)
+gc.anova.res$auc_e_between <- as.numeric(gc.anova.res$auc_e_between)
+gc.anova.res$auc_e_within <- as.numeric(gc.anova.res$auc_e_within)
+gc.anova.res$gr_between <- p.adjust(gc.anova.res$gr_between, method = 'BH')
+gc.anova.res$gr_within <- p.adjust(gc.anova.res$gr_within, method = 'BH')
+gc.anova.res$t_gen_between <- p.adjust(gc.anova.res$t_gen_between, method = 'BH')
+gc.anova.res$t_gen_within <- p.adjust(gc.anova.res$t_gen_within, method = 'BH')
+gc.anova.res$auc_e_between <- p.adjust(gc.anova.res$auc_e_between, method = 'BH')
+gc.anova.res$auc_e_within <- p.adjust(gc.anova.res$auc_e_within, method = 'BH')
 
-plot.ttest.res.dt <- ggplot(gc.ttest.res) +
-  geom_tile(aes(x = strain1, y = strain2, fill = dt_p <= 0.05),
+gc.anova.res$strain1 <- factor(gc.anova.res$strain1, levels = strain.levels)
+gc.anova.res$strain2 <- factor(gc.anova.res$strain2, levels = strain.levels)
+gc.anova.res$condition <- factor(gc.anova.res$condition, levels = condition.levels)
+
+write.csv(gc.anova.res, file = sprintf('%s/%s/GROWTH_CURVE_ANOVA_RESULTS.csv', res_path, expt.name))
+# write.csv(gc.ttest.res, file = sprintf('%s/%s/GROWTH_CURVE_TTEST_RESULTS2.csv', res_path, expt.name))
+
+plot.anova.res.gr <- ggplot(gc.anova.res) +
+  geom_tile(aes(x = strain1, y = strain2, fill = gr_between <= 0.05),
             col = 'black') +
-  labs(title = 'Doubling Time (DT)') +
+  labs(title = 'Growth Rate') +
   facet_wrap(.~condition, nrow = 5) +
-  scale_fill_manual(name = 'Significant T-Test',
+  scale_fill_manual(name = 'Significant Anova',
                     breaks = c('TRUE', 'FALSE'),
                     values = c('TRUE' = '#4CAF50', 'FALSE' = '#536DFE')) +
   theme_linedraw() +
@@ -389,12 +528,12 @@ plot.ttest.res.dt <- ggplot(gc.ttest.res) +
                                   margin = margin(0.1,0,0.1,0, "mm")),
         panel.grid = element_blank())
   
-plot.ttest.res.auc <- ggplot(gc.ttest.res) +
-  geom_tile(aes(x = strain1, y = strain2, fill = auc_p <= 0.05),
+plot.anova.res.auc <- ggplot(gc.anova.res) +
+  geom_tile(aes(x = strain1, y = strain2, fill = auc_e_between <= 0.05),
             col = 'black') +
   labs(title = 'Area Under the Curve (AUC)') +
   facet_wrap(.~condition, nrow = 5) +
-  scale_fill_manual(name = 'Significant T-Test',
+  scale_fill_manual(name = 'Significant Anova',
                     breaks = c('TRUE', 'FALSE'),
                     values = c('TRUE' = '#4CAF50', 'FALSE' = '#536DFE')) +
   theme_linedraw() +
@@ -412,10 +551,142 @@ plot.ttest.res.auc <- ggplot(gc.ttest.res) +
                                   margin = margin(0.1,0,0.1,0, "mm")),
         panel.grid = element_blank())
 
-plot.gc.ttest.res <- ggpubr::ggarrange(plot.ttest.res.dt, plot.ttest.res.auc,
+plot.gc.anova.res <- ggpubr::ggarrange(plot.anova.res.gr, plot.anova.res.auc,
                                  ncol = 2,
                                  common.legend = T, legend = 'bottom')
-ggsave(sprintf("%s/%s/GROWTH_CURVES_TTEST.jpg",fig_path, expt.name), plot.gc.ttest.res,
+ggsave(sprintf("%s/%s/GROWTH_CURVES_ANOVA.jpg",fig_path, expt.name), plot.gc.anova.res,
        height = 200, width = 150, units = 'mm',
        dpi = 600)
+
+## VIOLIN + ANOVA
+plot.gc.gr.anova <- gc.res %>%
+  ggplot(aes(x = orf_name, y = gr)) +
+  geom_violin(aes(fill = bio_rep),lwd = 0.1) +
+  geom_point(data = gc.anova.res[gc.anova.res$strain2 == 'FY4' &
+                                gc.anova.res$gr_between <= 0.05,],
+             aes(x = strain1, y = 0.08), shape = 8, size = 1, col = 'red') +
+  scale_fill_discrete(name = 'Biological Replicate') +
+  facet_wrap(.~condition, nrow = 1) +
+  labs(x = 'Strain',
+       y = 'Growth Rate') +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm")))
+ggsave(sprintf("%s/%s/GROWTH_CURVES_GROWTHRATE_ANOVA.jpg",fig_path, expt.name), plot.gc.gr.anova,
+       height = 80, width = 200, units = 'mm',
+       dpi = 600)
+
+plot.gc.auc.anova <- gc.res %>%
+  ggplot(aes(x = orf_name, y = auc_e)) +
+  geom_violin(aes(fill = bio_rep),lwd = 0.1) +
+  geom_point(data = gc.anova.res[gc.anova.res$strain2 == 'FY4' &
+                                   gc.anova.res$auc_e_between <= 0.05,],
+             aes(x = strain1, y = 1200000), shape = 8, size = 1, col = 'red') +
+  scale_fill_discrete(name = 'Biological Replicate') +
+  facet_wrap(.~condition, nrow = 1) +
+  labs(x = 'Strain',
+       y = 'Area Under the Curve') +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm")))
+ggsave(sprintf("%s/%s/GROWTH_CURVES_AUC_ANOVA.jpg",fig_path, expt.name), plot.gc.auc.anova,
+       height = 80, width = 200, units = 'mm',
+       dpi = 600)
+
+
+##### GROWTH CURVE ANALYSIS SUMMARY
+head(gc.res)
+gc.res.sum <- gc.res %>%
+  filter(n > 10) %>%
+  group_by(condition, orf_name, bio_rep) %>%
+  summarise(t_gen = median(t_gen, na.rm = T), dtime = median(dtime, na.rm = T),
+            gr = median(gr, na.rm = T), auc_e = median(auc_e, na.rm = T)) %>%
+  data.frame()
+
+plot.gc.auc <- gc.res.sum %>%
+  ggplot(aes(x = orf_name, y = auc_e)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(aes(col = bio_rep)) +
+  # geom_violin(fill = 'transparent') +
+  stat_compare_means(method = 't.test', ref.group = 'FY4', label = "p.signif",
+                     size = 1.5, label.y = 1000000) +
+  scale_color_discrete(name = 'Biological Replicate') +
+  facet_wrap(.~condition, nrow = 1) +
+  labs(x = 'Strain',
+       y = 'AUC',
+       title = 'Area Under the Curve (AUC)') +
+  # coord_flip() +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm"))) +
+  coord_cartesian(ylim = c(0,1000000))
+
+plot.gc.tgen <- gc.res.sum %>%
+  ggplot(aes(x = orf_name, y = gr)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(aes(col = bio_rep)) +
+  # geom_violin(fill = 'transparent') +
+  scale_color_discrete(name = 'Biological Replicate') +
+  stat_compare_means(method = 't.test', ref.group = 'FY4', label = "p.signif",
+                     size = 1.5, label.y = 0.06) +
+  facet_wrap(.~condition, nrow = 1) +
+  labs(x = 'Strain',
+       y = 'Rate of Change in Colony Size (pix/hours)',
+       title = 'Growth Rate') +
+  # coord_flip() +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm")))
+
+plot.gc.res <- ggpubr::ggarrange(plot.gc.tgen, plot.gc.auc,
+                                 nrow = 2, align = 'hv',
+                                 common.legend = T, legend = 'bottom')
+ggsave(sprintf("%s/%s/GROWTH_CURVES_RESULTS.jpg", fig_path, expt.name), plot.gc.res,
+       height = 160, width = 200, units = 'mm',
+       dpi = 600)
+
+
+##### GROWTH CURVE AND COLONY SIZE SUMMARY
+all.res.sum <- merge(gc.res.sum, data.sum %>% filter(hours == 327.88), by = c('condition','orf_name','bio_rep'), all = T)
+write.csv(all.res.sum, file = sprintf('%s/%s/ALL_RESULTS_SUMMARY.csv', res_path, expt.name))
 
