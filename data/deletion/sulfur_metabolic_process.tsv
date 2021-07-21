@@ -1,0 +1,482 @@
+﻿GENE PRODUCT DB	GENE PRODUCT ID	SYMBOL	QUALIFIER	GO TERM	GO NAME	ECO ID	GO EVIDENCE CODE	REFERENCE	WITH/FROM	TAXON ID	ASSIGNED BY	ANNOTATION EXTENSION	GO ASPECT
+UniProtKB	P00890	CIT1	involved_in	GO:0046356	acetyl-CoA catabolic process	ECO:0000314	IDA	PMID:17570335		559292	SGD		P
+UniProtKB	P00890	CIT1	involved_in	GO:0046356	acetyl-CoA catabolic process	ECO:0000315	IMP	PMID:17570335		559292	SGD		P
+UniProtKB	P05694	MET6	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR002629|InterPro:IPR006276	559292	InterPro		P
+UniProtKB	P05694	MET6	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P05694	MET6	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000315	IMP	PMID:1101032		559292	SGD		P
+UniProtKB	P06106	MET17	involved_in	GO:0019346	transsulfuration	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR000277	559292	InterPro		P
+UniProtKB	P06106	MET17	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0198	559292	UniProt		P
+UniProtKB	P06106	MET17	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P06106	MET17	enables	GO:0004124	cysteine synthase activity	ECO:0000501	IEA	GO_REF:0000003	EC:2.5.1.47	559292	UniProt		F
+UniProtKB	P06106	MET17	enables	GO:0003961	O-acetylhomoserine aminocarboxypropyltransferase activity	ECO:0000501	IEA	GO_REF:0000003	EC:2.5.1.49	559292	UniProt		F
+UniProtKB	P06106	MET17	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000304	TAS	PMID:15042590		559292	SGD		P
+UniProtKB	P06106	MET17	involved_in	GO:0006555	methionine metabolic process	ECO:0000315	IMP	PMID:1101032		559292	SGD		P
+UniProtKB	P06106	MET17	enables	GO:0004124	cysteine synthase activity	ECO:0000314	IDA	PMID:7765825		559292	SGD		F
+UniProtKB	P06106	MET17	enables	GO:0003961	O-acetylhomoserine aminocarboxypropyltransferase activity	ECO:0000304	TAS	PMID:3299001		559292	SGD		F
+UniProtKB	P06106	MET17	enables	GO:0003961	O-acetylhomoserine aminocarboxypropyltransferase activity	ECO:0000314	IDA	PMID:7765825		559292	SGD		F
+UniProtKB	P06106	MET17	enables	GO:0004124	cysteine synthase activity	ECO:0000256	IEA	GO_REF:0000116	RHEA:14829	559292	RHEA		F
+UniProtKB	P06106	MET17	enables	GO:0003961	O-acetylhomoserine aminocarboxypropyltransferase activity	ECO:0000256	IEA	GO_REF:0000116	RHEA:10048	559292	RHEA		F
+UniProtKB	P06106	MET17	involved_in	GO:0071266	'de novo' L-methionine biosynthetic process	ECO:0000364	IEA	GO_REF:0000108	GO:0003961	559292	GOC		P
+UniProtKB	P06106	MET17	involved_in	GO:0071266	'de novo' L-methionine biosynthetic process	ECO:0000364	IEA	GO_REF:0000108	GO:0003961	559292	GOC		P
+UniProtKB	P06106	MET17	involved_in	GO:0071266	'de novo' L-methionine biosynthetic process	ECO:0000366	IEA	GO_REF:0000108	GO:0003961	559292	GOC		P
+UniProtKB	P06106	MET17	involved_in	GO:0071266	'de novo' L-methionine biosynthetic process	ECO:0000366	IEA	GO_REF:0000108	GO:0003961	559292	GOC		P
+UniProtKB	P07245	ADE3	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P07277	ERG12	involved_in	GO:0019287	isopentenyl diphosphate biosynthetic process, mevalonate pathway	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000048610|RGD:621295|SGD:S000004821	559292	GO_Central		P
+UniProtKB	P07277	ERG12	involved_in	GO:0019287	isopentenyl diphosphate biosynthetic process, mevalonate pathway	ECO:0000315	IMP	PMID:200835		559292	SGD		P
+UniProtKB	P07277	ERG12	involved_in	GO:0019287	isopentenyl diphosphate biosynthetic process, mevalonate pathway	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00057	559292	UniProt		P
+UniProtKB	P08465	MET2	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000791315|PomBase:SPBC56F2.11|SGD:S000005221	559292	GO_Central		P
+UniProtKB	P08465	MET2	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P08465	MET2	involved_in	GO:0000096	sulfur amino acid metabolic process	ECO:0000315	IMP	PMID:1101032		559292	SGD		P
+UniProtKB	P08465	MET2	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000315	IMP	PMID:6035500		559292	SGD		P
+UniProtKB	P08536	MET3	involved_in	GO:0019379	sulfate assimilation, phosphoadenylyl sulfate reduction by phosphoadenylyl-sulfate reductase (thioredoxin)	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000114738|SGD:S000003771	559292	GO_Central		P
+UniProtKB	P08536	MET3	involved_in	GO:0000096	sulfur amino acid metabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000114738|SGD:S000003771	559292	GO_Central		P
+UniProtKB	P08536	MET3	involved_in	GO:0010134	sulfate assimilation via adenylyl sulfate reduction	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000114738|PomBase:SPBC27.08c	559292	GO_Central		P
+UniProtKB	P08536	MET3	involved_in	GO:0000103	sulfate assimilation	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR002650	559292	InterPro		P
+UniProtKB	P08536	MET3	involved_in	GO:0000096	sulfur amino acid metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR027535	559292	InterPro		P
+UniProtKB	P08536	MET3	involved_in	GO:0019379	sulfate assimilation, phosphoadenylyl sulfate reduction by phosphoadenylyl-sulfate reductase (thioredoxin)	ECO:0000315	IMP	PMID:197388		559292	SGD		P
+UniProtKB	P08536	MET3	involved_in	GO:0000096	sulfur amino acid metabolic process	ECO:0000315	IMP	PMID:1101032		559292	SGD		P
+UniProtKB	P08536	MET3	involved_in	GO:0000103	sulfate assimilation	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000375820	559292	UniProt		P
+UniProtKB	P08536	MET3	involved_in	GO:0070814	hydrogen sulfide biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00140	559292	UniProt		P
+UniProtKB	P09440	MIS1	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P10659	SAM1	involved_in	GO:0006556	S-adenosylmethionine biosynthetic process	ECO:0000318	IBA	PMID:21873635	FB:FBgn0005278|MGI:MGI:2443731|PANTHER:PTN000239344|RGD:3050|RGD:619985|SGD:S000002910|SGD:S000004170|UniProtKB:P0A817|UniProtKB:P31153|UniProtKB:Q00266|UniProtKB:Q7K6A4	559292	GO_Central		P
+UniProtKB	P10659	SAM1	involved_in	GO:0006556	S-adenosylmethionine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR002133|InterPro:IPR022628|InterPro:IPR022629|InterPro:IPR022630|InterPro:IPR022631|InterPro:IPR022636	559292	InterPro		P
+UniProtKB	P10659	SAM1	involved_in	GO:0006556	S-adenosylmethionine biosynthetic process	ECO:0000315	IMP	PMID:17426150		559292	SGD		P
+UniProtKB	P10659	SAM1	involved_in	GO:0006555	methionine metabolic process	ECO:0000315	IMP	PMID:4580557		559292	SGD		P
+UniProtKB	P10659	SAM1	involved_in	GO:0006556	S-adenosylmethionine biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00315	559292	UniProt		P
+UniProtKB	P10869	HOM3	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000315	IMP	PMID:4380684		559292	SGD		P
+UniProtKB	P12683	HMG1	involved_in	GO:0019287	isopentenyl diphosphate biosynthetic process, mevalonate pathway	ECO:0000305	IC	PMID:3526336	GO:0004420	559292	SGD		P
+UniProtKB	P12695	LAT1	involved_in	GO:0006086	acetyl-CoA biosynthetic process from pyruvate	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000568043|RGD:619859|SGD:S000003425|SGD:S000005015|ZFIN:ZDB-GENE-030131-2921	559292	GO_Central		P
+UniProtKB	P12695	LAT1	involved_in	GO:0006086	acetyl-CoA biosynthetic process from pyruvate	ECO:0000314	IDA	PMID:7947791		559292	SGD		P
+UniProtKB	P13663	HOM2	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN002928538|SGD:S000002565	559292	GO_Central		P
+UniProtKB	P13663	HOM2	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR012080	559292	InterPro		P
+UniProtKB	P13663	HOM2	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P13663	HOM2	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000315	IMP	PMID:4380684		559292	SGD		P
+UniProtKB	P15807	MET8	involved_in	GO:0000103	sulfate assimilation	ECO:0000315	IMP	PMID:10051442		559292	SGD		P
+UniProtKB	P16387	PDA1	involved_in	GO:0006086	acetyl-CoA biosynthetic process from pyruvate	ECO:0000318	IBA	PMID:21873635	MGI:MGI:97532|PANTHER:PTN000162184|RGD:3286|RGD:620095|SGD:S000000980|UniProtKB:P08559	559292	GO_Central		P
+UniProtKB	P16387	PDA1	involved_in	GO:0006086	acetyl-CoA biosynthetic process from pyruvate	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR017597	559292	InterPro		P
+UniProtKB	P16387	PDA1	involved_in	GO:0006086	acetyl-CoA biosynthetic process from pyruvate	ECO:0000314	IDA	PMID:7947791		559292	SGD		P
+UniProtKB	P16451	PDX1	involved_in	GO:0006086	acetyl-CoA biosynthetic process from pyruvate	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000568043|RGD:619859|SGD:S000003425|SGD:S000005015|ZFIN:ZDB-GENE-030131-2921	559292	GO_Central		P
+UniProtKB	P16451	PDX1	involved_in	GO:0006086	acetyl-CoA biosynthetic process from pyruvate	ECO:0000314	IDA	PMID:2007123		559292	SGD		P
+UniProtKB	P16451	PDX1	involved_in	GO:0006086	acetyl-CoA biosynthetic process from pyruvate	ECO:0000314	IDA	PMID:7947791		559292	SGD		P
+UniProtKB	P16451	PDX1	involved_in	GO:0006086	acetyl-CoA biosynthetic process from pyruvate	ECO:0000315	IMP	PMID:2007123		559292	SGD		P
+UniProtKB	P17695	GRX2	involved_in	GO:0006749	glutathione metabolic process	ECO:0000316	IGI	PMID:23242256	SGD:S000006012	559292	SGD		P
+UniProtKB	P18408	MET16	involved_in	GO:0006750	glutathione biosynthetic process	ECO:0000315	IMP	PMID:22234534		559292	CACAO		P
+UniProtKB	P18408	MET16	involved_in	GO:0019379	sulfate assimilation, phosphoadenylyl sulfate reduction by phosphoadenylyl-sulfate reductase (thioredoxin)	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000591370|SGD:S000006371|UniProtKB:P17854	559292	GO_Central		P
+UniProtKB	P18408	MET16	involved_in	GO:0019379	sulfate assimilation, phosphoadenylyl sulfate reduction by phosphoadenylyl-sulfate reductase (thioredoxin)	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004511|InterPro:IPR011800	559292	InterPro		P
+UniProtKB	P18408	MET16	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0198	559292	UniProt		P
+UniProtKB	P18408	MET16	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P18408	MET16	involved_in	GO:0019379	sulfate assimilation, phosphoadenylyl sulfate reduction by phosphoadenylyl-sulfate reductase (thioredoxin)	ECO:0000314	IDA	PMID:3060034		559292	SGD		P
+UniProtKB	P18408	MET16	involved_in	GO:0019379	sulfate assimilation, phosphoadenylyl sulfate reduction by phosphoadenylyl-sulfate reductase (thioredoxin)	ECO:0000315	IMP	PMID:197388		559292	SGD		P
+UniProtKB	P18408	MET16	involved_in	GO:0070814	hydrogen sulfide biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00140	559292	UniProt		P
+UniProtKB	P19262	KGD2	involved_in	GO:0033512	L-lysine catabolic process to acetyl-CoA via saccharopine	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00868	559292	UniProt		P
+UniProtKB	P19358	SAM2	involved_in	GO:0006556	S-adenosylmethionine biosynthetic process	ECO:0000318	IBA	PMID:21873635	FB:FBgn0005278|MGI:MGI:2443731|PANTHER:PTN000239344|RGD:3050|RGD:619985|SGD:S000002910|SGD:S000004170|UniProtKB:P0A817|UniProtKB:P31153|UniProtKB:Q00266|UniProtKB:Q7K6A4	559292	GO_Central		P
+UniProtKB	P19358	SAM2	involved_in	GO:0006556	S-adenosylmethionine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR002133|InterPro:IPR022628|InterPro:IPR022629|InterPro:IPR022630|InterPro:IPR022631|InterPro:IPR022636	559292	InterPro		P
+UniProtKB	P19358	SAM2	involved_in	GO:0006556	S-adenosylmethionine biosynthetic process	ECO:0000315	IMP	PMID:17426150		559292	SGD		P
+UniProtKB	P19358	SAM2	involved_in	GO:0006555	methionine metabolic process	ECO:0000315	IMP	PMID:4585174		559292	SGD		P
+UniProtKB	P19358	SAM2	involved_in	GO:0006556	S-adenosylmethionine biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00315	559292	UniProt		P
+UniProtKB	P21182	SPE2	involved_in	GO:0006557	S-adenosylmethioninamine biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00331	559292	UniProt		P
+UniProtKB	P22803	TRX2	involved_in	GO:0000103	sulfate assimilation	ECO:0000316	IGI	PMID:2026619	SGD:S000004033	559292	SGD		P
+UniProtKB	P22803	TRX2	involved_in	GO:0006749	glutathione metabolic process	ECO:0000316	IGI	PMID:23242256	SGD:S000006012	559292	SGD		P
+UniProtKB	P23202	URE2	involved_in	GO:0006749	glutathione metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004045	559292	InterPro		P
+UniProtKB	P23503	NAR1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000318	IBA	PMID:21873635	MGI:MGI:1914813|PANTHER:PTN000177496|SGD:S000005184|UniProtKB:Q9H6Q4	559292	GO_Central		P
+UniProtKB	P23503	NAR1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:19385603		559292	UniProt		P
+UniProtKB	P23503	NAR1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:15103330		559292	SGD		P
+UniProtKB	P24031	PHO3	involved_in	GO:0042723	thiamine-containing compound metabolic process	ECO:0000314	IDA	PMID:2407294		559292	SGD		P
+UniProtKB	P24521	ERG8	involved_in	GO:0019287	isopentenyl diphosphate biosynthetic process, mevalonate pathway	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN001274235|SGD:S000004833	559292	GO_Central		P
+UniProtKB	P24521	ERG8	involved_in	GO:0019287	isopentenyl diphosphate biosynthetic process, mevalonate pathway	ECO:0000315	IMP	PMID:200835		559292	SGD		P
+UniProtKB	P24521	ERG8	involved_in	GO:0019287	isopentenyl diphosphate biosynthetic process, mevalonate pathway	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00057	559292	UniProt		P
+UniProtKB	P25362	PET18	involved_in	GO:0006772	thiamine metabolic process	ECO:0000270	IEP	PMID:10383756		559292	SGD		P
+UniProtKB	P25374	NFS1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000318	IBA	PMID:21873635	FB:FBgn0032393|MGI:MGI:1316706|PANTHER:PTN000175851|SGD:S000000522|TAIR:locus:2169985|UniProtKB:Q9Y697	559292	GO_Central		P
+UniProtKB	P25374	NFS1	involved_in	GO:0044571	[2Fe-2S] cluster assembly	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR010240	559292	InterPro		P
+UniProtKB	P25374	NFS1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000314	IDA	PMID:15220327		559292	SGD		P
+UniProtKB	P25374	NFS1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:12970193		559292	SGD		P
+UniProtKB	P28273	OXP1	involved_in	GO:0006749	glutathione metabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000146326|SGD:S000001698|TAIR:locus:2156030	559292	GO_Central		P
+UniProtKB	P28273	OXP1	acts_upstream_of_or_within	GO:0006749	glutathione metabolic process	ECO:0000314	IDA	PMID:20349993		559292	MGI		P
+UniProtKB	P28273	OXP1	involved_in	GO:0006749	glutathione metabolic process	ECO:0000315	IMP	PMID:20349993		559292	SGD		P
+UniProtKB	P29547	CAM1	involved_in	GO:0006749	glutathione metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004045	559292	InterPro		P
+UniProtKB	P30624	FAA1	involved_in	GO:0035336	long-chain fatty-acyl-CoA metabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000645126|PomBase:SPBC18H10.02|PomBase:SPBP4H10.11c|RGD:69401|SGD:S000004860|SGD:S000005844|UniProtKB:A0A0B4KFE4	559292	GO_Central		P
+UniProtKB	P30624	FAA1	involved_in	GO:0035336	long-chain fatty-acyl-CoA metabolic process	ECO:0000315	IMP	PMID:11477098		559292	SGD		P
+UniProtKB	P30624	FAA1	involved_in	GO:0035336	long-chain fatty-acyl-CoA metabolic process	ECO:0000316	IGI	PMID:11477098	SGD:S000004860	559292	SGD		P
+UniProtKB	P31116	HOM6	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P31116	HOM6	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000315	IMP	PMID:4380684		559292	SGD		P
+UniProtKB	P31373	CYS3	involved_in	GO:0019346	transsulfuration	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000211590|SGD:S000000010|SGD:S000003152|UniProtKB:P32929	559292	GO_Central		P
+UniProtKB	P31373	CYS3	involved_in	GO:0019343	cysteine biosynthetic process via cystathionine	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000211591|SGD:S000000010|UniProtKB:P32929|UniProtKB:P9WGB7	559292	GO_Central		P
+UniProtKB	P31373	CYS3	involved_in	GO:0019346	transsulfuration	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR000277	559292	InterPro		P
+UniProtKB	P31373	CYS3	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0198	559292	UniProt		P
+UniProtKB	P31373	CYS3	involved_in	GO:0019346	transsulfuration	ECO:0000315	IMP	PMID:8366024		559292	SGD		P
+UniProtKB	P31373	CYS3	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000315	IMP	PMID:8366024		559292	SGD		P
+UniProtKB	P31373	CYS3	involved_in	GO:0019343	cysteine biosynthetic process via cystathionine	ECO:0000315	IMP	PMID:10509018		559292	SGD		P
+UniProtKB	P31373	CYS3	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00136	559292	UniProt		P
+UniProtKB	P32179	MET22	involved_in	GO:0000103	sulfate assimilation	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000465401|PomBase:SPCC1753.04|SGD:S000005425	559292	GO_Central		P
+UniProtKB	P32179	MET22	involved_in	GO:0006790	sulfur compound metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR006239	559292	InterPro		P
+UniProtKB	P32179	MET22	involved_in	GO:0000103	sulfate assimilation	ECO:0000315	IMP	PMID:8910555		559292	SGD		P
+UniProtKB	P32179	MET22	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000315	IMP	PMID:8393782		559292	SGD		P
+UniProtKB	P32318	THI4	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR027495	559292	InterPro		P
+UniProtKB	P32318	THI4	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0784	559292	UniProt		P
+UniProtKB	P32318	THI4	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000315	IMP	PMID:7941734		559292	SGD		P
+UniProtKB	P32318	THI4	involved_in	GO:0052837	thiazole biosynthetic process	ECO:0000314	IDA	PMID:22031445		559292	SGD		P
+UniProtKB	P32318	THI4	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000375967	559292	UniProt		P
+UniProtKB	P32318	THI4	involved_in	GO:0052837	thiazole biosynthetic process	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000375967	559292	UniProt		P
+UniProtKB	P32377	MVD1	involved_in	GO:0019287	isopentenyl diphosphate biosynthetic process, mevalonate pathway	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000104601|RGD:621292|UniProtKB:A0A1D8PC43	559292	GO_Central		P
+UniProtKB	P32377	MVD1	involved_in	GO:0019287	isopentenyl diphosphate biosynthetic process, mevalonate pathway	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR029765	559292	InterPro		P
+UniProtKB	P32377	MVD1	involved_in	GO:0019287	isopentenyl diphosphate biosynthetic process, mevalonate pathway	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00057	559292	UniProt		P
+UniProtKB	P32389	MET4	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0198	559292	UniProt		P
+UniProtKB	P32389	MET4	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P32389	MET4	involved_in	GO:0000096	sulfur amino acid metabolic process	ECO:0000315	IMP	PMID:1549123		559292	SGD		P
+UniProtKB	P32451	BIO2	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000540961|PomBase:SPCC1235.02|SGD:S000003518|UniProtKB:P12996	559292	GO_Central		P
+UniProtKB	P32451	BIO2	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR002684	559292	InterPro		P
+UniProtKB	P32451	BIO2	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0093	559292	UniProt		P
+UniProtKB	P32451	BIO2	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000315	IMP	PMID:10525840		559292	SGD		P
+UniProtKB	P32451	BIO2	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00078	559292	UniProt		P
+UniProtKB	P32463	ACP1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:27540631		559292	SGD		P
+UniProtKB	P32463	ACP1	involved_in	GO:0009107	lipoate biosynthetic process	ECO:0000315	IMP	PMID:9187370		559292	SGD		P
+UniProtKB	P32473	PDB1	involved_in	GO:0006086	acetyl-CoA biosynthetic process from pyruvate	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000178974|PomBase:SPBC30D10.13c|RGD:1359146|SGD:S000000425|UniProtKB:P11177	559292	GO_Central		P
+UniProtKB	P32473	PDB1	involved_in	GO:0006086	acetyl-CoA biosynthetic process from pyruvate	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR027110	559292	InterPro		P
+UniProtKB	P32473	PDB1	involved_in	GO:0006086	acetyl-CoA biosynthetic process from pyruvate	ECO:0000314	IDA	PMID:7947791		559292	SGD		P
+UniProtKB	P32477	GSH1	involved_in	GO:0006750	glutathione biosynthetic process	ECO:0000318	IBA	PMID:21873635	FB:FBgn0040319|MGI:MGI:104990|PANTHER:PTN000126115|PomBase:SPAC22F3.10c|RGD:619868|SGD:S000003637|UniProtKB:A0A1D8PE63|UniProtKB:P48506|WB:WBGene00001527|dictyBase:DDB_G0284651	559292	GO_Central		P
+UniProtKB	P32477	GSH1	involved_in	GO:0006750	glutathione biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004308	559292	InterPro		P
+UniProtKB	P32477	GSH1	involved_in	GO:0006750	glutathione biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0317	559292	UniProt		P
+UniProtKB	P32477	GSH1	involved_in	GO:0006750	glutathione biosynthetic process	ECO:0000314	IDA	PMID:1687097		559292	SGD		P
+UniProtKB	P32477	GSH1	involved_in	GO:0006750	glutathione biosynthetic process	ECO:0000315	IMP	PMID:8768524		559292	SGD		P
+UniProtKB	P32477	GSH1	involved_in	GO:0006750	glutathione biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00142	559292	UniProt		P
+UniProtKB	P32582	CYS4	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000318	IBA	PMID:21873635	MGI:MGI:88285|PANTHER:PTN000034104|PomBase:SPBC36.04|SGD:S000003387|TAIR:locus:2043964|TAIR:locus:2082837|TAIR:locus:2114804|TAIR:locus:2130419|TAIR:locus:2143814|UniProtKB:O05393|UniProtKB:P0ABK5|UniProtKB:P16703|UniProtKB:P35520|UniProtKB:P37887|UniProtKB:P9WP53|UniProtKB:P9WP55|UniProtKB:Q43725|UniProtKB:Q79FV4|WB:WBGene00007653|WB:WBGene00010759|WB:WBGene00019962	559292	GO_Central		P
+UniProtKB	P32582	CYS4	involved_in	GO:0019343	cysteine biosynthetic process via cystathionine	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR005857	559292	InterPro		P
+UniProtKB	P32582	CYS4	involved_in	GO:0006535	cysteine biosynthetic process from serine	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR001216	559292	InterPro		P
+UniProtKB	P32582	CYS4	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0198	559292	UniProt		P
+UniProtKB	P32582	CYS4	involved_in	GO:0019346	transsulfuration	ECO:0000315	IMP	PMID:8366024		559292	SGD		P
+UniProtKB	P32582	CYS4	involved_in	GO:0019343	cysteine biosynthetic process via cystathionine	ECO:0000315	IMP	PMID:10509018		559292	SGD		P
+UniProtKB	P32582	CYS4	involved_in	GO:0019343	cysteine biosynthetic process via cystathionine	ECO:0000315	IMP	PMID:8366024		559292	SGD		P
+UniProtKB	P32582	CYS4	involved_in	GO:0006535	cysteine biosynthetic process from serine	ECO:0000314	IDA	PMID:11948191		559292	SGD		P
+UniProtKB	P32582	CYS4	involved_in	GO:0070814	hydrogen sulfide biosynthetic process	ECO:0000314	IDA	PMID:19531479		559292	SGD		P
+UniProtKB	P32582	CYS4	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00136	559292	UniProt		P
+UniProtKB	P32626	UTR4	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000463822|SGD:S000000764|UniProtKB:Q9UHY7	559292	GO_Central		P
+UniProtKB	P32626	UTR4	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR023943|InterPro:IPR027511	559292	InterPro		P
+UniProtKB	P32626	UTR4	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P32626	UTR4	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000315	IMP	PMID:18625006		559292	SGD		P
+UniProtKB	P32626	UTR4	involved_in	GO:0019284	L-methionine salvage from S-adenosylmethionine	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000106755	559292	UniProt		P
+UniProtKB	P32626	UTR4	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00904	559292	UniProt		P
+UniProtKB	P32656	GCG1	involved_in	GO:0006751	glutathione catabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN004341755|SGD:S000000965|TAIR:locus:2128096|TAIR:locus:2179714|TAIR:locus:2194854|UniProtKB:P39163|ZFIN:ZDB-GENE-030131-1957	559292	GO_Central		P
+UniProtKB	P32656	GCG1	involved_in	GO:0006751	glutathione catabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR006840	559292	InterPro		P
+UniProtKB	P32656	GCG1	involved_in	GO:0006751	glutathione catabolic process	ECO:0000314	IDA	PMID:23070364		559292	SGD		P
+UniProtKB	P32656	GCG1	involved_in	GO:0006751	glutathione catabolic process	ECO:0000315	IMP	PMID:23070364		559292	SGD		P
+UniProtKB	P32860	NFU1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000127018|SGD:S000001523|TAIR:locus:2008311|TAIR:locus:2088781|TAIR:locus:2120745|TAIR:locus:2141400|TAIR:locus:2158849|UniProtKB:P63020|UniProtKB:Q9UMS0	559292	GO_Central		P
+UniProtKB	P32860	NFU1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR001075	559292	InterPro		P
+UniProtKB	P32860	NFU1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:10468587		559292	SGD		P
+UniProtKB	P32860	NFU1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:10588895		559292	SGD		P
+UniProtKB	P32874	HFA1	involved_in	GO:2001295	malonyl-CoA biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00655	559292	UniProt		P
+UniProtKB	P32875	LIP5	involved_in	GO:0009107	lipoate biosynthetic process	ECO:0000318	IBA	PMID:21873635	MGI:MGI:1934604|PANTHER:PTN000101947|TAIR:locus:2051384	559292	GO_Central		P
+UniProtKB	P32875	LIP5	enables	GO:0016992	lipoate synthase activity	ECO:0000318	IBA	PMID:21873635	MGI:MGI:1934604|PANTHER:PTN000101947|TAIR:locus:2051384	559292	GO_Central		F
+UniProtKB	P32875	LIP5	involved_in	GO:0009107	lipoate biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR003698	559292	InterPro		P
+UniProtKB	P32875	LIP5	enables	GO:0016992	lipoate synthase activity	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR003698	559292	InterPro		F
+UniProtKB	P32875	LIP5	enables	GO:0016992	lipoate synthase activity	ECO:0000501	IEA	GO_REF:0000003	EC:2.8.1.8	559292	UniProt		F
+UniProtKB	P32875	LIP5	enables	GO:0016992	lipoate synthase activity	ECO:0000247	ISA	PMID:8349643	UniProtKB:P60716	559292	SGD		F
+UniProtKB	P32875	LIP5	enables	GO:0016992	lipoate synthase activity	ECO:0000256	IEA	GO_REF:0000116	RHEA:16585	559292	RHEA		F
+UniProtKB	P32875	LIP5	involved_in	GO:0009107	lipoate biosynthetic process	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000376665	559292	UniProt		P
+UniProtKB	P32875	LIP5	enables	GO:0016992	lipoate synthase activity	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000376665	559292	UniProt		F
+UniProtKB	P35202	THI80	involved_in	GO:0009229	thiamine diphosphate biosynthetic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000341466|SGD:S000005669	559292	GO_Central		P
+UniProtKB	P35202	THI80	involved_in	GO:0009229	thiamine diphosphate biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR007371|InterPro:IPR007373|InterPro:IPR016966|InterPro:IPR036371|InterPro:IPR036759	559292	InterPro		P
+UniProtKB	P35202	THI80	involved_in	GO:0009229	thiamine diphosphate biosynthetic process	ECO:0000315	IMP	PMID:8394343		559292	SGD		P
+UniProtKB	P35202	THI80	involved_in	GO:0009229	thiamine diphosphate biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00060	559292	UniProt		P
+UniProtKB	P36008	TEF4	involved_in	GO:0006749	glutathione metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004045	559292	InterPro		P
+UniProtKB	P36150	MET1	involved_in	GO:0000103	sulfate assimilation	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR012066	559292	InterPro		P
+UniProtKB	P36150	MET1	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P36152	DRE2	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000328118|SGD:S000001779	559292	GO_Central		P
+UniProtKB	P36152	DRE2	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR007785	559292	InterPro		P
+UniProtKB	P36152	DRE2	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:20802492		559292	SGD		P
+UniProtKB	P36152	DRE2	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:18625724		559292	SGD		P
+UniProtKB	P36152	DRE2	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000106733	559292	UniProt		P
+UniProtKB	P36156	ECM4	involved_in	GO:0006749	glutathione metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004045	559292	InterPro		P
+UniProtKB	P36156	ECM4	involved_in	GO:0006749	glutathione metabolic process	ECO:0000314	IDA	PMID:22686328		559292	SGD		P
+UniProtKB	P36156	ECM4	involved_in	GO:0006749	glutathione metabolic process	ECO:0000314	IDA	PMID:20388120		559292	SGD		P
+UniProtKB	P38141	THI2	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0784	559292	UniProt		P
+UniProtKB	P38149	DUG2	involved_in	GO:0006751	glutathione catabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN005154692|SGD:S000000485	559292	GO_Central		P
+UniProtKB	P38149	DUG2	involved_in	GO:0006751	glutathione catabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR017149	559292	InterPro		P
+UniProtKB	P38149	DUG2	involved_in	GO:0006751	glutathione catabolic process	ECO:0000314	IDA	PMID:22277648		559292	SGD		P
+UniProtKB	P38149	DUG2	involved_in	GO:0006751	glutathione catabolic process	ECO:0000315	IMP	PMID:22277648		559292	SGD		P
+UniProtKB	P38149	DUG2	involved_in	GO:0006751	glutathione catabolic process	ECO:0000315	IMP	PMID:17179087		559292	SGD		P
+UniProtKB	P38716	YHR112C	involved_in	GO:0019346	transsulfuration	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000211590|SGD:S000000010|SGD:S000003152|UniProtKB:P32929	559292	GO_Central		P
+UniProtKB	P38716	YHR112C	involved_in	GO:0019346	transsulfuration	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR000277	559292	InterPro		P
+UniProtKB	P38716	YHR112C	involved_in	GO:0006790	sulfur compound metabolic process	ECO:0000250	ISS	PMID:10821189		559292	SGD		P
+UniProtKB	P38767	ERC1	involved_in	GO:0006556	S-adenosylmethionine biosynthetic process	ECO:0000315	IMP	PMID:18592490		559292	SGD		P
+UniProtKB	P38829	YHR122W	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000272123|SGD:S000001164|TAIR:locus:2199362|UniProtKB:Q9Y3D0	559292	GO_Central		P
+UniProtKB	P38829	YHR122W	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:22678362		559292	SGD		P
+UniProtKB	P38840	ARO9	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00904	559292	UniProt		P
+UniProtKB	P38891	BAT1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00904	559292	UniProt		P
+UniProtKB	P39002	FAA3	involved_in	GO:0035336	long-chain fatty-acyl-CoA metabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000645126|PomBase:SPBC18H10.02|PomBase:SPBP4H10.11c|RGD:69401|SGD:S000004860|SGD:S000005844|UniProtKB:A0A0B4KFE4	559292	GO_Central		P
+UniProtKB	P39014	MET30	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0198	559292	UniProt		P
+UniProtKB	P39014	MET30	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P39109	YCF1	involved_in	GO:0006749	glutathione metabolic process	ECO:0000316	IGI	PMID:23242256	SGD:S000006012	559292	SGD		P
+UniProtKB	P39692	MET10	involved_in	GO:0000103	sulfate assimilation	ECO:0000315	IMP	PMID:7928966		559292	SGD		P
+UniProtKB	P39692	MET10	involved_in	GO:0000103	sulfate assimilation	ECO:0000315	IMP	PMID:19236486		559292	SGD		P
+UniProtKB	P39692	MET10	involved_in	GO:0070814	hydrogen sulfide biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00140	559292	UniProt		P
+UniProtKB	P39954	SAH1	involved_in	GO:0033353	S-adenosylmethionine cycle	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000602759|ZFIN:ZDB-GENE-031219-6	559292	GO_Central		P
+UniProtKB	P39954	SAH1	involved_in	GO:0019510	S-adenosylhomocysteine catabolic process	ECO:0000315	IMP	PMID:18591246		559292	SGD		P
+UniProtKB	P40416	ATM1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:10406803		559292	SGD		P
+UniProtKB	P40416	ATM1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:31040179		559292	UniProt		P
+UniProtKB	P40469	MET18	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000306846|UniProtKB:Q96T76	559292	GO_Central		P
+UniProtKB	P40469	MET18	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:22678362		559292	UniProt		P
+UniProtKB	P40558	CFD1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000586498|SGD:S000001265|SGD:S000003059|UniProtKB:P53384	559292	GO_Central		P
+UniProtKB	P40558	CFD1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR019591|InterPro:IPR028600	559292	InterPro		P
+UniProtKB	P40558	CFD1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000314	IDA	PMID:17401378		559292	SGD		P
+UniProtKB	P40558	CFD1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:12970194		559292	SGD		P
+UniProtKB	P40558	CFD1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000106172	559292	UniProt		P
+UniProtKB	P40573	MET28	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0198	559292	UniProt		P
+UniProtKB	P40573	MET28	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P40582	GTT1	involved_in	GO:0006749	glutathione metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004045	559292	InterPro		P
+UniProtKB	P40582	GTT1	involved_in	GO:0006749	glutathione metabolic process	ECO:0000314	IDA	PMID:9792709		559292	SGD		P
+UniProtKB	P41835	THI6	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000466113|SGD:S000006135|UniProtKB:P30137	559292	GO_Central		P
+UniProtKB	P41835	THI6	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR000417|InterPro:IPR034291	559292	InterPro		P
+UniProtKB	P41835	THI6	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0784	559292	UniProt		P
+UniProtKB	P41835	THI6	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000315	IMP	PMID:7982968		559292	SGD		P
+UniProtKB	P41835	THI6	involved_in	GO:0009229	thiamine diphosphate biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00060	559292	UniProt		P
+UniProtKB	P41903	TES1	involved_in	GO:0006637	acyl-CoA metabolic process	ECO:0000318	IBA	PMID:21873635	MGI:MGI:2158201|PANTHER:PTN000115911|RGD:70368|UniProtKB:O14734	559292	GO_Central		P
+UniProtKB	P41903	TES1	involved_in	GO:0006637	acyl-CoA metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR003703	559292	InterPro		P
+UniProtKB	P41921	GLR1	involved_in	GO:0006749	glutathione metabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN002448883|PomBase:SPBC17A3.07|RGD:621747|SGD:S000006012|dictyBase:DDB_G0272754	559292	GO_Central		P
+UniProtKB	P41921	GLR1	involved_in	GO:0006749	glutathione metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR006322	559292	InterPro		P
+UniProtKB	P41921	GLR1	involved_in	GO:0006749	glutathione metabolic process	ECO:0000315	IMP	PMID:23242256		559292	SGD		P
+UniProtKB	P42883	THI12	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR027939	559292	InterPro		P
+UniProtKB	P42883	THI12	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0784	559292	UniProt		P
+UniProtKB	P42883	THI12	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000316	IGI	PMID:12777485	SGD:S000001836|SGD:S000002403|SGD:S000003917	559292	SGD		P
+UniProtKB	P42883	THI12	involved_in	GO:0009229	thiamine diphosphate biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00060	559292	UniProt		P
+UniProtKB	P42936	YGR201C	involved_in	GO:0006749	glutathione metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004045	559292	InterPro		P
+UniProtKB	P43534	THI5	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR027939	559292	InterPro		P
+UniProtKB	P43534	THI5	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0784	559292	UniProt		P
+UniProtKB	P43534	THI5	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000316	IGI	PMID:12777485	SGD:S000002403|SGD:S000003917|SGD:S000005276	559292	SGD		P
+UniProtKB	P43534	THI5	involved_in	GO:0009229	thiamine diphosphate biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00060	559292	UniProt		P
+UniProtKB	P43534	THI5	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000314	IDA	PMID:23048037		559292	UniProt		P
+UniProtKB	P43545	SNZ3	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000316	IGI	PMID:30498136	SGD:S000005277	559292	SGD		P
+UniProtKB	P43616	DUG1	involved_in	GO:0006751	glutathione catabolic process	ECO:0000315	IMP	PMID:17179087		559292	SGD		P
+UniProtKB	P43623	IRC7	involved_in	GO:0019450	L-cysteine catabolic process to pyruvate	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000211746|SGD:S000001952|UniProtKB:P06721	559292	GO_Central		P
+UniProtKB	P43623	IRC7	involved_in	GO:0019346	transsulfuration	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR000277	559292	InterPro		P
+UniProtKB	P43623	IRC7	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P43623	IRC7	involved_in	GO:0019450	L-cysteine catabolic process to pyruvate	ECO:0000314	IDA	PMID:21569935		559292	SGD		P
+UniProtKB	P43623	IRC7	involved_in	GO:0019450	L-cysteine catabolic process to pyruvate	ECO:0000315	IMP	PMID:21569935		559292	SGD		P
+UniProtKB	P43623	IRC7	involved_in	GO:0006790	sulfur compound metabolic process	ECO:0000314	IDA	PMID:21569935		559292	SGD		P
+UniProtKB	P43623	IRC7	involved_in	GO:0006790	sulfur compound metabolic process	ECO:0000315	IMP	PMID:21569935		559292	SGD		P
+UniProtKB	P46151	MET12	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000318	IBA	PMID:21873635	MGI:MGI:106639|PANTHER:PTN000472667|PomBase:SPAC343.10|PomBase:SPAC56F8.10|SGD:S000003093	559292	GO_Central		P
+UniProtKB	P46151	MET12	involved_in	GO:0006555	methionine metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR003171|InterPro:IPR004621	559292	InterPro		P
+UniProtKB	P47095	MDE1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000067541|SGD:S000003785|UniProtKB:Q96GX9	559292	GO_Central		P
+UniProtKB	P47095	MDE1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR017714|InterPro:IPR027514	559292	InterPro		P
+UniProtKB	P47095	MDE1	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P47095	MDE1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000315	IMP	PMID:18625006		559292	SGD		P
+UniProtKB	P47095	MDE1	involved_in	GO:0019284	L-methionine salvage from S-adenosylmethionine	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000106743	559292	UniProt		P
+UniProtKB	P47095	MDE1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00904	559292	UniProt		P
+UniProtKB	P47158	IBA57	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000503456|TAIR:locus:2118041	559292	GO_Central		P
+UniProtKB	P47164	STR2	involved_in	GO:0019346	transsulfuration	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000928825|SGD:S000003891	559292	GO_Central		P
+UniProtKB	P47164	STR2	involved_in	GO:0019346	transsulfuration	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR000277	559292	InterPro		P
+UniProtKB	P47164	STR2	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P47164	STR2	involved_in	GO:0019346	transsulfuration	ECO:0000315	IMP	PMID:10821189		559292	SGD		P
+UniProtKB	P47164	STR2	involved_in	GO:0006790	sulfur compound metabolic process	ECO:0000315	IMP	PMID:10821189		559292	SGD		P
+UniProtKB	P47169	MET5	involved_in	GO:0000103	sulfate assimilation	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN001353165|PomBase:SPAC10F6.01c|SGD:S000003898	559292	GO_Central		P
+UniProtKB	P47169	MET5	involved_in	GO:0000103	sulfate assimilation	ECO:0000315	IMP	PMID:19236486		559292	SGD		P
+UniProtKB	P47169	MET5	involved_in	GO:0000097	sulfur amino acid biosynthetic process	ECO:0000315	IMP	PMID:1479340		559292	SGD		P
+UniProtKB	P47169	MET5	involved_in	GO:0070814	hydrogen sulfide biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00140	559292	UniProt		P
+UniProtKB	P47176	BAT2	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00904	559292	UniProt		P
+UniProtKB	P47183	THI11	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR027939	559292	InterPro		P
+UniProtKB	P47183	THI11	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0784	559292	UniProt		P
+UniProtKB	P47183	THI11	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000316	IGI	PMID:12777485	SGD:S000001836|SGD:S000002403|SGD:S000005276	559292	SGD		P
+UniProtKB	P47183	THI11	involved_in	GO:0009229	thiamine diphosphate biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00060	559292	UniProt		P
+UniProtKB	P47912	FAA4	involved_in	GO:0035336	long-chain fatty-acyl-CoA metabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000645126|PomBase:SPBC18H10.02|PomBase:SPBP4H10.11c|RGD:69401|SGD:S000004860|SGD:S000005844|UniProtKB:A0A0B4KFE4	559292	GO_Central		P
+UniProtKB	P47912	FAA4	involved_in	GO:0035336	long-chain fatty-acyl-CoA metabolic process	ECO:0000315	IMP	PMID:11477098		559292	SGD		P
+UniProtKB	P47912	FAA4	involved_in	GO:0035336	long-chain fatty-acyl-CoA metabolic process	ECO:0000316	IGI	PMID:11477098	SGD:S000005844	559292	SGD		P
+UniProtKB	P48239	GTO1	involved_in	GO:0006749	glutathione metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004045	559292	InterPro		P
+UniProtKB	P48239	GTO1	involved_in	GO:0006749	glutathione metabolic process	ECO:0000250	ISS	PMID:16709151	protein_id:CAI12107	559292	SGD		P
+UniProtKB	P50107	GLO1	involved_in	GO:0006749	glutathione metabolic process	ECO:0000315	IMP	PMID:8824231		559292	SGD		P
+UniProtKB	P50277	BIO3	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000241343|SGD:S000005341|TAIR:locus:2174532|UniProtKB:P12995|UniProtKB:P9WQ81|UniProtKB:Q5AYI6	559292	GO_Central		P
+UniProtKB	P50277	BIO3	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR005815	559292	InterPro		P
+UniProtKB	P50277	BIO3	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0093	559292	UniProt		P
+UniProtKB	P50277	BIO3	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000314	IDA	PMID:10333520		559292	SGD		P
+UniProtKB	P50277	BIO3	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000315	IMP	PMID:10333520		559292	SGD		P
+UniProtKB	P50277	BIO3	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00078	559292	UniProt		P
+UniProtKB	P52910	ACS2	involved_in	GO:0019427	acetyl-CoA biosynthetic process from acetate	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR011904	559292	InterPro		P
+UniProtKB	P52910	ACS2	involved_in	GO:0006085	acetyl-CoA biosynthetic process	ECO:0000314	IDA	PMID:8910545		559292	SGD		P
+UniProtKB	P52920	NBP35	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000586498|SGD:S000001265|SGD:S000003059|UniProtKB:P53384	559292	GO_Central		P
+UniProtKB	P52920	NBP35	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR019591|InterPro:IPR028601	559292	InterPro		P
+UniProtKB	P52920	NBP35	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000314	IDA	PMID:17401378		559292	SGD		P
+UniProtKB	P52920	NBP35	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:15728363		559292	SGD		P
+UniProtKB	P52920	NBP35	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000107516	559292	UniProt		P
+UniProtKB	P53090	ARO8	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00904	559292	UniProt		P
+UniProtKB	P53101	STR3	involved_in	GO:0019346	transsulfuration	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000211590|SGD:S000000010|SGD:S000003152|UniProtKB:P32929	559292	GO_Central		P
+UniProtKB	P53101	STR3	involved_in	GO:0019343	cysteine biosynthetic process via cystathionine	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000211591|SGD:S000000010|UniProtKB:P32929|UniProtKB:P9WGB7	559292	GO_Central		P
+UniProtKB	P53101	STR3	involved_in	GO:0019346	transsulfuration	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR000277	559292	InterPro		P
+UniProtKB	P53101	STR3	involved_in	GO:0071266	'de novo' L-methionine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR006238	559292	InterPro		P
+UniProtKB	P53101	STR3	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	P53101	STR3	involved_in	GO:0019346	transsulfuration	ECO:0000315	IMP	PMID:10821189		559292	SGD		P
+UniProtKB	P53101	STR3	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000315	IMP	PMID:10821189		559292	SGD		P
+UniProtKB	P53128	MET13	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000318	IBA	PMID:21873635	MGI:MGI:106639|PANTHER:PTN000472667|PomBase:SPAC343.10|PomBase:SPAC56F8.10|SGD:S000003093	559292	GO_Central		P
+UniProtKB	P53128	MET13	involved_in	GO:0006555	methionine metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR003171|InterPro:IPR004621	559292	InterPro		P
+UniProtKB	P53128	MET13	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000315	IMP	PMID:10029993		559292	SGD		P
+UniProtKB	P53128	MET13	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000315	IMP	PMID:10600168		559292	SGD		P
+UniProtKB	P53193	JAC1	involved_in	GO:0044571	[2Fe-2S] cluster assembly	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000361285|PomBase:SPAC144.08	559292	GO_Central		P
+UniProtKB	P53206	MCY1	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000318	IBA	PMID:21873635	MGI:MGI:88285|PANTHER:PTN000034104|PomBase:SPBC36.04|SGD:S000003387|TAIR:locus:2043964|TAIR:locus:2082837|TAIR:locus:2114804|TAIR:locus:2130419|TAIR:locus:2143814|UniProtKB:O05393|UniProtKB:P0ABK5|UniProtKB:P16703|UniProtKB:P35520|UniProtKB:P37887|UniProtKB:P9WP53|UniProtKB:P9WP55|UniProtKB:Q43725|UniProtKB:Q79FV4|WB:WBGene00007653|WB:WBGene00010759|WB:WBGene00019962	559292	GO_Central		P
+UniProtKB	P53206	MCY1	involved_in	GO:0006535	cysteine biosynthetic process from serine	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR001216	559292	InterPro		P
+UniProtKB	P53206	MCY1	enables	GO:0004124	cysteine synthase activity	ECO:0000501	IEA	GO_REF:0000003	EC:2.5.1.47	559292	UniProt		F
+UniProtKB	P53206	MCY1	enables	GO:0004124	cysteine synthase activity	ECO:0000256	IEA	GO_REF:0000116	RHEA:14829	559292	RHEA		F
+UniProtKB	P53312	LSC2	involved_in	GO:0006104	succinyl-CoA metabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000212531|RGD:1305008|RGD:1309397|SGD:S000003476	559292	GO_Central		P
+UniProtKB	P53312	LSC2	involved_in	GO:0006104	succinyl-CoA metabolic process	ECO:0000314	IDA	PMID:9874242		559292	SGD		P
+UniProtKB	P53598	LSC1	involved_in	GO:0006104	succinyl-CoA metabolic process	ECO:0000314	IDA	PMID:9874242		559292	SGD		P
+UniProtKB	P53630	BIO4	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000482092|SGD:S000005340|UniProtKB:P13000|UniProtKB:P9WPQ5	559292	GO_Central		P
+UniProtKB	P53630	BIO4	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004472	559292	InterPro		P
+UniProtKB	P53630	BIO4	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0093	559292	UniProt		P
+UniProtKB	P53630	BIO4	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000314	IDA	PMID:10333520		559292	SGD		P
+UniProtKB	P53630	BIO4	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000315	IMP	PMID:10333520		559292	SGD		P
+UniProtKB	P53630	BIO4	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00078	559292	UniProt		P
+UniProtKB	P53744	BIO5	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000315	IMP	PMID:10333520		559292	SGD		P
+UniProtKB	P53824	SNZ2	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000316	IGI	PMID:30498136	SGD:S000001835	559292	SGD		P
+UniProtKB	P53871	DUG3	involved_in	GO:0006751	glutathione catabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000935692|SGD:S000005135	559292	GO_Central		P
+UniProtKB	P53871	DUG3	involved_in	GO:0006751	glutathione catabolic process	ECO:0000314	IDA	PMID:22277648		559292	SGD		P
+UniProtKB	P53871	DUG3	involved_in	GO:0006751	glutathione catabolic process	ECO:0000315	IMP	PMID:22277648		559292	SGD		P
+UniProtKB	P53871	DUG3	involved_in	GO:0006751	glutathione catabolic process	ECO:0000315	IMP	PMID:17179087		559292	SGD		P
+UniProtKB	P54839	ERG13	involved_in	GO:0006084	acetyl-CoA metabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000222418|PomBase:SPAC4F8.14c|UniProtKB:P54868	559292	GO_Central		P
+UniProtKB	P54839	ERG13	involved_in	GO:0006084	acetyl-CoA metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR013746	559292	InterPro		P
+UniProtKB	Q00955	ACC1	involved_in	GO:2001295	malonyl-CoA biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00655	559292	UniProt		P
+UniProtKB	Q00955	ACC1	involved_in	GO:0006085	acetyl-CoA biosynthetic process	ECO:0000315	IMP	PMID:15341732		559292	CAFA		P
+UniProtKB	Q01532	LAP3	involved_in	GO:0043418	homocysteine catabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN001621808|SGD:S000005183	559292	GO_Central		P
+UniProtKB	Q01532	LAP3	involved_in	GO:0043418	homocysteine catabolic process	ECO:0000314	IDA	PMID:16769724		559292	SGD		P
+UniProtKB	Q01532	LAP3	involved_in	GO:0043418	homocysteine catabolic process	ECO:0000315	IMP	PMID:16769724		559292	SGD		P
+UniProtKB	Q01574	ACS1	involved_in	GO:0019427	acetyl-CoA biosynthetic process from acetate	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR011904	559292	InterPro		P
+UniProtKB	Q01574	ACS1	involved_in	GO:0006085	acetyl-CoA biosynthetic process	ECO:0000314	IDA	PMID:8910545		559292	SGD		P
+UniProtKB	Q02196	MET14	involved_in	GO:0000103	sulfate assimilation	ECO:0000318	IBA	PMID:21873635	MGI:MGI:1330223|PANTHER:PTN000114642|SGD:S000001484|TAIR:locus:2046901|TAIR:locus:2140005|UniProtKB:O43252|UniProtKB:Q92203	559292	GO_Central		P
+UniProtKB	Q02196	MET14	involved_in	GO:0000103	sulfate assimilation	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR002891	559292	InterPro		P
+UniProtKB	Q02196	MET14	involved_in	GO:0019344	cysteine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0198	559292	UniProt		P
+UniProtKB	Q02196	MET14	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	Q02196	MET14	involved_in	GO:0019379	sulfate assimilation, phosphoadenylyl sulfate reduction by phosphoadenylyl-sulfate reductase (thioredoxin)	ECO:0000315	IMP	PMID:197388		559292	SGD		P
+UniProtKB	Q02196	MET14	involved_in	GO:0000096	sulfur amino acid metabolic process	ECO:0000315	IMP	PMID:1101032		559292	SGD		P
+UniProtKB	Q02196	MET14	involved_in	GO:0070814	hydrogen sulfide biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00140	559292	UniProt		P
+UniProtKB	Q03020	ISU1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR002871|InterPro:IPR011339	559292	InterPro		P
+UniProtKB	Q03020	ISU1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:15143178		559292	SGD		P
+UniProtKB	Q03020	ISU1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:10588895		559292	SGD		P
+UniProtKB	Q03020	ISU1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000316	IGI	PMID:12970193	SGD:S000005752	559292	SGD		P
+UniProtKB	Q03677	ADI1	involved_in	GO:0006555	methionine metabolic process	ECO:0000318	IBA	PMID:21873635	FB:FBgn0052068|PANTHER:PTN000602608|SGD:S000004611|UniProtKB:Q9BV57	559292	GO_Central		P
+UniProtKB	Q03677	ADI1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR027496	559292	InterPro		P
+UniProtKB	Q03677	ADI1	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	Q03677	ADI1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000250	ISS	PMID:15938715	UniProtKB:Q9BV57	559292	SGD		P
+UniProtKB	Q03677	ADI1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000315	IMP	PMID:15938715		559292	SGD		P
+UniProtKB	Q03677	ADI1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000315	IMP	PMID:18625006		559292	SGD		P
+UniProtKB	Q03677	ADI1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000316	IGI	PMID:15938715	EMBL:AB158319	559292	SGD		P
+UniProtKB	Q03677	ADI1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000336851	559292	UniProt		P
+UniProtKB	Q03677	ADI1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00904	559292	UniProt		P
+UniProtKB	Q04533	YML082W	involved_in	GO:0019346	transsulfuration	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000928825|SGD:S000003891	559292	GO_Central		P
+UniProtKB	Q04533	YML082W	involved_in	GO:0019346	transsulfuration	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR000277	559292	InterPro		P
+UniProtKB	Q04533	YML082W	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	Q04533	YML082W	involved_in	GO:0006790	sulfur compound metabolic process	ECO:0000250	ISS	PMID:10821189		559292	SGD		P
+UniProtKB	Q04806	GTO3	involved_in	GO:0006749	glutathione metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004045	559292	InterPro		P
+UniProtKB	Q04806	GTO3	involved_in	GO:0006749	glutathione metabolic process	ECO:0000250	ISS	PMID:16709151	protein_id:CAI12107	559292	SGD		P
+UniProtKB	Q04898	YMR321C	involved_in	GO:0033528	S-methylmethionine cycle	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN001843930|TAIR:locus:2077234	559292	GO_Central		P
+UniProtKB	Q04898	YMR321C	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN001843930|TAIR:locus:2077234|TAIR:locus:2092120	559292	GO_Central		P
+UniProtKB	Q05583	CIA1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000460364|TAIR:locus:2057381|UniProtKB:O76071	559292	GO_Central		P
+UniProtKB	Q05583	CIA1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR028608	559292	InterPro		P
+UniProtKB	Q05583	CIA1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000107508	559292	UniProt		P
+UniProtKB	Q05902	ECM38	involved_in	GO:0006751	glutathione catabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN002269349|SGD:S000004290|TAIR:locus:2118229|TAIR:locus:2135212|TAIR:locus:2135222|UniProtKB:P19440|UniProtKB:P36269	559292	GO_Central		P
+UniProtKB	Q05902	ECM38	involved_in	GO:0006751	glutathione catabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR000101	559292	InterPro		P
+UniProtKB	Q05902	ECM38	involved_in	GO:0006751	glutathione catabolic process	ECO:0000315	IMP	PMID:11672438		559292	SGD		P
+UniProtKB	Q05902	ECM38	involved_in	GO:0006749	glutathione metabolic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00204	559292	UniProt		P
+UniProtKB	Q05931	SSQ1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:9813017		559292	SGD		P
+UniProtKB	Q06408	ARO10	involved_in	GO:0000951	methionine catabolic process to 3-methylthiopropanol	ECO:0000315	IMP	PMID:16423070		559292	SGD		P
+UniProtKB	Q06489	MRI1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN002460138|SGD:S000006322	559292	GO_Central		P
+UniProtKB	Q06489	MRI1	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	Q06489	MRI1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000315	IMP	PMID:15215245		559292	SGD		P
+UniProtKB	Q06489	MRI1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000315	IMP	PMID:18625006		559292	SGD		P
+UniProtKB	Q06489	MRI1	involved_in	GO:0019284	L-methionine salvage from S-adenosylmethionine	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000106821	559292	UniProt		P
+UniProtKB	Q06489	MRI1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00904	559292	UniProt		P
+UniProtKB	Q06490	THI22	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000466159|SGD:S000005416|SGD:S000006179|TAIR:locus:2017734|UniProtKB:P76422	559292	GO_Central		P
+UniProtKB	Q06490	THI22	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004399|InterPro:IPR045029	559292	InterPro		P
+UniProtKB	Q06490	THI22	involved_in	GO:0006772	thiamine metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR027574	559292	InterPro		P
+UniProtKB	Q06490	THI22	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000270	IEP	PMID:10383756		559292	SGD		P
+UniProtKB	Q07540	YFH1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:12065597		559292	CACAO		P
+UniProtKB	Q07540	YFH1	involved_in	GO:0018283	iron incorporation into metallo-sulfur cluster	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000423706|UniProtKB:Q16595	559292	GO_Central		P
+UniProtKB	Q07540	YFH1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR002908|InterPro:IPR036524	559292	InterPro		P
+UniProtKB	Q07540	YFH1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000314	IDA	PMID:12947415		559292	SGD		P
+UniProtKB	Q07540	YFH1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:12221295		559292	SGD		P
+UniProtKB	Q07540	YFH1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:12947415		559292	SGD		P
+UniProtKB	Q07540	YFH1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:12970193		559292	SGD		P
+UniProtKB	Q07540	YFH1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000316	IGI	PMID:14741370	SGD:S000006056	559292	SGD		P
+UniProtKB	Q07540	YFH1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000353	IPI	PMID:14741370	SGD:S000006056	559292	SGD		P
+UniProtKB	Q07540	YFH1	involved_in	GO:0006749	glutathione metabolic process	ECO:0000315	IMP	PMID:18562474		559292	SGD		P
+UniProtKB	Q07748	THI13	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR027939	559292	InterPro		P
+UniProtKB	Q07748	THI13	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0784	559292	UniProt		P
+UniProtKB	Q07748	THI13	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000316	IGI	PMID:12777485	SGD:S000001836|SGD:S000003917|SGD:S000005276	559292	SGD		P
+UniProtKB	Q07748	THI13	involved_in	GO:0009229	thiamine diphosphate biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00060	559292	UniProt		P
+UniProtKB	Q07821	ISA1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN001601055|SGD:S000003950|UniProtKB:P0AAC8|UniProtKB:P74596|UniProtKB:P77667	559292	GO_Central		P
+UniProtKB	Q07821	ISA1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR016092	559292	InterPro		P
+UniProtKB	Q07821	ISA1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:10748136		559292	SGD		P
+UniProtKB	Q07821	ISA1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:10805735		559292	SGD		P
+UniProtKB	Q07821	ISA1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000316	IGI	PMID:10805735	SGD:S000006271	559292	SGD		P
+UniProtKB	Q07821	ISA1	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000315	IMP	PMID:17259550		559292	SGD		P
+UniProtKB	Q07821	ISA1	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000316	IGI	PMID:17259550	SGD:S000006271	559292	SGD		P
+UniProtKB	Q07938	MEU1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000224684|SGD:S000004007	559292	GO_Central		P
+UniProtKB	Q07938	MEU1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000314	IDA	PMID:14506228		559292	SGD		P
+UniProtKB	Q07938	MEU1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000315	IMP	PMID:14506228		559292	SGD		P
+UniProtKB	Q07938	MEU1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000315	IMP	PMID:18625006		559292	SGD		P
+UniProtKB	Q07938	MEU1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000337064	559292	UniProt		P
+UniProtKB	Q07938	MEU1	involved_in	GO:0019509	L-methionine salvage from methylthioadenosine	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00904	559292	UniProt		P
+UniProtKB	Q08220	GSH2	enables	GO:0004363	glutathione synthase activity	ECO:0000318	IBA	PMID:21873635	MGI:MGI:95852|PANTHER:PTN000122964|PomBase:SPAC3F10.04|RGD:2752|SGD:S000005409|TAIR:locus:2146395	559292	GO_Central		F
+UniProtKB	Q08220	GSH2	involved_in	GO:0006750	glutathione biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004887|InterPro:IPR005615|InterPro:IPR014042|InterPro:IPR037013	559292	InterPro		P
+UniProtKB	Q08220	GSH2	enables	GO:0004363	glutathione synthase activity	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004887|InterPro:IPR005615|InterPro:IPR014042|InterPro:IPR014049|InterPro:IPR037013	559292	InterPro		F
+UniProtKB	Q08220	GSH2	involved_in	GO:0006750	glutathione biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0317	559292	UniProt		P
+UniProtKB	Q08220	GSH2	enables	GO:0004363	glutathione synthase activity	ECO:0000501	IEA	GO_REF:0000003	EC:6.3.2.3	559292	UniProt		F
+UniProtKB	Q08220	GSH2	involved_in	GO:0006750	glutathione biosynthetic process	ECO:0000315	IMP	PMID:9512666		559292	SGD		P
+UniProtKB	Q08220	GSH2	enables	GO:0004363	glutathione synthase activity	ECO:0000314	IDA	PMID:9512666		559292	SGD		F
+UniProtKB	Q08220	GSH2	enables	GO:0004363	glutathione synthase activity	ECO:0000256	IEA	GO_REF:0000116	RHEA:13557	559292	RHEA		F
+UniProtKB	Q08220	GSH2	involved_in	GO:0006750	glutathione biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00142	559292	UniProt		P
+UniProtKB	Q08224	THI20	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000466159|SGD:S000005416|SGD:S000006179|TAIR:locus:2017734|UniProtKB:P76422	559292	GO_Central		P
+UniProtKB	Q08224	THI20	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004399|InterPro:IPR045029	559292	InterPro		P
+UniProtKB	Q08224	THI20	involved_in	GO:0006772	thiamine metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR027574	559292	InterPro		P
+UniProtKB	Q08224	THI20	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0784	559292	UniProt		P
+UniProtKB	Q08224	THI20	involved_in	GO:0009230	thiamine catabolic process	ECO:0000314	IDA	PMID:15967475		559292	SGD		P
+UniProtKB	Q08224	THI20	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000315	IMP	PMID:10383756		559292	SGD		P
+UniProtKB	Q08224	THI20	involved_in	GO:0009229	thiamine diphosphate biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00060	559292	UniProt		P
+UniProtKB	Q08347	BDS1	involved_in	GO:0018909	dodecyl sulfate metabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000770101|SGD:S000005524|UniProtKB:P32717	559292	GO_Central		P
+UniProtKB	Q08347	BDS1	involved_in	GO:0018909	dodecyl sulfate metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR044097	559292	InterPro		P
+UniProtKB	Q08347	BDS1	involved_in	GO:0018909	dodecyl sulfate metabolic process	ECO:0000315	IMP	PMID:15947202		559292	SGD		P
+UniProtKB	Q08686	TUM1	involved_in	GO:0019346	transsulfuration	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000146159|RGD:620065	559292	GO_Central		P
+UniProtKB	Q08975	THI21	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000466159|SGD:S000005416|SGD:S000006179|TAIR:locus:2017734|UniProtKB:P76422	559292	GO_Central		P
+UniProtKB	Q08975	THI21	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004399|InterPro:IPR045029	559292	InterPro		P
+UniProtKB	Q08975	THI21	involved_in	GO:0006772	thiamine metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR027574	559292	InterPro		P
+UniProtKB	Q08975	THI21	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0784	559292	UniProt		P
+UniProtKB	Q08975	THI21	involved_in	GO:0009228	thiamine biosynthetic process	ECO:0000316	IGI	PMID:10383756	SGD:S000005416	559292	SGD		P
+UniProtKB	Q08975	THI21	involved_in	GO:0009229	thiamine diphosphate biosynthetic process	ECO:0000322	IEA	GO_REF:0000041	UniPathway:UPA00060	559292	UniProt		P
+UniProtKB	Q08985	SAM4	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	Q08985	SAM4	involved_in	GO:0019284	L-methionine salvage from S-adenosylmethionine	ECO:0000314	IDA	PMID:14189892		559292	SGD		P
+UniProtKB	Q08985	SAM4	involved_in	GO:0050667	homocysteine metabolic process	ECO:0000314	IDA	PMID:14189892		559292	SGD		P
+UniProtKB	Q08985	SAM4	involved_in	GO:0046498	S-adenosylhomocysteine metabolic process	ECO:0000314	IDA	PMID:14189892		559292	SGD		P
+UniProtKB	Q12056	ISU2	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR002871|InterPro:IPR011339	559292	InterPro		P
+UniProtKB	Q12056	ISU2	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:10588895		559292	SGD		P
+UniProtKB	Q12056	ISU2	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:15143178		559292	SGD		P
+UniProtKB	Q12181	TAH18	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:20802492		559292	SGD		P
+UniProtKB	Q12181	TAH18	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000256	IEA	GO_REF:0000104	UniRule:UR000112755	559292	UniProt		P
+UniProtKB	Q12184	YAH1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:12970193		559292	SGD		P
+UniProtKB	Q12184	YAH1	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000314	IDA	PMID:10655482		559292	UniProt		P
+UniProtKB	Q12198	YLL058W	involved_in	GO:0019346	transsulfuration	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000928825|SGD:S000003891	559292	GO_Central		P
+UniProtKB	Q12198	YLL058W	involved_in	GO:0019346	transsulfuration	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR000277	559292	InterPro		P
+UniProtKB	Q12198	YLL058W	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	Q12198	YLL058W	involved_in	GO:0006790	sulfur compound metabolic process	ECO:0000250	ISS	PMID:10821189		559292	SGD		P
+UniProtKB	Q12358	JLP1	involved_in	GO:0044273	sulfur compound catabolic process	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN004741875|SGD:S000003980	559292	GO_Central		P
+UniProtKB	Q12358	JLP1	involved_in	GO:0044273	sulfur compound catabolic process	ECO:0000315	IMP	PMID:10482536		559292	SGD		P
+UniProtKB	Q12390	GTT2	involved_in	GO:0006749	glutathione metabolic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR004045	559292	InterPro		P
+UniProtKB	Q12390	GTT2	involved_in	GO:0006749	glutathione metabolic process	ECO:0000314	IDA	PMID:9792709		559292	SGD		P
+UniProtKB	Q12425	ISA2	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000318	IBA	PMID:21873635	PANTHER:PTN000008068|SGD:S000006271|UniProtKB:P0ACC3	559292	GO_Central		P
+UniProtKB	Q12425	ISA2	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:10805735		559292	SGD		P
+UniProtKB	Q12425	ISA2	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000316	IGI	PMID:10805735	SGD:S000003950	559292	SGD		P
+UniProtKB	Q12425	ISA2	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000315	IMP	PMID:17259550		559292	SGD		P
+UniProtKB	Q12425	ISA2	involved_in	GO:0009102	biotin biosynthetic process	ECO:0000316	IGI	PMID:17259550	SGD:S000003950	559292	SGD		P
+UniProtKB	Q12525	MHT1	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000256	IEA	GO_REF:0000002	InterPro:IPR017226	559292	InterPro		P
+UniProtKB	Q12525	MHT1	involved_in	GO:0009086	methionine biosynthetic process	ECO:0000323	IEA	GO_REF:0000043	UniProtKB-KW:KW-0486	559292	UniProt		P
+UniProtKB	Q12525	MHT1	involved_in	GO:0000096	sulfur amino acid metabolic process	ECO:0000315	IMP	PMID:11013242		559292	SGD		P
+UniProtKB	Q3E785	SDH6	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000303	NAS	PMID:19465911		559292	UniProt		P
+UniProtKB	Q3E793	BOL1	involved_in	GO:0044572	[4Fe-4S] cluster assembly	ECO:0000315	IMP	PMID:27532773		559292	SGD		P
+UniProtKB	Q3E793	BOL1	involved_in	GO:0044572	[4Fe-4S] cluster assembly	ECO:0000316	IGI	PMID:27532773	UniProtKB:Q02784	559292	SGD		P
+UniProtKB	Q3E793	BOL1	involved_in	GO:0044572	[4Fe-4S] cluster assembly	ECO:0000353	IPI	PMID:27532773	UniProtKB:Q02784	559292	SGD		P
+UniProtKB	Q6Q560	ISD11	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000318	IBA	PMID:21873635	FB:FBgn0013432|PANTHER:PTN000323064|SGD:S000007237	559292	GO_Central		P
+UniProtKB	Q6Q560	ISD11	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:16341090		559292	SGD		P
+UniProtKB	Q6Q560	ISD11	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000315	IMP	PMID:16341089		559292	SGD		P
+UniProtKB	Q6Q560	ISD11	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000353	IPI	PMID:16341090	SGD:S000000522	559292	SGD		P
+ComplexPortal	CPX-1379	succoa_yeast	involved_in	GO:1901289	succinyl-CoA catabolic process	ECO:0005547		PMID:9874242		559292	ComplexPortal		P
+ComplexPortal	CPX-3163	sulfite-reductase_yeast	involved_in	GO:0000097	sulfur amino acid biosynthetic process	ECO:0005547		PMID:6751400		559292	ComplexPortal		P
+ComplexPortal	CPX-3163	sulfite-reductase_yeast	involved_in	GO:0000103	sulfate assimilation	ECO:0005547		PMID:6751400		559292	ComplexPortal		P
+ComplexPortal	CPX-3207	pdh_yeast	involved_in	GO:0006086	acetyl-CoA biosynthetic process from pyruvate	ECO:0005547		PMID:18180296		559292	ComplexPortal		P
+ComplexPortal	CPX-325	dug2_dug3_yeast	involved_in	GO:0006751	glutathione catabolic process	ECO:0000314	IDA	PMID:22277648		559292	ComplexPortal		P
+ComplexPortal	CPX-385	cfd1-nbp35_yeast	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000314	IDA	PMID:17401378		559292	ComplexPortal		P
+ComplexPortal	CPX-386	tah18-dre2_yeast	involved_in	GO:0016226	iron-sulfur cluster assembly	ECO:0000314	IDA	PMID:20802492		559292	ComplexPortal		P
+ComplexPortal	CPX-392	nfs1-isd11_yeast	involved_in	GO:0019448	L-cysteine catabolic process	ECO:0000314	IDA	PMID:24045011		559292	ComplexPortal		P
+ComplexPortal	CPX-392	nfs1-isd11_yeast	involved_in	GO:0044571	[2Fe-2S] cluster assembly	ECO:0000314	IDA	PMID:25358379		559292	ComplexPortal		P

@@ -11,14 +11,26 @@ source("~/R/Projects/adaptivefitness/R/functions/initialize.sql.R")
 conn <- initialize.sql("saurin_test")
 
 out_path <- "~/R/Projects/methionine/data"
-expt.name <- "resp_1_2"
+expt.name <- "respiration"
 
 ##### GATHER AND CLEAN DATA FROM SQL
-tables <- rbind(c('respiration_exp1R_MiM_Et_Rep2_JX__BinaThreZoom_cleaned_384_JPEG', 'MET-', 'URA+', 'EtOH', 'SD-MET+EtOH'),
-  c('respiration_exp1R_MiM_Glu_Rep2_JX__BinaThreZoom_cleaned_384_JPEG', 'MET-', 'URA+', 'Glucose', 'SD-MET+Glucose'),
-  c('respiration_exp1R_PlM_Et_Rep2_JX__BinaThreZoom_cleaned_384_JPEG', 'MET+', 'URA+', 'EtOH', 'SD+MET+EtOH'),
-  c('respiration_exp1R_PlM_Glu_Rep2_JX__BinaThreZoom_cleaned_384_JPEG', 'MET+', 'URA+', 'Glucose', 'SD+MET+Glucose'),
-  c('respiration_exp1R_Ura_Rep2_JX__binary_Zoom_cleaned_384_JPEG', 'MET+', 'URA-', 'Glucose', 'SD+MET-URA+Glucose'))
+tables <- rbind(c('respiration_exp1R_MiM_Et_Rep2_JX__BinaThreZoom_cleaned_384_JPEG', 'MET-', 'URA+', 'EtOH', 'SD-Met-Cys+EtOH', '1'),
+  c('respiration_exp1R_MiM_Glu_Rep2_JX__BinaThreZoom_cleaned_384_JPEG', 'MET-', 'URA+', 'Glucose', 'SD-Met-Cys+Glu', '1'),
+  c('respiration_exp1R_PlM_Et_Rep2_JX__BinaThreZoom_cleaned_384_JPEG', 'MET+', 'URA+', 'EtOH', 'SD+Met-Cys+EtOH', '1'),
+  c('respiration_exp1R_PlM_Glu_Rep2_JX__BinaThreZoom_cleaned_384_JPEG', 'MET+', 'URA+', 'Glucose', 'SD+Met-Cys+Glu', '1'),
+  c('respiration_exp1R_Ura_Rep2_JX__binary_Zoom_cleaned_384_JPEG', 'MET+', 'URA-', 'Glucose', 'SD+Met-Ura+Glu', '1'),
+  
+  c('respiration_exp1R_MiM_Et_Rep1_BVO_binary_384_CLEAN', 'MET-', 'URA+', 'EtOH', 'SD-Met-Cys+EtOH', '2'),
+  c('respiration_exp1R_MiM_Glu_Rep1_BVO_binary_384_CLEAN', 'MET-', 'URA+', 'Glucose', 'SD-Met-Cys+Glu', '2'),
+  c('respiration_exp1R_PlM_Et_Rep1_BVO_binary_384_CLEAN', 'MET+', 'URA+', 'EtOH', 'SD+Met-Cys+EtOH', '2'),
+  c('respiration_exp1R_PlM_Glu_Rep1b_BVO_binary_384_CLEAN', 'MET+', 'URA+', 'Glucose', 'SD+Met-Cys+Glu', '2'),
+  c('respiration_exp1R_Ura_Rep1_BVO_384_binary_384_CLEAN', 'MET+', 'URA-', 'Glucose', 'SD+Met-Ura+Glu', '2'),
+  
+  c('respiration_exp2R_MiM_Et_Rep1_SBP_binary_384_CLEAN', 'MET-', 'URA+', 'EtOH', 'SD-Met-Cys+EtOH', '3'),
+  c('respiration_exp2R_MiM_Glu_Rep1_SBP_binary_384_CLEAN', 'MET-', 'URA+', 'Glucose', 'SD-Met-Cys+Glu', '3'),
+  c('respiration_exp2R_PlM_Et_Rep1_BVO_binary_384_CLEAN', 'MET+', 'URA+', 'EtOH', 'SD+Met-Cys+EtOH', '3'),
+  c('respiration_exp2R_PlM_Glu_Rep1_BVO_binary_384_CLEAN', 'MET+', 'URA+', 'Glucose', 'SD+Met-Cys+Glu', '3'),
+  c('respiration_exp2R_Ura_Rep1_SBP_binary_384_CLEAN', 'MET+', 'URA-', 'Glucose', 'SD+Met-Ura+Glu', '3'))
 
 data <- NULL
 for (i in seq(1,dim(tables)[1])) {
@@ -33,12 +45,15 @@ for (i in seq(1,dim(tables)[1])) {
     for (o in unique(temp$orf_name)) {
       temp$average[temp$orf_name == o & temp$hours == h][isoutlier(temp$average[temp$orf_name == o & temp$hours == h], 2)] <- NA
     }
+    temp$relative_cs[temp$hours == h] <-
+      temp$average[temp$hours == h]/median(temp$average[temp$hours == h & temp$orf_name == 'FY4'], na.rm = T)
   }
 
   temp$methionine <- tables[i,2]
   temp$uracil <- tables[i,3]
   temp$carbon <- tables[i,4]
   temp$condition <- tables[i,5]
+  temp$expt_rep <- tables[i,6]
   
   data <- rbind(data,temp)
 }

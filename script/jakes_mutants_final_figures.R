@@ -1,0 +1,172 @@
+##### JAKES MUTANT EXPERIMENT - FINAL FIGURES
+##### Author : Saurin Parikh
+##### Email  : dr.saurin.parikh@gmail.com
+##### Date   : 05/19/2021 
+
+##### INITIALIZE
+library(ggplot2)
+library(gridExtra)
+library(grid)
+library(tidyverse)
+library(ggpubr)
+library(ggridges)
+library(stringr)
+library(egg)
+library(zoo)
+library(ggrepel)
+library(plotly)
+library(scales)
+library(reshape2)
+library(locfit)
+library(growthcurver)
+library(rstatix)
+library(gtools)
+library(effsize)
+
+out_path <- "~/R/Projects/methionine/data"
+fig_path <- "~/R/Projects/methionine/figures"
+res_path <- "~/R/Projects/methionine/results"
+
+expt.name <- "jakes"
+
+##### LOAD DATA
+load(file = sprintf('%s/%s/colonysizes2.RData', out_path, expt.name))
+load(file = sprintf('%s/%s/anova_results.RData', out_path, expt.name))
+# load(file = sprintf('%s/%s/anova_results2.RData', out_path, expt.name))
+load(file = sprintf('%s/%s/anova_results2_nopilot.RData', out_path, expt.name))
+
+##### LEVELS
+attempt.levels <- c('pilot', 'copy1', 'copy2')
+strain.levels <- c('FY4', 'met12', 'str3', 'met3','met15', 'met2', 'met6', 'met13', 'cys4', 'yll', 'BY4742', 'BY4741')
+condition.levels <- c('YPDA', 'SD-Met-Cys-Glu')
+
+data$condition <- as.character(data$condition)
+data$condition[data$condition == 'SD-MET+Glucose'] <- 'SD-Met-Cys-Glu'
+anova.res$condition <- as.character(anova.res$condition)
+anova.res$condition[anova.res$condition == 'SD-MET+Glucose'] <- 'SD-Met-Cys-Glu'
+anova.res2$condition <- as.character(anova.res2$condition)
+anova.res2$condition[anova.res2$condition == 'SD-MET+Glucose'] <- 'SD-Met-Cys-Glu'
+
+data$attempt <- factor(data$attempt, levels = attempt.levels)
+data$orf_name <- factor(data$orf_name, levels = strain.levels)
+data$condition <- factor(data$condition, levels = condition.levels)
+
+anova.res2$strain1 <- factor(anova.res2$strain1, levels = strain.levels)
+anova.res2$strain2 <- factor(anova.res2$strain2, levels = strain.levels)
+anova.res2$condition <- factor(anova.res2$condition, levels = condition.levels)
+
+##### FIGURE SIZE
+one.c <- 90 #single column
+one.5c <- 140 #1.5 column
+two.c <- 190 #full width
+
+##### TEXT SIZE
+titles <- 7
+txt <- 5
+lbls <- 9
+
+##### STAT LABELS
+anova.res$label[anova.res$rcs_between > 0.05] <- 'ns'
+anova.res$label[anova.res$rcs_between <= 0.05] <- '*'
+anova.res$label[anova.res$rcs_between <= 0.01] <- '**'
+anova.res$label[anova.res$rcs_between <= 0.001] <- '***'
+anova.res$label[anova.res$rcs_between <= 0.0001] <- '****'
+
+anova.res2$label[anova.res2$rcs_kw > 0.05] <- 'ns'
+anova.res2$label[anova.res2$rcs_kw <= 0.05] <- '*'
+anova.res2$label[anova.res2$rcs_kw <= 0.01] <- '**'
+anova.res2$label[anova.res2$rcs_kw <= 0.001] <- '***'
+anova.res2$label[anova.res2$rcs_kw <= 0.0001] <- '****'
+
+data$attempt_label[data$attempt == 'pilot'] <- 'Replicate 0'
+data$attempt_label[data$attempt == 'copy1'] <- 'Replicate 1'
+data$attempt_label[data$attempt == 'copy2'] <- 'Replicate 2'
+
+anova.res$attempt_label[anova.res$attempt == 'pilot'] <- 'Replicate 0'
+anova.res$attempt_label[anova.res$attempt == 'copy1'] <- 'Replicate 1'
+anova.res$attempt_label[anova.res$attempt == 'copy2'] <- 'Replicate 2'
+
+##### STRAIN LABELES
+strain.labs <- c('FY4', '*met12Δ*', '*str3Δ*', '*met3Δ*', '*met15Δ*', '*met2Δ*', '*met6Δ*', 
+                 '*met13Δ*', '*cys4Δ*', '*yll058wΔ*', 'BY4742', 'BY4741')
+
+#####
+plot.rcs.box.kw <- data[data$time == 't_final' & data$attempt != 'pilot' & data$orf_name != 'yll',] %>%
+  group_by(attempt, condition, time, orf_name, bio_rep) %>%
+  summarise(average = mean(average, na.rm = T), relative_cs = mean(relative_cs, na.rm = T)) %>%
+  data.frame() %>%
+  ggplot(aes(x = orf_name, y = relative_cs)) +
+  geom_boxplot(outlier.shape = NA) +
+  # geom_jitter(aes(col = bio_rep, shape = attempt), size = 1) +
+  geom_jitter(size = 1) +
+  geom_text(data = anova.res2[anova.res2$strain2 == 'FY4' & 
+                               anova.res2$time == 't_final' & anova.res2$strain1 != 'yll',],
+            aes(x = strain1, y = 1.5, label = label), size = 2, col = 'red') +
+  geom_text(data = anova.res2[anova.res2$strain2 == 'FY4' &
+                                anova.res2$time == 't_final' & anova.res2$strain1 != 'yll',],
+            aes(x = strain1, y = 1.4, label = sprintf('%0.2f%%',effect_size*100)),
+            size = 1.5) +
+  scale_x_discrete(labels = strain.labs[-10]) +
+  scale_y_continuous(minor_breaks = seq(-2,2,0.05)) +
+  facet_wrap(.~condition, nrow = 1) +
+  labs(x = 'Strains', y = 'Relative Colony Size') +
+  scale_color_discrete(name = 'Biological Replicate') +
+  scale_shape_discrete(name = 'Experimental Replicate') +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        # axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        axis.text.x = ggtext::element_markdown(angle = 45, vjust = 1, hjust = 1),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm"))) +
+  coord_cartesian(ylim = c(0,1.5))
+ggsave(sprintf("%s/%s/final/RELATIVE_COLONY_SIZE_BOX_KW.jpg",fig_path, expt.name),
+       plot.rcs.box.kw,
+       height = 70, width = two.c, units = 'mm',
+       dpi = 600)
+# write.csv(anova.res2[anova.res2$strain2 == 'FY4' & anova.res2$time == 't_final',],
+#           file = sprintf('%s/%s/final/RELATIVE_COLONY_SIZE_KW.csv', res_path, expt.name))
+
+##### SUPPLEMENTARY FIGURES #####
+##### DENSITY PLOT WITH ANOVA RESULTS
+plot.rcs.den.aov <- data[data$attempt != 'pilot' & data$time == 't_final' & data$orf_name != 'yll',] %>%
+  ggplot(aes(x = relative_cs, y = orf_name)) +
+  geom_density_ridges(quantile_lines = TRUE,
+                      aes(fill = bio_rep),
+                      scale = 2, alpha = 0.7, size = 0.2,
+                      vline_size = 0.2, vline_color = "black") +
+  geom_text(data = anova.res[anova.res$attempt != 'pilot' &
+                               anova.res$strain2 == 'FY4' & 
+                               anova.res$time == 't_final' &
+                               anova.res$strain1 != 'yll',],
+            aes(y = strain1, x = 1.5, label = label), size = 2, col = 'red') +
+  labs(x = 'Relative Colony Size',
+       y = 'Strain') +
+  scale_y_discrete(labels = strain.labs[-10]) +
+  scale_fill_discrete(name = 'Biological Replicate') +
+  facet_wrap(.~condition*attempt_label, nrow = 1) +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        axis.text.y = ggtext::element_markdown(),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm")))
+ggsave(sprintf("%s/%s/final/RELATIVE_COLONY_SIZE_DENSITY_ANOVA.jpg",fig_path, expt.name), plot.rcs.den.aov,
+       height = 70, width = two.c, units = 'mm',
+       dpi = 600)
+
+

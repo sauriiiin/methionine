@@ -1,0 +1,141 @@
+---
+title: "CRISPR Target Prediction"
+author: "Saurin Parikh"
+date: "7/20/2021"
+output:
+  html_document:
+    toc: true
+    number_sections: false
+    toc_float:
+      collapsed: false
+    toc_depth: 2
+    df_print: paged
+    highlight: kate
+  pdf_document:
+    toc: true
+    toc_depth: 2
+    highlight: breezedark
+  fontsize: 13pt
+  geometry: margin=0.5in
+---
+
+```{r initialize, message = FALSE, eval=TRUE, include=FALSE}
+library(RMariaDB)
+source("~/R/Projects/adaptivefitness/R/functions/initialize.sql.R")
+conn <- initialize.sql("saurin_test")
+
+library(ggplot2)
+library(gridExtra)
+library(grid)
+library(tidyverse)
+library(ggpubr)
+library(stringr)
+library(egg)
+library(zoo)
+library(ggrepel)
+library(ggforce)
+library(plotly)
+library(scales)
+library(reshape2)
+
+##### FIGURE SIZE
+one.c <- 90 #single column
+one.5c <- 140 #1.5 column
+two.c <- 190 #full width
+
+##### TEXT SIZE
+titles <- 7
+txt <- 5
+lbls <- 9
+```
+
+### GET FLASHFRY
+wget https://github.com/mckennalab/FlashFry/releases/download/1.12/FlashFry-assembly-1.12.jar
+
+### CREATE DATABASE
+
+```{bash Create FlashFry Database, eval=FALSE, include=TRUE}
+cd ~/flashfry
+java -Xmx4g -jar FlashFry-assembly-1.12.jar \
+ index \
+ --tmpLocation ./tmp \
+ --database ./scer/scer_database \
+ --reference ./scer/scer.fsa \
+ --enzyme spcas9ngg > /dev/null 2>&1
+```
+
+### DISCOVER CANDIDATES
+ 
+```{bash Discover Candidates, eval=FALSE, include=TRUE}
+cd ~/flashfry
+java -Xmx4g -jar FlashFry-assembly-1.12.jar \
+ discover \
+ --database ./scer/scer_database \
+ --fasta ./scer/allorfs.fasta \
+ --output ./scer/allorfs.output > /dev/null 2>&1
+```
+
+### SCORE AND RANK CANDIDATES
+
+```{bash Score and Rank Candidates, eval=FALSE, include=TRUE}
+cd ~/flashfry
+java -Xmx4g -jar FlashFry-assembly-1.12.jar \
+ score \
+ --input ./scer/allorfs.output \
+ --output ./scer/allorfs.output.scored \
+ --scoringMetrics doench2014ontarget,doench2016cfd,hsu2013 \
+ --database ./scer/scer_database > /dev/null 2>&1
+```
+
+```{r read output file, eval=TRUE, include=TRUE}
+data <- read.delim(file = '/home/sbp29/flashfry/scer/allorfs.output.scored', sep = '\t', header = T, stringsAsFactors = F)
+head(data)
+
+temp <- str_split(data$contig, pattern = ',', simplify = T)
+temp <- str_split(temp[,1], pattern = '_', simplify = T)
+temp <- temp[,c(1,2)]
+colnames(temp) <- c('orf_name','standard_name')
+
+data <- cbind(temp, data)
+data <- data[,-3]
+```
+
+```{r scored results, eval=TRUE, include=TRUE}
+plot.theme <- theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm")))
+
+plot.onandoff <- data %>%
+  ggplot(aes(x = Doench2014OnTarget, y = Hsu2013)) +
+  geom_point(size = 0.2) +
+  plot.theme
+
+plot.on <- data %>%
+  ggplot() +
+  geom_line(aes(x = Doench2014OnTarget), stat = 'density') +
+  plot.theme + theme_minimal() +
+  theme(axis.title = element_blank(),
+        axis.text = element_blank())
+
+plot.off <- data %>%
+  ggplot() +
+  geom_line(aes(y = Hsu2013), stat = 'density') +
+  plot.theme + theme_minimal() +
+  theme(axis.title = element_blank(),
+        axis.text = element_blank())
+
+ggpubr::ggarrange(plot.on,NULL,plot.onandoff,plot.off,nrow = 2,ncol = 2,align = 'hv',
+                  widths = c(3, 1), heights = c(1, 3))
+```
+
+
+
