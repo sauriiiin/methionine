@@ -1,5 +1,7 @@
 
+source("~/R/Projects/methionine/functions/colorstrip.R")
 
+gc.res$expt_rep <- as.character(gc.res$expt_rep)
 head(gc.res.sum)
 
 ##### STRAIN LABELES
@@ -16,6 +18,14 @@ for (c in unique(gc.res.sum$condition)) {
       gc.res.sum$gr[gc.res.sum$expt_rep == e & gc.res.sum$condition == c]/median(gc.res.sum$gr[gc.res.sum$expt_rep == e & 
                                                                                                  gc.res.sum$condition == c &
                                                                                                  gc.res.sum$orf_name == 'FY4'])
+    gc.res$rel_auc[gc.res$expt_rep == e & gc.res$condition == c] <-
+      gc.res$auc_e[gc.res$expt_rep == e & gc.res$condition == c]/median(gc.res$auc_e[gc.res$expt_rep == e & 
+                                                                                                       gc.res$condition == c &
+                                                                                                       gc.res$orf_name == 'FY4'])
+    gc.res$rel_gr[gc.res$expt_rep == e & gc.res$condition == c] <-
+      gc.res$gr[gc.res$expt_rep == e & gc.res$condition == c]/median(gc.res$gr[gc.res$expt_rep == e & 
+                                                                                                 gc.res$condition == c &
+                                                                                                 gc.res$orf_name == 'FY4'])
   }
   for (o in unique(gc.res.sum$orf_name[gc.res.sum$condition == c & gc.res.sum$orf_name != 'FY4'])) {
     temp.kw <- compare_means(data = gc.res.sum[gc.res.sum$condition == c & gc.res.sum$orf_name %in% c(o, 'FY4'),],
@@ -68,31 +78,27 @@ gc.pred$orf_name <- factor(gc.pred$orf_name, levels = strain.levels)
 
 ##### FIGURES
 for (o in c('FY','BY')) {
-  plot.rauc.box.kw <- gc.res.sum[str_detect(gc.res.sum$orf_name, o),] %>%
+  plot.rauc.box.kw <- gc.res[str_detect(gc.res$orf_name, o),] %>%
     filter(condition != 'SD+Met-Ura+Glu') %>%
     ggplot(aes(x = orf_name, y = rel_auc)) +
-    geom_boxplot(outlier.shape = NA) +
-    geom_jitter(aes(col = orf_name), size = 1) +
+    geom_boxplot(aes(fill = bio_rep), outlier.shape = NA) +
+    # geom_jitter(aes(col = bio_rep), size = 1) +
     geom_text(data = plot_labels[str_detect(plot_labels$orf_name, o),] %>% filter(condition != 'SD+Met-Ura+Glu'),
-              aes(x = orf_name, y = 1.4, label = sprintf('%0.2f%%',effect_size*100)), size = 2) +
+              aes(x = orf_name, y = 1.4, label = sprintf('%0.2f%%',effect_size*100)), size = 2.2) +
     geom_text(data = plot_labels[str_detect(plot_labels$orf_name, o),]  %>% filter(condition != 'SD+Met-Ura+Glu'),
-              aes(x = orf_name, y = 1.5, label = signif), col = 'red', size = 2) +
-    scale_color_discrete(name = 'Strain',
-                         label = c( 'FY4' = 'FY4',
-                                    'FY4_pet' = 'FY4 (&rho;-)' ,
-                                    'FY4-met15del' = '*met15Δ*', 
-                                    'FY4-met15del_pet' = '*met15Δ* (&rho;-)', 
-                                    'BY4742' = 'BY4742', 
-                                    'BY4742_pet' = 'BY4742 (&rho;-)', 
-                                    'BY4741' = 'BY4741', 
-                                    'BY4741_pet' = 'BY4741 (&rho;-)')) +
+              aes(x = orf_name, y = 1.5, label = signif), col = 'red', size = 2.2) +
+    scale_fill_manual(name = 'Biological Replicate',
+                      values = c("1" = "#673AB7",
+                                 "2" = "#009688",
+                                 "3" = "#607D8B",
+                                 "4" = "#FFC107")) +
     facet_wrap(.~condition, nrow = 1) +
     labs(x = 'Strain',
          y = 'Relative Area Under the Curve') +
     scale_x_discrete(labels = c( 'FY4' = 'FY4',
                                 'FY4_pet' = 'FY4 (&rho;-)' ,
-                                'FY4-met15del' = '*met15Δ*', 
-                                'FY4-met15del_pet' = '*met15Δ* (&rho;-)', 
+                                'FY4-met15del' = 'FY4-*met15Δ*', 
+                                'FY4-met15del_pet' = 'FY4-*met15Δ* (&rho;-)', 
                                 'BY4742' = 'BY4742', 
                                 'BY4742_pet' = 'BY4742 (&rho;-)', 
                                 'BY4741' = 'BY4741', 
@@ -101,48 +107,45 @@ for (o in c('FY','BY')) {
     theme_linedraw() +
     theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
           axis.title = element_text(size = titles),
-          axis.text = element_text(size = txt),
+          axis.text = element_text(size = txt+2),
           # axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
-          axis.text.x = ggtext::element_markdown(),
+          axis.text.x = ggtext::element_markdown(angle = 45, vjust = 1, hjust = 1),
           legend.title = element_text(size = titles),
-          legend.text = ggtext::element_markdown(size = txt),
+          legend.text = ggtext::element_markdown(size = txt+2),
           legend.position = 'bottom',
           legend.key.size = unit(3, "mm"),
           legend.box.spacing = unit(0.5,"mm"),
-          strip.text = element_text(size = txt,
+          strip.text = element_text(size = txt+2,
                                     face = 'bold',
                                     margin = margin(0.1,0,0.1,0, "mm"))) +
     coord_cartesian(ylim = c(0,1.5))
+  plot.rauc.box.kw <- colorstrip(plot.rauc.box.kw,c("#303F9F","#448AFF","#388E3C","#8BC34A"))
   ggsave(sprintf("%s/%s/RELATIVE_AUC_BOX_KW_%s.jpg",fig_path, expt.name,o),
          plot.rauc.box.kw,
          height = 70, width = two.c, units = 'mm',
          dpi = 600)
   
-  plot.gr.box.kw <- gc.res.sum[str_detect(gc.res.sum$orf_name, o),] %>%
+  plot.gr.box.kw <- gc.res[str_detect(gc.res$orf_name, o),] %>%
     filter(condition != 'SD+Met-Ura+Glu') %>%
     ggplot(aes(x = orf_name, y = gr)) +
-    geom_boxplot(outlier.shape = NA) +
-    geom_jitter(aes(col = orf_name), size = 1) +
+    geom_boxplot(aes(fill = bio_rep), outlier.shape = NA) +
+    # geom_jitter(aes(col = bio_rep), size = 1) +
     geom_text(data = plot_labels[str_detect(plot_labels$orf_name, o),] %>% filter(condition != 'SD+Met-Ura+Glu'),
-              aes(x = orf_name, y = 0.06, label = sprintf('%0.2f%%',gr_effect_size*100)), size = 2) +
+              aes(x = orf_name, y = 0.06, label = sprintf('%0.2f%%',gr_effect_size*100)), size = 2.2) +
     geom_text(data = plot_labels[str_detect(plot_labels$orf_name, o),]  %>% filter(condition != 'SD+Met-Ura+Glu'),
-              aes(x = orf_name, y = 0.065, label = gr_signif), col = 'red', size = 2) +
-    scale_color_discrete(name = 'Strain',
-                         label = c( 'FY4' = 'FY4',
-                                    'FY4_pet' = 'FY4 (&rho;-)' ,
-                                    'FY4-met15del' = '*met15Δ*', 
-                                    'FY4-met15del_pet' = '*met15Δ* (&rho;-)', 
-                                    'BY4742' = 'BY4742', 
-                                    'BY4742_pet' = 'BY4742 (&rho;-)', 
-                                    'BY4741' = 'BY4741', 
-                                    'BY4741_pet' = 'BY4741 (&rho;-)')) +
+              aes(x = orf_name, y = 0.065, label = gr_signif), col = 'red', size = 2.2) +
+    scale_fill_manual(name = 'Biological Replicate',
+                      values = c("1" = "#673AB7",
+                                 "2" = "#009688",
+                                 "3" = "#607D8B",
+                                 "4" = "#FFC107")) +
     facet_wrap(.~condition, nrow = 1) +
     labs(x = 'Strain',
          y = 'Growth Rate') +
     scale_x_discrete(labels = c( 'FY4' = 'FY4',
                                  'FY4_pet' = 'FY4 (&rho;-)' ,
-                                 'FY4-met15del' = '*met15Δ*', 
-                                 'FY4-met15del_pet' = '*met15Δ* (&rho;-)', 
+                                 'FY4-met15del' = 'FY4-*met15Δ*', 
+                                 'FY4-met15del_pet' = 'FY4-*met15Δ* (&rho;-)', 
                                  'BY4742' = 'BY4742', 
                                  'BY4742_pet' = 'BY4742 (&rho;-)', 
                                  'BY4741' = 'BY4741', 
@@ -151,18 +154,19 @@ for (o in c('FY','BY')) {
     theme_linedraw() +
     theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
           axis.title = element_text(size = titles),
-          axis.text = element_text(size = txt),
+          axis.text = element_text(size = txt+2),
           # axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
-          axis.text.x = ggtext::element_markdown(),
+          axis.text.x = ggtext::element_markdown(angle = 45, vjust = 1, hjust = 1),
           legend.title = element_text(size = titles),
-          legend.text = ggtext::element_markdown(size = txt),
+          legend.text = ggtext::element_markdown(size = txt+2),
           legend.position = 'bottom',
           legend.key.size = unit(3, "mm"),
           legend.box.spacing = unit(0.5,"mm"),
-          strip.text = element_text(size = txt,
+          strip.text = element_text(size = txt+2,
                                     face = 'bold',
                                     margin = margin(0.1,0,0.1,0, "mm"))) +
     coord_cartesian(ylim = c(0,0.07))
+  plot.gr.box.kw <- colorstrip(plot.gr.box.kw,c("#303F9F","#448AFF","#388E3C","#8BC34A"))
   ggsave(sprintf("%s/%s/GROWTHRATE_BOX_KW_%s.jpg",fig_path, expt.name,o),
          plot.gr.box.kw,
          height = 70, width = two.c, units = 'mm',
@@ -176,15 +180,23 @@ for (o in c('FY','BY')) {
     stat_summary(fun.data=mean_sdl, fun.args = list(mult=1),
                  aes(group = orf_name, fill = orf_name), geom="ribbon", alpha = 0.4) +
     stat_summary(aes(group = orf_name, col = orf_name), fun=mean, geom="line", lwd =0.7) +
-    scale_color_discrete(name = 'Strain',
+    scale_color_manual(name = 'Strain',
                          label = c( 'FY4' = 'FY4',
                                     'FY4_pet' = 'FY4 (&rho;-)' ,
-                                    'FY4-met15del' = '*met15Δ*', 
-                                    'FY4-met15del_pet' = '*met15Δ* (&rho;-)', 
+                                    'FY4-met15del' = 'FY4-*met15Δ*', 
+                                    'FY4-met15del_pet' = 'FY4-*met15Δ* (&rho;-)', 
                                     'BY4742' = 'BY4742', 
                                     'BY4742_pet' = 'BY4742 (&rho;-)', 
                                     'BY4741' = 'BY4741', 
-                                    'BY4741_pet' = 'BY4741 (&rho;-)')) +
+                                    'BY4741_pet' = 'BY4741 (&rho;-)'),
+                         values = c('FY4' = '#E64A19',
+                                    'FY4_pet' = '#FF9800' ,
+                                    'FY4-met15del' = '#673AB7', 
+                                    'FY4-met15del_pet' = '#E040FB', 
+                                    'BY4742' = '#E64A19', 
+                                    'BY4742_pet' = '#FF9800', 
+                                    'BY4741' = '#673AB7', 
+                                    'BY4741_pet' = '#E040FB')) +
     scale_fill_discrete(guide = F) +
     labs(y = 'Relative Colony Size',
          x = 'Time (hours)') +
@@ -192,30 +204,31 @@ for (o in c('FY','BY')) {
     theme_linedraw() +
     theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
           axis.title = element_text(size = titles),
-          axis.text = element_text(size = txt),
+          axis.text = element_text(size = txt+2),
           legend.title = element_text(size = titles),
-          legend.text = ggtext::element_markdown(size = txt),
+          legend.text = ggtext::element_markdown(size = txt+2),
           legend.position = 'bottom',
           legend.key.size = unit(3, "mm"),
           legend.box.spacing = unit(0.5,"mm"),
-          strip.text = element_text(size = txt,
+          strip.text = element_text(size = txt+2,
                                     face = 'bold',
                                     margin = margin(0.1,0,0.1,0, "mm"))) +
     coord_cartesian(ylim = c(0,1.2))
+  plot.all.gc <- colorstrip(plot.all.gc,c("#303F9F","#448AFF","#388E3C","#8BC34A"))
   ggsave(sprintf("%s/%s/GROWTH_CURVES_%s.jpg",fig_path, expt.name,o),
          plot.all.gc,
          height = 70, width = two.c, units = 'mm',
          dpi = 600)
   
-  plot.growth <- ggpubr::ggarrange(plot.all.gc, plot.rauc.box.kw, ncol = 1,
-                                   common.legend = T, legend = 'bottom')
+  plot.growth <- cowplot::plot_grid(plot.all.gc, plot.rauc.box.kw,
+                              ncol = 1, align = 'v', rel_heights = c(0.9,1))
   ggsave(sprintf("%s/%s/GROWTH_AUC_CURVES_%s.jpg",fig_path, expt.name, o),
          plot.growth,
          height = 140, width = two.c, units = 'mm',
          dpi = 600)
   
-  plot.growth2 <- ggpubr::ggarrange(plot.all.gc, plot.gr.box.kw, ncol = 1,
-                                   common.legend = T, legend = 'bottom')
+  plot.growth2 <- cowplot::plot_grid(plot.all.gc, plot.gr.box.kw,
+                                     ncol = 1, align = 'v', rel_heights = c(0.9,1))
   ggsave(sprintf("%s/%s/GROWTH_GR_CURVES_%s.jpg",fig_path, expt.name, o),
          plot.growth2,
          height = 140, width = two.c, units = 'mm',

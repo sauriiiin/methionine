@@ -1,7 +1,7 @@
-##### JAKES MUTANT EXPERIMENT - FINAL FIGURES
+##### NO SULFATE EXPERIMENT - FIGURES
 ##### Author : Saurin Parikh
 ##### Email  : dr.saurin.parikh@gmail.com
-##### Date   : 05/19/2021 
+##### Date   : 08/04/2021 
 
 ##### INITIALIZE
 library(ggplot2)
@@ -27,7 +27,7 @@ out_path <- "~/R/Projects/methionine/data"
 fig_path <- "~/R/Projects/methionine/figures"
 res_path <- "~/R/Projects/methionine/results"
 
-expt.name <- "jakes"
+expt.name <- "nosulfate"
 
 source("~/R/Projects/methionine/functions/colorstrip.R")
 
@@ -106,7 +106,7 @@ plot.rcs.box.kw <- data[data$time == 't_final' & data$attempt != 'pilot' & data$
   # geom_jitter(aes(col = bio_rep, shape = attempt), size = 1) +
   # geom_jitter(size = 1) +
   geom_text(data = anova.res2[anova.res2$strain2 == 'FY4' & 
-                               anova.res2$time == 't_final' & anova.res2$strain1 != 'yll',],
+                                anova.res2$time == 't_final' & anova.res2$strain1 != 'yll',],
             aes(x = strain1, y = 1.5, label = label), size = 2.2, col = 'red') +
   geom_text(data = anova.res2[anova.res2$strain2 == 'FY4' &
                                 anova.res2$time == 't_final' & anova.res2$strain1 != 'yll',],

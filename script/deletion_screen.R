@@ -501,9 +501,9 @@ diff.dist$ul <- as.numeric(as.character(diff.dist$ul))
 data.diff <- merge(data.diff, diff.dist, by = 'stage')
 
 data.diff$phenotype[data.diff$fitness_diff >= data.diff$ul] <- 'Beneficial'
-data.diff$phenotype[data.diff$fitness_diff <= data.diff$ll & data.diff$phenotype_MM != 'Dead'] <- 'Deleterious'
+data.diff$phenotype[data.diff$fitness_diff <= data.diff$ll] <- 'Deleterious'
 # data.diff$phenotype[data.diff$phenotype_MM == 'Dead'] <- 'Dead'
-data.diff$phenotype[data.diff$phenotype_MM == 'Dead'] <- 'Deleterious'
+# data.diff$phenotype[data.diff$phenotype_MM == 'Dead'] <- 'Deleterious'
 data.diff$phenotype[is.na(data.diff$phenotype)] <- 'Neutral'
 
 ##### FITNESS PLOT FOR DIFFERENCE
@@ -614,7 +614,7 @@ data.ded <- merge(merge(data.sum[data.sum$stage == 'Pre-Screen #1' & data.sum$ho
                         by = c('arm','orf_name','strain_id','orf_type'), suffixes = c('_PS1','_PS2'), all = T),
                   data.sum[data.sum$stage == 'Final Screen' & data.sum$hours == data.sum$saturation, c('arm','orf_name','strain_id','fitness','cs','orf_type','phenotype')],
                   by = c('arm','orf_name','strain_id','orf_type'), suffixes = c('','_FS'), all = T)
-data.cnts$phenotype <- factor(data.cnts$phenotype, levels = c('Beneficial','Neutral','Deleterious','Dead'))head(data.ded)
+data.cnts$phenotype <- factor(data.cnts$phenotype, levels = c('Beneficial','Neutral','Deleterious','Dead'))
 data.ded$phenotype_PS2 <- as.character(data.ded$phenotype_PS2)
 data.ded$phenotype <- as.character(data.ded$phenotype)
 data.ded$phenotype_PS2[is.na(data.ded$phenotype_PS2)] <- 'Dead'
@@ -639,7 +639,7 @@ head(data.ded)
 
 data.ded %>%
   group_by(orf_type, phenotype_PS1_MM) %>%
-  count()
+  dplyr::count()
 
 ##### COUNTS OF PGS BENEFICIAL, DELETERIOUS, NEUTRAL AND DEAD
 head(data.diff)
@@ -658,9 +658,9 @@ data.cnts$phenotype[data.cnts$phenotype == 'Dead'] <- 'Deleterious'
 
 data.cnts <- merge(data.cnts[!is.na(data.cnts$phenotype),] %>%
                      group_by(level,orf_type,phenotype) %>%
-                     count(), data.cnts[!is.na(data.cnts$phenotype),] %>%
+                     dplyr::count(), data.cnts[!is.na(data.cnts$phenotype),] %>%
                      group_by(level,orf_type) %>%
-                     count(), by = c('level','orf_type'), suffixes = c('','_total'))
+                     dplyr::count(), by = c('level','orf_type'), suffixes = c('','_total'))
 data.cnts$percentage <- data.cnts$n/data.cnts$n_total * 100 
 
 data.cnts$stage[str_detect(data.cnts$level,'PS1')] <- 'Pre-Screen #1'
@@ -783,6 +783,87 @@ ggsave(sprintf("%s/%s/PHENOTYPE_ODDS.jpg",fig_path, expt.name), plot.or,
        dpi = 600) 
 
 write.csv(data.or, file = sprintf('%s/%s/phenotype_odds.csv',res_path,expt.name))
+
+##### PHENOTYPE OVERLAP BETWEEN -MET AND +MET CONDITIONS
+data.olp <- data.ded[,str_detect(colnames(data.ded), 'phenotype') | colnames(data.ded) %in% c('orf_name','orf_type')]
+data.olp[data.olp == 'Dead' & !is.na(data.olp)] <- 'Deleterious'
+
+data.olp$PS1 <- paste(data.olp$phenotype_PS1_MM, data.olp$phenotype_PS1_PM, sep = '/')
+data.olp$PS2 <- paste(data.olp$phenotype_PS2_MM, data.olp$phenotype_PS2_PM, sep = '/')
+data.olp$FS <- paste(data.olp$phenotype_FS_MM, data.olp$phenotype_FS_PM, sep = '/')
+
+data.olp <- data.olp[,c(1,2,12,13,14)]
+data.olp <- melt(data.olp, id.vars = c('orf_name','orf_type'), variable.name = 'stage', value.name = 'phenotype')
+data.olp <- data.olp[!str_detect(data.olp$phenotype, 'NA'),]
+
+data.olp %>%
+  group_by(stage, phenotype) %>%
+  dplyr::count() %>%
+  data.frame()
+
+allgenes <- unique(data.olp$orf_name)
+allgenes <- bitr(allgenes, fromType = "ORF",
+                 toType = c("ENTREZID","GENENAME","ENSEMBL"),
+                 OrgDb = org.Sc.sgd.db)
+# allgenes <- allgenes[!is.na(allgenes$ENSEMBL),]
+
+goe.olp <- data.frame()
+kegg.olp <- data.frame()
+for (s in unique(data.olp$stage)) {
+  for (p in unique(data.olp$phenotype[data.olp$stage == s])) {
+    temp.deg <- data.olp$orf_name[data.olp$stage == s & data.olp$phenotype == p]
+    temp.deg <- bitr(temp.deg, fromType = "ORF",
+                     toType = c("ENTREZID","GENENAME","ENSEMBL"),
+                     OrgDb = org.Sc.sgd.db)
+    temp.deg <- temp.deg[!is.na(temp.deg$ENSEMBL),]
+    
+    temp.goe <- enrichGO(gene          = temp.deg$ENSEMBL,
+                         universe      = allgenes$ENSEMBL,
+                         OrgDb         = org.Sc.sgd.db,
+                         keyType       = "ENSEMBL",
+                         ont           = "ALL",
+                         pAdjustMethod = "BH",
+                         pvalueCutoff  = 0.01,
+                         qvalueCutoff  = 0.05)
+    if (dim(temp.goe)[1] == 0) {
+      cat(sprintf('There are no GO term enrichment for %s ORFs in %s.\n',p,s))
+    } else{
+      cat(sprintf('GO term enrichment for %s ORFs in %s are:\n%s\n',
+                  p,s,
+                  paste(temp.goe$Description,collapse = ', ')))
+      goe.olp <- rbind(goe.olp, data.frame(temp.goe, stage = s, phenotype = p))
+    }
+    
+    temp.kegg <- enrichKEGG(gene         = temp.deg$ENSEMBL,
+                            universe     = allgenes$ENSEMBL,
+                            organism     = 'sce',
+                            pvalueCutoff = 0.05)
+    if (dim(temp.kegg)[1] == 0) {
+      cat(sprintf('There are no KEGG pathway enriched for %s ORFs in %s.\n',p,s))
+    } else{
+      cat(sprintf('KEGG pathway enrichment for %s ORFs in %s are:\n%s\n',
+                  p,s,
+                  paste(temp.kegg$Description,collapse = ', ')))
+      kegg.olp <- rbind(kegg.olp, data.frame(temp.kegg, stage = s, phenotype = p))
+    }
+  }
+}
+goe.olp$GeneRatio <- as.numeric(str_split(goe.olp$GeneRatio,'/',simplify = T)[,1])/
+  as.numeric(str_split(goe.olp$GeneRatio,'/',simplify = T)[,2])
+goe.olp$BgRatio <- as.numeric(str_split(goe.olp$BgRatio,'/',simplify = T)[,1])/
+  as.numeric(str_split(goe.olp$BgRatio,'/',simplify = T)[,2])
+goe.olp$GO <- paste0(goe.olp$ONTOLOGY, '_', goe.olp$Description)
+
+kegg.olp$GeneRatio <- as.numeric(str_split(kegg.olp$GeneRatio,'/',simplify = T)[,1])/
+  as.numeric(str_split(kegg.olp$GeneRatio,'/',simplify = T)[,2])
+kegg.olp$BgRatio <- as.numeric(str_split(kegg.olp$BgRatio,'/',simplify = T)[,1])/
+  as.numeric(str_split(kegg.olp$BgRatio,'/',simplify = T)[,2])
+
+goe.olp <- goe.olp[order(goe.olp$stage,goe.olp$phenotype,-goe.olp$GeneRatio,-goe.olp$Count,goe.olp$qvalue),]
+kegg.olp <- kegg.olp[order(kegg.olp$stage,kegg.olp$phenotype,-kegg.olp$GeneRatio,-kegg.olp$Count,kegg.olp$qvalue),]
+
+write.csv(goe.olp, file = sprintf('%s/%s/go_overlap_enrichments.csv', res_path, expt.name))
+write.csv(kegg.olp, file = sprintf('%s/%s/kegg_overlap_enrichments.csv', res_path, expt.name))
 
 ##### SAVING ALL DATA
 save(data, data.cnts, data.ded, data.diff, data.jm, data.lim, data.mad,

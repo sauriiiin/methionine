@@ -52,14 +52,14 @@ lbls <- 9
 ### GET FLASHFRY
 wget https://github.com/mckennalab/FlashFry/releases/download/1.12/FlashFry-assembly-1.12.jar
 
-### CREATE DATABASE
+### CREATE data.crspBASE
 
-```{bash Create FlashFry Database, eval=FALSE, include=TRUE}
+```{bash Create FlashFry data.crspbase, eval=FALSE, include=TRUE}
 cd ~/flashfry
 java -Xmx4g -jar FlashFry-assembly-1.12.jar \
  index \
  --tmpLocation ./tmp \
- --database ./scer/scer_database \
+ --data.crspbase ./scer/scer_database \
  --reference ./scer/scer.fsa \
  --enzyme spcas9ngg > /dev/null 2>&1
 ```
@@ -83,21 +83,25 @@ java -Xmx4g -jar FlashFry-assembly-1.12.jar \
  score \
  --input ./scer/allorfs.output \
  --output ./scer/allorfs.output.scored \
- --scoringMetrics doench2014ontarget,doench2016cfd,hsu2013 \
+ --scoringMetrics doench2014ontarget,doench2016cfd,hsu2013,moreno2015 \
  --database ./scer/scer_database > /dev/null 2>&1
 ```
 
 ```{r read output file, eval=TRUE, include=TRUE}
-data <- read.delim(file = '/home/sbp29/flashfry/scer/allorfs.output.scored', sep = '\t', header = T, stringsAsFactors = F)
-head(data)
+data.crsp <- read.delim(file = '/home/sbp29/flashfry/scer/allorfs.output.scored', sep = '\t', header = T, stringsAsFactors = F)
+# head(data.crsp)
 
-temp <- str_split(data$contig, pattern = ',', simplify = T)
+temp <- str_split(data.crsp$contig, pattern = ',', simplify = T)
 temp <- str_split(temp[,1], pattern = '_', simplify = T)
 temp <- temp[,c(1,2)]
 colnames(temp) <- c('orf_name','standard_name')
 
-data <- cbind(temp, data)
-data <- data[,-3]
+data.crsp <- cbind(temp, data.crsp)
+data.crsp <- data.crsp[,-3]
+
+# data.crsp$candidates[data.crsp$Hsu2013 >= 95 & data.crsp$Doench2014OnTarget >= 0.7 & !is.na(data.crsp$Doench2014OnTarget)] <- 'Good' 
+# data.crsp$candidates[data.crsp$Hsu2013 >= 95 & data.crsp$Doench2014OnTarget >= 0.9 & !is.na(data.crsp$Doench2014OnTarget)] <- 'Very Good' 
+# data.crsp$candidates[is.na(data.crsp$candidates)] <- 'Not Good'
 ```
 
 ```{r scored results, eval=TRUE, include=TRUE}
@@ -114,19 +118,19 @@ plot.theme <- theme_linedraw() +
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")))
 
-plot.onandoff <- data %>%
+plot.onandoff <- data.crsp %>%
   ggplot(aes(x = Doench2014OnTarget, y = Hsu2013)) +
   geom_point(size = 0.2) +
   plot.theme
 
-plot.on <- data %>%
+plot.on <- data.crsp %>%
   ggplot() +
   geom_line(aes(x = Doench2014OnTarget), stat = 'density') +
   plot.theme + theme_minimal() +
   theme(axis.title = element_blank(),
         axis.text = element_blank())
 
-plot.off <- data %>%
+plot.off <- data.crsp %>%
   ggplot() +
   geom_line(aes(y = Hsu2013), stat = 'density') +
   plot.theme + theme_minimal() +

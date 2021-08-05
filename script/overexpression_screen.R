@@ -51,26 +51,18 @@ lbls <- 9
 
 ##### GATHER DATA
 stages <- c('Pre-Screen #1','Pre-Screen #2','Final Screen')
-arms <- c('SD-Met-Cys+Gal','SD+Met-Cys+Gal')
-phenotypes <- c('Beneficial','Neutral','Deleterious')
+arms <- c('SD-Met-Cys-Ura+Gal','SC-Ura+Gal')
+phenotypes <- c('Beneficial','Neutral','Deleterious','Dead')
+orfs <- c('Proto-gene','Gene','Reference')
 
-p2c <- dbGetQuery(conn, 'select a.*, b.orf_name from MET_DEL_pos2coor a, MET_DEL_pos2orf_name b
+p2c <- dbGetQuery(conn, 'select a.*, b.orf_name from MET_OE_pos2coor a, MET_OE_pos2orf_name b
                   where a.pos = b.pos
                   order by density, plate, col, row')
 
-info <- data.frame(rbind(c('PS1','MM',1536,'MET_DEL'), c('PS1','PM',1536,'MET_DEL'),
-                         c('PS2','MM',1536,'MET_DEL'), c('PS2','PM',1536,'MET_DEL'),
-                         c('FS','MM',6144,'MET_DEL_FS_MM'), c('FS','PM',6144,'MET_DEL')))
+info <- data.frame(rbind(c('PS1','MM',1536,'MET_OE'), c('PS1','PM',1536,'MET_OE'),
+                         c('PS2','MM',1536,'MET_OE'), c('PS2','PM',1536,'MET_OE'),
+                         c('FS','PM',6144,'MET_OE')))
 colnames(info) <- c('stage','arm','density','p2c')
-
-orfs <- dbGetQuery(conn, 'select distinct(orf_name) from MET_DEL_FS_MM_6144_FITNESS_STATS
-                   where hours = 22 and N >= 2
-                   and orf_name in
-                   (select distinct(orf_name) from MET_DEL_PS2_MM_1536_FITNESS_STATS
-                   where hours = 68 and N >= 2
-                   and orf_name in
-                   (select distinct(orf_name) from MET_DEL_PS1_MM_1536_FITNESS_STATS
-                   where hours = 69 and N >= 2))')
 
 pgs <- dbGetQuery(conn, 'select orf_name from PROTOGENES where pg_2012 = 1')
 
@@ -78,7 +70,7 @@ data <- NULL
 data.sum <- NULL
 for (i in seq(1,dim(info)[1])) {
   temp <- dbGetQuery(conn, sprintf('select a.*, b.density, b.plate, b.row, b.col
-                                   from MET_DEL_%s_%s_%s_FITNESS a,
+                                   from MET_OE_%s_%s_%s_FITNESS a,
                                    %s_pos2coor b
                                    where a.pos = b.pos
                                    order by a.hours, b.plate, b.col, b.row',
@@ -87,22 +79,14 @@ for (i in seq(1,dim(info)[1])) {
   temp <- temp[!is.na(temp$orf_name) & temp$orf_name != 'NULL',]
   
   temp2 <- dbGetQuery(conn, sprintf('select a.*, b.p
-                                    from MET_DEL_%s_%s_%s_FITNESS_STATS a
+                                    from MET_OE_%s_%s_%s_FITNESS_STATS a
                                     left join
-                                    MET_DEL_%s_%s_%s_PVALUE b
+                                    MET_OE_%s_%s_%s_PVALUE b
                                     on a.hours = b.hours and a.strain_id = b.strain_id
                                     order by a.hours',
                                     info[i,1],info[i,2],info[i,3],
                                     info[i,1],info[i,2],info[i,3]))
   
-  # for (h in unique(temp$hours)) {
-  #   for (o in unique(temp$orf_name)) {
-  #     temp$average[temp$orf_name == o & temp$hours == h][isoutlier(temp$average[temp$orf_name == o & temp$hours == h], 2) |
-  #                                                          isoutlier(temp$fitness[temp$orf_name == o & temp$hours == h], 2)] <- NA
-  #     temp$fitness[temp$orf_name == o & temp$hours == h][isoutlier(temp$average[temp$orf_name == o & temp$hours == h], 2) |
-  #                                                          isoutlier(temp$fitness[temp$orf_name == o & temp$hours == h], 2)] <- NA
-  #   }
-  # }
   temp$stage <- info[i,1]
   temp$arm <- info[i,2]
   
@@ -114,11 +98,12 @@ for (i in seq(1,dim(info)[1])) {
 }
 data <- data.frame(data)
 data$orf_type[data$orf_name %in% pgs$orf_name] <- 'Proto-gene'
+data$orf_type[data$orf_name == 'BF_control'] <- 'Reference'
 data$orf_type[is.na(data$orf_type)] <- 'Gene'
 data$arm <- as.character(data$arm)
 data$stage <- as.character(data$stage)
-data$arm[data$arm == 'MM'] <- 'SD-Met-Cys+Gal'
-data$arm[data$arm == 'PM'] <- 'SD+Met-Cys+Gal'
+data$arm[data$arm == 'MM'] <- 'SD-Met-Cys-Ura+Gal'
+data$arm[data$arm == 'PM'] <- 'SC-Ura+Gal'
 data$stage[data$stage == 'PS1'] <- 'Pre-Screen #1'
 data$stage[data$stage == 'PS2'] <- 'Pre-Screen #2'
 data$stage[data$stage == 'FS'] <- 'Final Screen'
@@ -126,15 +111,17 @@ data$rep <- as.numeric(str_trunc(as.character(data$pos), 5, side = 'left', ellip
 
 data$stage <- factor(data$stage, levels = stages)
 data$arm <- factor(data$arm, levels = arms)
+data$orf_type <- factor(data$orf_type, levels = orfs)
 head(data)
 
 data.sum <- data.frame(data.sum)
 data.sum$orf_type[data.sum$orf_name %in% pgs$orf_name] <- 'Proto-gene'
+data.sum$orf_type[data.sum$orf_name == 'BF_control'] <- 'Reference'
 data.sum$orf_type[is.na(data.sum$orf_type)] <- 'Gene'
 data.sum$arm <- as.character(data.sum$arm)
 data.sum$stage <- as.character(data.sum$stage)
-data.sum$arm[data.sum$arm == 'MM'] <- 'SD-Met-Cys+Gal'
-data.sum$arm[data.sum$arm == 'PM'] <- 'SD+Met-Cys+Gal'
+data.sum$arm[data.sum$arm == 'MM'] <- 'SD-Met-Cys-Ura+Gal'
+data.sum$arm[data.sum$arm == 'PM'] <- 'SC-Ura+Gal'
 data.sum$stage[data.sum$stage == 'PS1'] <- 'Pre-Screen #1'
 data.sum$stage[data.sum$stage == 'PS2'] <- 'Pre-Screen #2'
 data.sum$stage[data.sum$stage == 'FS'] <- 'Final Screen'
@@ -145,17 +132,18 @@ data.sum$phenotype[is.na(data.sum$phenotype)] <- 'Neutral'
 data.sum$stage <- factor(data.sum$stage, levels = stages)
 data.sum$arm <- factor(data.sum$arm, levels = arms)
 data.sum$phenotype <- factor(data.sum$phenotype, levels = phenotypes)
+data.sum$orf_type <- factor(data.sum$orf_type, levels = orfs)
 
-for (a in arms) {
-  for (s in stages) {
+for (a in unique(data$arm)) {
+  for (s in unique(data$stage[data$arm == a])) {
     data$saturation[data$arm == a & data$stage == s] <- 
       max(data$hours[data$arm == a & data$stage == s])
   }
 }
 head(data)
 
-for (a in arms) {
-  for (s in stages) {
+for (a in unique(data.sum$arm)) {
+  for (s in unique(data.sum$stage[data.sum$arm == a])) {
     data.sum$saturation[data.sum$arm == a & data.sum$stage == s] <- 
       max(data.sum$hours[data.sum$arm == a & data.sum$stage == s])
   }
@@ -175,7 +163,7 @@ data$fitness[data$fitness < (data$fitness.median - 2*data$fitness.mad) |
 data$average[data$average < (data$cs.median - 2*data$cs.mad) |
                data$average > (data$cs.median + 2*data$cs.mad)] <- NA
 
-temp <- data[!(data$arm == 'MM' & data$stage == 'PS2' & data$plate %in% c(1,2,3,4,5,6,10,13)),] %>%
+temp <- data %>%
   # filter(fitness <= 50) %>%
   group_by(arm, stage, hours, orf_name) %>%
   summarise(fitness = median(fitness, na.rm = T), cs = median(average, na.rm = T), .groups = 'keep') %>%
@@ -187,8 +175,12 @@ data.sum <- merge(data.sum, data.sum %>%
                     summarise(var = max(cs_std), .groups = 'keep') %>%
                     data.frame(), by = c('stage','arm','orf_name'), all = T)
 
-data.lim <- data[!(data$arm == 'MM' & data$stage == 'PS2' & data$plate %in% c(1,2,3,4,5,6,10,13)),] %>%
-  filter(orf_name == 'BY4741') %>%
+data.lim <- data %>%
+  filter(orf_name == 'BF_control') %>%
+  group_by(arm, stage, hours, orf_name, rep) %>%
+  summarize(average = median(average, na.rm = T),
+            fitness = median(fitness, na.rm = T),
+            .groups = 'keep') %>%
   group_by(arm, stage, hours, orf_name) %>%
   summarize(cs_ll = quantile(average, 0.025, na.rm = T),
             cs_m = median(average, na.rm = T),
@@ -199,35 +191,11 @@ data.lim <- data[!(data$arm == 'MM' & data$stage == 'PS2' & data$plate %in% c(1,
             .groups = 'keep') %>%
   data.frame()
 
-###### PLATEMAPS 
-plot.platemap <- p2c %>%
-  filter(density > 384) %>%
-  ggplot(aes(x = col, y = row)) +
-  geom_tile(aes(fill = orf_name), col = 'black') +
-  scale_fill_discrete(guide = F, na.value = 'white') +
-  labs(x = 'Columns', y = 'Rows') +
-  scale_y_reverse() +
-  facet_wrap(~density*plate, scales = 'free', ncol = 10) +
-  theme_linedraw() +
-  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
-        panel.grid = element_blank(),
-        axis.title = element_text(size = titles),
-        axis.text = element_text(size = txt),
-        legend.title = element_text(size = titles),
-        legend.text = element_text(size = txt),
-        legend.position = 'bottom',
-        legend.key.size = unit(3, "mm"),
-        legend.box.spacing = unit(0.5,"mm"),
-        strip.text = element_text(size = txt,
-                                  face = 'bold',
-                                  margin = margin(0.1,0,0.1,0, "mm")))
-ggsave(sprintf("%s/%s/PLATEMAP.jpg",fig_path, expt.name), plot.platemap,
-       height = one.5c*1.5, width = two.c*3, units = 'mm',
-       dpi = 600)
+data.sum <- merge(data.sum, data.lim[,-4], by = c('arm','stage','hours'))
+data.sum$es <- abs(data.sum$fitness - data.sum$fitness_m)/data.sum$fitness_m
 
 ##### PLOT GROWTH CURVES
 plot.cs.gc <- data.sum %>%
-  filter(orf_name %in% orfs$orf_name) %>%
   ggplot(aes(x = hours, y = cs)) +
   geom_line(aes(group = orf_name, col = orf_name), lwd = 0.7, alpha = 0.8) +
   # stat_summary(aes(group = orf_name, col = orf_name), fun=mean, geom="line", lwd =0.7) +
@@ -237,7 +205,7 @@ plot.cs.gc <- data.sum %>%
   geom_line(data = data.lim, aes(x = hours, y = cs_ul), col = 'red', linetype = 'dashed', lwd = 0.5) +
   labs(x = 'Time(hours)',
        y = 'Colony Size (pixels)') +
-  facet_wrap(.~arm*stage, scales = 'free') +
+  facet_wrap(.~arm*stage, scales = 'free_x') +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
@@ -250,27 +218,12 @@ plot.cs.gc <- data.sum %>%
         strip.text = element_text(size = txt,
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")))
-ggsave(sprintf("%s/%s/ALL_GROWTH_CURVES.jpg",fig_path, expt.name), plot.cs.gc,
+ggsave(sprintf("%s/%s/ALL_GROWTH_CURVES_CS.jpg",fig_path, expt.name), plot.cs.gc,
        height = one.5c, width = two.c, units = 'mm',
        dpi = 600)
 
-##### FIGURING OUT THE SUDDEN DROP
-## ANS: plate 17 wasn't analyzed properly at later time points
-
-# hi <- merge(data[data$hours == 50,], data[data$hours == 54,], 
-#       by = c('arm','stage','orf_name','pos','density','plate','row','col'))
-# hi[hi$average.x > hi$average.y & !is.na(hi$average.x) & hi$orf_name != 'BY4741' &
-#      !(hi$plate %in% c(1,2,3,4,5,6,10,13)),]
-# 
-# hi$diff <- hi$average.x - hi$average.y
-# hi[hi$diff > 500 & !is.na(hi$diff) & hi$orf_name != 'BY4741' &
-#      !(hi$plate %in% c(1,2,3,4,5,6,10,13)),]
-# 
-# hello <- data[data$arm == 'MM' & data$stage == 'PS2' & data$orf_name %in% hi$orf_name[hi$cs.x > hi$cs.y] &
-#                     data$hours == 54,]
-
 ###### SAP PATHWAY MEMBERS
-orfs.sap <- read.csv(file = 'data/overexpression/SAP_ORFs.csv')
+orfs.sap <- read.csv(file = 'data/deletion/SAP_ORFs.csv')
 orfs.sap <- orfs.sap[orfs.sap$standard_name %in% c('MET3','MET14','MET16','MET5','MET10'),]
 data.sap <- merge(data.sum, orfs.sap, by = 'orf_name')
 
@@ -278,7 +231,7 @@ plot.sap.gc <- data.sap %>%
   ggplot(aes(x = hours, y = fitness)) +
   geom_line(aes(group = standard_name, col = standard_name), lwd = 0.7, alpha = 0.8) +
   geom_point(data = data.sap[data.sap$hours == data.sap$saturation,],
-             aes(x = hours, y = fitness, fill = standard_name), size = 1.5, col = 'black', shape = 21) + 
+             aes(x = hours, y = fitness, fill = standard_name), size = 1.5, col = 'black', shape = 21) +
   geom_text_repel(data = data.sap[data.sap$hours == data.sap$saturation,],
                   aes(x = hours, y = fitness, label = standard_name, col = standard_name), size = 1.2,
                   force = 2, max.overlaps = 30) +
@@ -288,7 +241,7 @@ plot.sap.gc <- data.sap %>%
   scale_color_discrete(guide = F) + scale_fill_discrete(guide = F) +
   labs(x = 'Time (hours)', y = 'Fitness') +
   # facet_zoom(ylim = c(0, 5), zoom.data = ifelse(fitness <= 5, NA, FALSE)) +
-  facet_wrap(.~arm*stage) +
+  facet_wrap(.~arm*stage, scale = 'free_x') +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
@@ -300,9 +253,7 @@ plot.sap.gc <- data.sap %>%
         legend.box.spacing = unit(0.5,"mm"),
         strip.text = element_text(size = txt,
                                   face = 'bold',
-                                  margin = margin(0.1,0,0.1,0, "mm"))) +
-  coord_cartesian(xlim = c(0,80),
-                  ylim = c(0,2))
+                                  margin = margin(0.1,0,0.1,0, "mm")))
 ggsave(sprintf("%s/%s/SAP_GROWTH_CURVES.jpg",fig_path, expt.name), plot.sap.gc,
        height = one.5c, width = two.c, units = 'mm',
        dpi = 600)
@@ -311,7 +262,7 @@ plot.sap.cs.gc <- data.sap %>%
   ggplot(aes(x = hours, y = cs)) +
   geom_line(aes(group = standard_name, col = standard_name), lwd = 0.7, alpha = 0.8) +
   geom_point(data = data.sap[data.sap$hours == data.sap$saturation,],
-             aes(x = hours, y = cs, fill = standard_name), size = 1.5, col = 'black', shape = 21) + 
+             aes(x = hours, y = cs, fill = standard_name), size = 1.5, col = 'black', shape = 21) +
   geom_text_repel(data = data.sap[data.sap$hours == data.sap$saturation,],
                   aes(x = hours, y = cs, label = standard_name, col = standard_name), size = 1.2,
                   force = 2, max.overlaps = 30) +
@@ -321,7 +272,7 @@ plot.sap.cs.gc <- data.sap %>%
   scale_color_discrete(guide = F) + scale_fill_discrete(guide = F) +
   labs(x = 'Time (hours)', y = 'Fitness') +
   # facet_zoom(ylim = c(0, 5), zoom.data = ifelse(fitness <= 5, NA, FALSE)) +
-  facet_wrap(.~arm*stage) +
+  facet_wrap(.~arm*stage, scale = 'free_x') +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
@@ -347,7 +298,7 @@ plot.jm.gc <- data.jm %>%
   ggplot(aes(x = hours, y = fitness)) +
   geom_line(aes(group = standard_name, col = standard_name), lwd = 0.7, alpha = 0.8) +
   geom_point(data = data.jm[data.jm$hours == data.jm$saturation,],
-             aes(x = hours, y = fitness, fill = standard_name), size = 1.5, col = 'black', shape = 21) + 
+             aes(x = hours, y = fitness, fill = standard_name), size = 1.5, col = 'black', shape = 21) +
   geom_text_repel(data = data.jm[data.jm$hours == data.jm$saturation,],
                   aes(x = hours, y = fitness, label = standard_name, col = standard_name), size = 1.2,
                   force = 2, max.overlaps = 30) +
@@ -357,56 +308,7 @@ plot.jm.gc <- data.jm %>%
   scale_color_discrete(guide = F) + scale_fill_discrete(guide = F) +
   labs(x = 'Time (hours)', y = 'Fitness') +
   # facet_zoom(ylim = c(0, 5), zoom.data = ifelse(fitness <= 5, NA, FALSE)) +
-  facet_wrap(.~arm*stage) +
-  theme_linedraw() +
-  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
-        axis.title = element_text(size = titles),
-        axis.text = element_text(size = txt),
-        legend.title = element_text(size = titles),
-        legend.text = element_text(size = txt),
-        legend.position = 'bottom',
-        legend.key.size = unit(3, "mm"),
-        legend.box.spacing = unit(0.5,"mm"),
-        strip.text = element_text(size = txt,
-                                  face = 'bold',
-                                  margin = margin(0.1,0,0.1,0, "mm"))) +
-  coord_cartesian(xlim = c(0,80),
-                  ylim = c(0,2))
-ggsave(sprintf("%s/%s/JM_GROWTH_CURVES.jpg",fig_path, expt.name), plot.jm.gc,
-       height = one.5c, width = two.c, units = 'mm',
-       dpi = 600)
-
-
-##### ALL SULFUR METABOLIC PROCESS GENES
-orfs.sul <- read.table(file = 'data/overexpression/sulfur_metabolic_process.tsv', sep = '\t', header = T)
-
-data.sul <- merge(data.sum, data.frame(rbind(cbind(GENENAME = 'NULL', bitr(orfs.sul$SYMBOL,
-                                                                           fromType = "ORF", toType = c("ORF","DESCRIPTION"),
-                                                                           OrgDb = org.Sc.sgd.db)),
-                                             bitr(orfs.sul$SYMBOL,
-                                                  fromType = "GENENAME", toType = c("ORF","DESCRIPTION"),
-                                                  OrgDb = org.Sc.sgd.db)), row.names = NULL),
-                  by.x = 'orf_name', by.y = 'ORF')
-data.sul$GENENAME <- as.character(data.sul$GENENAME)
-data.sul$GENENAME[data.sul$GENENAME == 'NULL'] <- data.sul$orf_name[data.sul$GENENAME == 'NULL']
-head(data.sul)
-
-plot.sul.gc <- data.sul %>%
-  # filter(var < 10) %>%
-  ggplot(aes(x = hours, y = fitness)) +
-  geom_line(aes(group = GENENAME, col = GENENAME), lwd = 0.7, alpha = 0.8) +
-  # geom_smooth(method = 'loess', aes(group = GENENAME, col = GENENAME), lwd = 0.7, alpha = 0.8, se = F) +
-  geom_point(data = data.sul[data.sul$hours == data.sul$saturation,],
-             aes(x = hours, y = fitness, fill = GENENAME), size = 1.5, col = 'black', shape = 21) + 
-  geom_text_repel(data = data.sul[data.sul$hours == data.sul$saturation,],
-                  aes(x = hours, y = fitness, label = GENENAME, col = GENENAME), size = 1.2,
-                  force = 2, max.overlaps = 30) +
-  geom_line(data = data.lim, aes(x = hours, y = fitness_ll), col = 'red', linetype = 'dashed', lwd = 0.5) +
-  geom_line(data = data.lim, aes(x = hours, y = fitness_m), col = 'black', linetype = 'dashed', lwd = 0.5) +
-  geom_line(data = data.lim, aes(x = hours, y = fitness_ul), col = 'red', linetype = 'dashed', lwd = 0.5) +
-  scale_color_discrete(guide = F) + scale_fill_discrete(guide = F) +
-  labs(x = 'Time (hours)', y = 'Fitness') +
-  facet_wrap(.~arm*stage) +
+  facet_wrap(.~arm*stage, scale = 'free_x') +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
@@ -419,17 +321,17 @@ plot.sul.gc <- data.sul %>%
         strip.text = element_text(size = txt,
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")))
-ggsave(sprintf("%s/%s/SUL_GROWTH_CURVES.jpg",fig_path, expt.name), plot.sul.gc,
+ggsave(sprintf("%s/%s/JM_GROWTH_CURVES.jpg",fig_path, expt.name), plot.jm.gc,
        height = one.5c, width = two.c, units = 'mm',
        dpi = 600)
 
 ###### DENSITY PLOTS
-plot.fit.den <- data[data$hours == data$saturation,] %>%
-  filter(orf_name == 'BY4741', fitness.mad <= 20) %>%
+plot.fit.vio <- data[data$hours == data$saturation,] %>%
+  filter(orf_name == 'BF_control', fitness.mad <= 20) %>%
   ggplot(aes(x = 'Reference', y = fitness, fill = 'Reference')) +
   geom_violin(draw_quantiles = 0.5) +
   geom_violin(data = data[data$hours == data$saturation,] %>%
-                filter(orf_name != 'BY4741', fitness.mad <= 20),
+                filter(orf_name != 'BF_control', fitness.mad <= 20),
               aes(x = 'Mutants', y = fitness, fill = 'Mutants'), draw_quantiles = 0.5) +
   scale_y_log10() +
   # ggridges::geom_density_ridges(quantile_lines = F,
@@ -437,7 +339,7 @@ plot.fit.den <- data[data$hours == data$saturation,] %>%
   #                     scale = 0.5, alpha = 0.7, size = 0.2,
   #                     vline_size = 0.2, vline_color = "black") +
   # ggridges::geom_density_ridges(data = data[data$hours == data$saturation,] %>%
-  #             filter(orf_name != 'BY4741', fitness.mad <= 20), aes(x = fitness, y = 'Mutants', fill = 'Mutants'),
+  #             filter(orf_name != 'BF_control', fitness.mad <= 20), aes(x = fitness, y = 'Mutants', fill = 'Mutants'),
   #             scale = 0.5, alpha = 0.7, size = 0.2,
   #             vline_size = 0.2, vline_color = "black") +
   labs(y = 'Fitness (log10)') +
@@ -457,71 +359,25 @@ plot.fit.den <- data[data$hours == data$saturation,] %>%
         strip.text = element_text(size = txt,
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm"))) +
-  coord_cartesian(ylim = c(0.01,100)) #+
-# annotation_logticks(sides="b")
-ggsave(sprintf("%s/%s/FITNESS_DENSITY.jpg",fig_path, expt.name), plot.fit.den,
+  coord_cartesian(ylim = c(0.01,100))
+ggsave(sprintf("%s/%s/FITNESS_DENSITY_VIOLIN.jpg",fig_path, expt.name), plot.fit.vio,
        height = one.c, width = one.5c, units = 'mm',
        dpi = 600)
 
-###### DIFFERENCE BETWEEN -MET AND +MET CONDITIONS
-data.diff <- merge(data.sum[data.sum$arm == 'SD-Met-Cys+Gal' & data.sum$hours == data.sum$saturation,],
-                   data.sum[data.sum$arm == 'SD+Met-Cys+Gal' & data.sum$hours == data.sum$saturation,],
-                   by = c('stage','orf_name','strain_id','orf_type'), suffixes = c('_MM','_PM'), all = T)
-data.diff$phenotype_MM <- as.character(data.diff$phenotype_MM)
-data.diff$phenotype_MM[is.na(data.diff$phenotype_MM)] <- 'Dead'
-data.diff <- data.diff %>%
-  filter(strain_id %in% unique(data.diff$strain_id[data.diff$phenotype_MM != 'Dead' & data.diff$stage == 'Pre-Screen #1']))
-# data.diff <- data.diff[data.diff$phenotype_PM[!is.na(data.diff$phenotype_PM)],]
-
-data.diff$fitness_MM[data.diff$phenotype_MM == 'Dead'] <- 0
-data.diff$cs_MM[data.diff$phenotype_MM == 'Dead'] <- 0
-
-data.diff$fitness_diff <- data.diff$fitness_MM - data.diff$fitness_PM
-data.diff$cs_diff <- data.diff$cs_MM - data.diff$cs_PM 
-data.diff[data.diff$phenotype_MM == 'Dead',]
-
-##### REFERENCE DIFF FOR EMPIRICAL DIFF DISTRIBUTION
-diff.dist <- NULL
-for (s in unique(data$stage)) {
-  temp1 <- data$fitness[data$stage == s & data$arm == 'SD-Met-Cys+Gal' & data$orf_name == 'BY4741'
-                        & data$hours == max(data$hours[data$stage == s & data$arm == 'SD-Met-Cys+Gal'])]
-  temp2 <- data$fitness[data$stage == s & data$arm == 'SD+Met-Cys+Gal' & data$orf_name == 'BY4741'
-                        & data$hours == max(data$hours[data$stage == s & data$arm == 'SD+Met-Cys+Gal'])]
-  temp3 <- NULL
-  for (i in 1:50000) {
-    temp3 <- c(temp3, median(sample(temp1[!is.na(temp1)], 1)) - median(sample(temp2[!is.na(temp2)], 1)))
-  }
-  diff.dist <- rbind(diff.dist, cbind(stage = s, ll = quantile(temp3, 0.025)[[1]], m = quantile(temp3, 0.5)[[1]], ul = quantile(temp3, 0.975)[[1]]))
-}
-diff.dist <- data.frame(diff.dist)
-diff.dist$ll <- as.numeric(as.character(diff.dist$ll))
-diff.dist$m <- as.numeric(as.character(diff.dist$m))
-diff.dist$ul <- as.numeric(as.character(diff.dist$ul))
-
-data.diff <- merge(data.diff, diff.dist, by = 'stage')
-
-data.diff$phenotype[data.diff$fitness_diff >= data.diff$ul] <- 'Beneficial'
-data.diff$phenotype[data.diff$fitness_diff <= data.diff$ll & data.diff$phenotype_MM != 'Dead'] <- 'Deleterious'
-# data.diff$phenotype[data.diff$phenotype_MM == 'Dead'] <- 'Dead'
-data.diff$phenotype[data.diff$phenotype_MM == 'Dead'] <- 'Deleterious'
-data.diff$phenotype[is.na(data.diff$phenotype)] <- 'Neutral'
-
-##### FITNESS PLOT FOR DIFFERENCE
-plot.fit.diff <- data.diff %>%
-  ggplot(aes(x = fitness_diff, y = '')) +
-  ggridges::geom_density_ridges(scale = 1.8, alpha = 0.7, size = 0.2,
-                                vline_size = 0.2, vline_color = "black") +
-  geom_vline(data = diff.dist, aes(xintercept = ul)) +
-  geom_vline(data = diff.dist, aes(xintercept = m)) +
-  geom_vline(data = diff.dist, aes(xintercept = ll)) +
-  labs(x = 'Fitness Differential (log10)', y = 'Density') +
-  scale_x_continuous(trans = scales::pseudo_log_trans(base = 10)) +
-  facet_wrap(.~stage, nrow = 1) +
+plot.fit.den <- data.sum %>%
+  filter(hours == saturation, orf_type != 'Reference') %>%
+  ggplot(aes(x = fitness, y = orf_type, fill = orf_type)) +
+  geom_density_ridges(quantile_lines = TRUE,
+                      scale = 2, alpha = 0.7, size = 0.2,
+                      vline_size = 0.2, vline_color = "black") +
+  facet_wrap(.~arm*stage, nrow = 3) +
+  scale_fill_discrete(name = 'ORF Type') +
+  labs(x = 'Fitness') +
+  coord_cartesian(xlim = c(0,2)) +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
-        # axis.title.y = element_blank(),
-        axis.ticks.y = element_blank(),
+        axis.title.y = element_blank(),
         axis.text = element_text(size = txt),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
@@ -530,57 +386,187 @@ plot.fit.diff <- data.diff %>%
         legend.box.spacing = unit(0.5,"mm"),
         strip.text = element_text(size = txt,
                                   face = 'bold',
-                                  margin = margin(0.1,0,0.1,0, "mm"))) +
-  coord_cartesian(xlim = c(-2,10))
-ggsave(sprintf("%s/%s/FITNESS_DIFF_DENSITY.jpg",fig_path, expt.name), plot.fit.diff,
-       height = 50, width = one.5c, units = 'mm',
+                                  margin = margin(0.1,0,0.1,0, "mm")))
+ggsave(sprintf("%s/%s/FITNESS_DENSITY.jpg",fig_path, expt.name), plot.fit.den,
+       height = one.c, width = one.5c, units = 'mm',
        dpi = 600)
 
-##### GO/KEGG ENRICHMENT
-allgenes <- unique(data.diff$orf_name)
-allgenes <- bitr(allgenes, fromType = "ORF",
-                 toType = c("ENTREZID","GENENAME","ENSEMBL"),
-                 OrgDb = org.Sc.sgd.db)
-allgenes <- allgenes[!is.na(allgenes$ENSEMBL),]
+# ####### CRISPR TARGETS
+# data.crsp2 <- merge(data.sum %>% filter(hours == saturation, orf_type == 'Proto-gene',
+#                                         arm == 'SD-Met-Cys-Ura+Gal', phenotype == 'Beneficial'),
+#       data.crsp, by = 'orf_name')
+# 
+# unique(hi$orf_name)[!(unique(hi$orf_name) %in% unique(data.crsp2$orf_name))]
+# 
+# length(unique(data.crsp2$orf_name[data.crsp2$Hsu2013 >= 95 & data.crsp2$Doench2014OnTarget >= 0.65 & !is.na(data.crsp2$Doench2014OnTarget)]))
+# 
+# plot.crspr.good <- ggplot(data = data.sum %>%
+#          filter(orf_name %in%
+#                   unique(data.crsp$orf_name[data.crsp$Hsu2013 >= 95 & data.crsp$Doench2014OnTarget >= 0.7 &
+#                                               !is.na(data.crsp$Doench2014OnTarget)]),
+#                 hours == saturation, orf_type == 'Proto-gene',
+#                 arm == 'SD-Met-Cys-Ura+Gal'),
+#        aes(y = cs_mean, x = 'Proto-genes')) +
+#   geom_jitter(aes(col = phenotype), size = 1) + 
+#   geom_violin(fill = 'transparent') +
+#   geom_jitter(data = data.sum %>%
+#                 filter(orf_name %in% unique(data.crsp$orf_name[data.crsp$Hsu2013 >= 95 & data.crsp$Doench2014OnTarget >= 0.7 &
+#                                                                  !is.na(data.crsp$Doench2014OnTarget)]),
+#                        hours == saturation, orf_type == 'Gene',
+#                        arm == 'SD-Met-Cys-Ura+Gal', cs_mean <= 4),
+#               aes(y = cs_mean, x = 'Gene', col = phenotype), size = 1) +
+#   geom_violin(data = data.sum %>%
+#                 filter(orf_name %in% unique(data.crsp$orf_name[data.crsp$Hsu2013 >= 95 & data.crsp$Doench2014OnTarget >= 0.7 &
+#                                                                  !is.na(data.crsp$Doench2014OnTarget)]),
+#                        hours == saturation, orf_type == 'Gene',
+#                        arm == 'SD-Met-Cys-Ura+Gal', cs_mean <= 4),
+#               aes(y = cs_mean, x = 'Gene'), fill = 'transparent') +
+#   scale_y_continuous(minor_breaks = seq(-2,10,0.1)) +
+#   facet_wrap(.~arm*stage, nrow = 3) +
+#   scale_color_discrete(name = 'Phenotype') +
+#   labs(title = 'ORFs with at least one good CRISPR Target',
+#        x = 'ORF Type', y = 'Fitness') +
+#   theme_linedraw() +
+#   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+#         axis.title = element_text(size = titles),
+#         axis.text = element_text(size = txt),
+#         legend.title = element_text(size = titles),
+#         legend.text = element_text(size = txt),
+#         legend.position = 'bottom',
+#         legend.key.size = unit(3, "mm"),
+#         legend.box.spacing = unit(0.5,"mm"),
+#         strip.text = element_text(size = txt,
+#                                   face = 'bold',
+#                                   margin = margin(0.1,0,0.1,0, "mm")))
+# ggsave(sprintf("%s/%s/GOOD_CRISPR_FITNESS.jpg",fig_path, expt.name), plot.crspr.good,
+#        height = one.c, width = one.c, units = 'mm',
+#        dpi = 600)
+# 
+# # 107 PGs are Beneficial >> 24 PGs have no predicted CRISPR Target
+# data.sum %>%
+#   filter(orf_name %in% unique(data.crsp$orf_name[data.crsp$Hsu2013 >= 95 & data.crsp$Doench2014OnTarget >= 0.7 &
+#                                                    !is.na(data.crsp$Doench2014OnTarget)]),
+#          hours == saturation,
+#          arm == 'SD-Met-Cys-Ura+Gal', phenotype == 'Beneficial', orf_type == 'Proto-gene') %>%
+#   group_by(orf_type) %>%
+#   data.frame()
+# 
+# data.sum %>%
+#   filter(orf_name %in% unique(data.crsp$orf_name[data.crsp$Hsu2013 >= 95 & data.crsp$Doench2014OnTarget >= 0.7 &
+#                                                    !is.na(data.crsp$Doench2014OnTarget)]),
+#          hours == saturation) %>%
+#   group_by(arm, stage, orf_type, phenotype) %>%
+#   dplyr::count()
+# 
+# data.sum %>%
+#   filter(hours == saturation,
+#          arm == 'SD-Met-Cys-Ura+Gal') %>%
+#   group_by(orf_type, phenotype) %>%
+#   dplyr::count()
+# 
+# data.sum %>%
+#   filter(hours == saturation) %>%
+#   group_by(arm, stage, orf_type, phenotype) %>%
+#   dplyr::count() %>%
+#   data.frame()
+# 
+# pgs %>%
+#   filter(orf_name %in% unique(data.crsp$orf_name[data.crsp$Hsu2013 >= 95 & data.crsp$Doench2014OnTarget >= 0.7 &
+#                                                    !is.na(data.crsp$Doench2014OnTarget)])) %>%
+#   dplyr::count()
+# 
+# 428-372
+# 
+# 
+# plot.theme <- theme_linedraw() +
+#   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+#         axis.title = element_text(size = titles),
+#         axis.text = element_text(size = txt),
+#         legend.title = element_text(size = titles),
+#         legend.text = element_text(size = txt),
+#         legend.position = 'bottom',
+#         legend.key.size = unit(3, "mm"),
+#         legend.box.spacing = unit(0.5,"mm"),
+#         strip.text = element_text(size = txt,
+#                                   face = 'bold',
+#                                   margin = margin(0.1,0,0.1,0, "mm")))
+# 
+# plot.onandoff <- data.crsp2 %>%
+#   ggplot(aes(x = Doench2014OnTarget, y = Hsu2013)) +
+#   geom_point(size = 0.2) +
+#   plot.theme
+# 
+# plot.on <- data.crsp2 %>%
+#   ggplot() +
+#   geom_line(aes(x = Doench2014OnTarget), stat = 'density') +
+#   plot.theme + theme_minimal() +
+#   theme(axis.title = element_blank(),
+#         axis.text = element_blank())
+# 
+# plot.off <- data.crsp2 %>%
+#   ggplot() +
+#   geom_line(aes(y = Hsu2013), stat = 'density') +
+#   plot.theme + theme_minimal() +
+#   theme(axis.title = element_blank(),
+#         axis.text = element_blank())
+# 
+# ggpubr::ggarrange(plot.on,NULL,plot.onandoff,plot.off,nrow = 2,ncol = 2,align = 'hv',
+#                   widths = c(3, 1), heights = c(1, 3))
+# 
 
+
+##### EFFECT SIZE DISTRIBUTION
+data.sum %>%
+  ggplot(aes(x = es)) +
+  geom_line(stat = 'density', trim = T) +
+  facet_wrap(.~arm * stage)
+
+##### GO/KEGG ENRICHMENT
 goe <- data.frame()
 kegg <- data.frame()
-for (s in levels(data.diff$stage)) {
-  for (p in unique(data.diff$phenotype[data.diff$stage == s])) {
-    temp.deg <- data.diff$orf_name[data.diff$stage == s & data.diff$phenotype == p]
-    temp.deg <- bitr(temp.deg, fromType = "ORF",
-                     toType = c("ENTREZID","GENENAME","ENSEMBL"),
-                     OrgDb = org.Sc.sgd.db)
-    temp.deg <- temp.deg[!is.na(temp.deg$ENSEMBL),]
-    
-    temp.goe <- enrichGO(gene          = temp.deg$ENSEMBL,
-                         universe      = allgenes$ENSEMBL,
-                         OrgDb         = org.Sc.sgd.db,
-                         keyType       = "ENSEMBL",
-                         ont           = "ALL",
-                         pAdjustMethod = "BH",
-                         pvalueCutoff  = 0.01,
-                         qvalueCutoff  = 0.05)
-    if (dim(temp.goe)[1] == 0) {
-      cat(sprintf('There are no GO term enrichment for %s ORFs in %s.\n',p,s))
-    } else{
-      cat(sprintf('GO term enrichment for %s ORFs in %s are:\n%s\n',
-                  p,s,
-                  paste(temp.goe$Description,collapse = ', ')))
-      goe <- rbind(goe, data.frame(temp.goe, stage = s, phenotype = p))
-    }
-    
-    temp.kegg <- enrichKEGG(gene         = temp.deg$ENSEMBL,
-                            universe     = allgenes$ENSEMBL,
-                            organism     = 'sce',
-                            pvalueCutoff = 0.05)
-    if (dim(temp.kegg)[1] == 0) {
-      cat(sprintf('There are no KEGG pathway enriched for %s ORFs in %s.\n',p,s))
-    } else{
-      cat(sprintf('KEGG pathway enrichment for %s ORFs in %s are:\n%s\n',
-                  p,s,
-                  paste(temp.kegg$Description,collapse = ', ')))
-      kegg <- rbind(kegg, data.frame(temp.kegg, stage = s, phenotype = p))
+for (a in unique(data.sum$arm)) {
+  allgenes <- unique(data.sum$orf_name[data.sum$arm == a])
+  allgenes <- bitr(allgenes, fromType = "ORF",
+                   toType = c("ENTREZID","GENENAME","ENSEMBL"),
+                   OrgDb = org.Sc.sgd.db)
+  allgenes <- allgenes[!is.na(allgenes$ENSEMBL),]
+  for (s in unique(data.sum$stage[data.sum$arm == a])) {
+    for (p in unique(data.sum$phenotype[data.sum$stage == s & data.sum$arm == a])) {
+      temp.deg <- data.sum$orf_name[data.sum$stage == s & data.sum$phenotype == p & data.sum$arm == a]
+      temp.deg <- bitr(temp.deg, fromType = "ORF",
+                       toType = c("ENTREZID","GENENAME","ENSEMBL"),
+                       OrgDb = org.Sc.sgd.db)
+      temp.deg <- temp.deg[!is.na(temp.deg$ENSEMBL),]
+      
+      temp.goe <- enrichGO(gene          = temp.deg$ENSEMBL,
+                           universe      = allgenes$ENSEMBL,
+                           OrgDb         = org.Sc.sgd.db,
+                           keyType       = "ENSEMBL",
+                           ont           = "ALL",
+                           pAdjustMethod = "BH",
+                           pvalueCutoff  = 0.01,
+                           qvalueCutoff  = 0.05)
+      if (dim(temp.goe)[1] == 0) {
+        cat(sprintf('There are no GO term enrichment for %s ORFs in %s %s.\n',p,a,s))
+      } else{
+        cat(sprintf('GO term enrichment for %s ORFs in %s %s are:\n%s\n',
+                    p,a,s,
+                    paste(temp.goe$Description,collapse = ', ')))
+        goe <- rbind(goe, data.frame(temp.goe, arm = a, stage = s, phenotype = p))
+      }
+      
+      temp.kegg <- enrichKEGG(gene         = temp.deg$ENSEMBL,
+                              universe     = allgenes$ENSEMBL,
+                              organism     = 'sce',
+                              pvalueCutoff = 0.05)
+      if (dim(temp.kegg)[1] == 0) {
+        cat(sprintf('There are no KEGG pathway enriched for %s ORFs in %s %s.\n',p,a,s))
+      } else{
+        cat(sprintf('KEGG pathway enrichment for %s ORFs in %s %s are:\n%s\n',
+                    p,a,s,
+                    paste(temp.kegg$Description,collapse = ', ')))
+        kegg <- rbind(kegg, data.frame(temp.kegg, arm = a, stage = s, phenotype = p))
+      }
     }
   }
 }
@@ -595,8 +581,8 @@ kegg$GeneRatio <- as.numeric(str_split(kegg$GeneRatio,'/',simplify = T)[,1])/
 kegg$BgRatio <- as.numeric(str_split(kegg$BgRatio,'/',simplify = T)[,1])/
   as.numeric(str_split(kegg$BgRatio,'/',simplify = T)[,2])
 
-goe <- goe[order(goe$stage,goe$phenotype,-goe$GeneRatio,-goe$Count,goe$qvalue),]
-kegg <- kegg[order(kegg$stage,kegg$phenotype,-kegg$GeneRatio,-kegg$Count,kegg$qvalue),]
+goe <- goe[order(goe$arm,goe$stage,goe$phenotype,-goe$GeneRatio,-goe$Count,goe$qvalue),]
+kegg <- kegg[order(kegg$arm,kegg$stage,kegg$phenotype,-kegg$GeneRatio,-kegg$Count,kegg$qvalue),]
 
 write.csv(goe, file = sprintf('%s/%s/go_enrichments.csv', res_path, expt.name))
 write.csv(kegg, file = sprintf('%s/%s/kegg_enrichments.csv', res_path, expt.name))
@@ -614,7 +600,7 @@ data.ded <- merge(merge(data.sum[data.sum$stage == 'Pre-Screen #1' & data.sum$ho
                         by = c('arm','orf_name','strain_id','orf_type'), suffixes = c('_PS1','_PS2'), all = T),
                   data.sum[data.sum$stage == 'Final Screen' & data.sum$hours == data.sum$saturation, c('arm','orf_name','strain_id','fitness','cs','orf_type','phenotype')],
                   by = c('arm','orf_name','strain_id','orf_type'), suffixes = c('','_FS'), all = T)
-data.cnts$phenotype <- factor(data.cnts$phenotype, levels = c('Beneficial','Neutral','Deleterious','Dead'))head(data.ded)
+head(data.ded)
 data.ded$phenotype_PS2 <- as.character(data.ded$phenotype_PS2)
 data.ded$phenotype <- as.character(data.ded$phenotype)
 data.ded$phenotype_PS2[is.na(data.ded$phenotype_PS2)] <- 'Dead'
@@ -629,49 +615,37 @@ data.ded$cs[data.ded$phenotype == 'Dead'] <- 0
 
 colnames(data.ded) <- c(colnames(data.ded)[1:10],'fitness_FS','cs_FS','phenotype_FS')
 
-data.ded <- merge(data.ded[data.ded$arm == 'SD-Met-Cys+Gal',-1], data.ded[data.ded$arm == 'SD+Met-Cys+Gal',-1],
+data.ded <- merge(data.ded[data.ded$arm == 'SD-Met-Cys-Ura+Gal',-1], data.ded[data.ded$arm == 'SC-Ura+Gal',-1],
                   by = c('orf_name','strain_id','orf_type'), suffixes = c('_MM','_PM'), all = T)
-
-data.ded$diff_PS1 <- data.ded$fitness_PS1_MM - data.ded$fitness_PS1_PM
-data.ded$diff_PS2 <- data.ded$fitness_PS2_MM - data.ded$fitness_PS2_PM
-data.ded$diff_FS <- data.ded$fitness_FS_MM - data.ded$fitness_FS_PM
+# data.ded$diff_PS1 <- data.ded$fitness_PS1_MM - data.ded$fitness_PS1_PM
+# data.ded$diff_PS2 <- data.ded$fitness_PS2_MM - data.ded$fitness_PS2_PM
+# data.ded$diff_FS <- data.ded$fitness_FS_MM - data.ded$fitness_FS_PM
 head(data.ded)
 
 data.ded %>%
-  group_by(orf_type, phenotype_PS1_MM) %>%
-  count()
+  group_by(orf_type, phenotype_PS2_MM) %>%
+  dplyr::count()
 
 ##### COUNTS OF PGS BENEFICIAL, DELETERIOUS, NEUTRAL AND DEAD
-head(data.diff)
-data.ded <- merge(merge(merge(data.ded, data.diff[,c('stage','orf_name','strain_id','orf_type','phenotype')] %>% filter(stage == 'Pre-Screen #1'),
-                              by = c('orf_name','strain_id','orf_type'), all = T),
-                        data.diff[,c('stage','orf_name','strain_id','orf_type','phenotype')] %>% filter(stage == 'Pre-Screen #2'),
-                        by = c('orf_name','strain_id','orf_type'), all = T),
-                  data.diff[,c('stage','orf_name','strain_id','orf_type','phenotype')] %>% filter(stage == 'Final Screen'),
-                  by = c('orf_name','strain_id','orf_type'), all = T)
-data.ded <- data.ded[,c(-29,-27,-25)]
-colnames(data.ded) <- c(colnames(data.ded)[1:24],'phenotype_PS1_diff','phenotype_PS2_diff','phenotype_FS_diff')
-
 data.cnts <- data.ded[,str_detect(colnames(data.ded), 'phenotype') | colnames(data.ded) %in% c('orf_name','orf_type')]
 data.cnts <- melt(data.cnts, id.vars = c('orf_name','orf_type'), variable.name = 'level', value.name = 'phenotype')
 data.cnts$phenotype[data.cnts$phenotype == 'Dead'] <- 'Deleterious'
 
 data.cnts <- merge(data.cnts[!is.na(data.cnts$phenotype),] %>%
                      group_by(level,orf_type,phenotype) %>%
-                     count(), data.cnts[!is.na(data.cnts$phenotype),] %>%
+                     dplyr::count(), data.cnts[!is.na(data.cnts$phenotype),] %>%
                      group_by(level,orf_type) %>%
-                     count(), by = c('level','orf_type'), suffixes = c('','_total'))
+                     dplyr::count(), by = c('level','orf_type'), suffixes = c('','_total'))
 data.cnts$percentage <- data.cnts$n/data.cnts$n_total * 100 
 
 data.cnts$stage[str_detect(data.cnts$level,'PS1')] <- 'Pre-Screen #1'
 data.cnts$stage[str_detect(data.cnts$level,'PS2')] <- 'Pre-Screen #2'
 data.cnts$stage[str_detect(data.cnts$level,'FS')] <- 'Final Screen'
-data.cnts$stage <- factor(data.cnts$stage, levels = c('Pre-Screen #1','Pre-Screen #2','Final Screen'))
+data.cnts$stage <- factor(data.cnts$stage, levels = stages)
 
-data.cnts$arm[str_detect(data.cnts$level,'MM')] <- 'SD-Met-Cys+Gal'
-data.cnts$arm[str_detect(data.cnts$level,'PM')] <- 'SD+Met-Cys+Gal'
-data.cnts$arm[str_detect(data.cnts$level,'diff')] <- 'Differential'
-data.cnts$arm <- factor(data.cnts$arm, levels = c('SD+Met-Cys+Gal','SD-Met-Cys+Gal','Differential'))
+data.cnts$arm[str_detect(data.cnts$level,'MM')] <- 'SD-Met-Cys-Ura+Gal'
+data.cnts$arm[str_detect(data.cnts$level,'PM')] <- 'SC-Ura+Gal'
+data.cnts$arm <- factor(data.cnts$arm, levels = arms)
 
 data.cnts$phenotype <- factor(data.cnts$phenotype, levels = c('Beneficial','Neutral','Deleterious','Dead'))
 
@@ -704,13 +678,12 @@ plot.pheno.cnts <- data.cnts %>%
         legend.box.spacing = unit(0.5,"mm"),
         strip.text = element_text(size = txt,
                                   face = 'bold',
-                                  margin = margin(0.1,0,0.1,0, "mm"))) +
-  coord_cartesian(ylim = c(0,.7))
+                                  margin = margin(0.1,0,0.1,0, "mm")))
 ggsave(sprintf("%s/%s/PHENOTYPE_COUNTS.jpg",fig_path, expt.name), plot.pheno.cnts,
        height = one.c, width = two.c, units = 'mm',
        dpi = 600)  
 
-write.csv(data.cnts, file = sprintf('%s/%s/phenotype_counts.csv',res_path,expt.name))
+# write.csv(data.cnts, file = sprintf('%s/%s/phenotype_counts.csv',res_path,expt.name))
 
 ##### ODDS RATIOS OF PGS BENEFICIAL, DELETERIOUS, NEUTRAL AND DEAD
 head(data.cnts)
@@ -740,7 +713,7 @@ data.or$significant[is.na(data.or$significant)] <- 'No'
 
 data.or$phenotype <- factor(data.or$phenotype, levels = c('Beneficial','Neutral','Deleterious','Dead'))
 data.or$stage <- factor(data.or$stage, levels = c('Pre-Screen #1','Pre-Screen #2','Final Screen'))
-data.or$arm <- factor(data.or$arm, levels = c('SD+Met-Cys+Gal','SD-Met-Cys+Gal','Differential'))
+data.or$arm <- factor(data.or$arm, levels = c('SC-Ura+Gal','SD-Met-Cys-Ura+Gal','Differential'))
 
 data.or$pg_w_effect <- as.numeric(data.or$pg_w_effect)
 data.or$pg_wo_effect <- as.numeric(data.or$pg_wo_effect)
@@ -761,11 +734,11 @@ plot.or <- ggplot(data.or,aes(x=phenotype,y=or,ymin=bottom,ymax=top))+
   geom_point(stat="identity",  shape=21, size=2, stroke=1, fill = "white")+
   geom_errorbar(width=0.25)+
   geom_hline(yintercept=1,linetype="dashed",color="red")+
-  geom_text(aes(x = phenotype, y = 2, label = label), size = 2, col = 'red') +
+  geom_text(aes(x = phenotype, y = 8, label = label), size = 2, col = 'red') +
   labs(x='Phenotype',y='Odds Ratio') +
   # scale_y_continuous(trans="log10", breaks=c(0.2,0.5,1,2,5,10)) + 
   # annotation_logticks(sides="l") +
-  facet_wrap(.~stage*arm) +
+  facet_wrap(.~arm*stage, nrow = 2) +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
@@ -782,10 +755,10 @@ ggsave(sprintf("%s/%s/PHENOTYPE_ODDS.jpg",fig_path, expt.name), plot.or,
        height = one.5c, width = one.5c, units = 'mm',
        dpi = 600) 
 
-write.csv(data.or, file = sprintf('%s/%s/phenotype_odds.csv',res_path,expt.name))
+# write.csv(data.or, file = sprintf('%s/%s/phenotype_odds.csv',res_path,expt.name))
 
 ##### SAVING ALL DATA
-save(data, data.cnts, data.ded, data.diff, data.jm, data.lim, data.mad,
-     data.or, data.sap, data.sul, data.sum, diff.dist, goe, kegg,
-     orfs, orfs.jm, orfs.sap, orfs.sul, pgs,
-     file = sprintf('%s/%s/all_data.RData',res_path,expt.name))
+# save(data, data.cnts, data.ded, data.diff, data.jm, data.lim, data.mad,
+#      data.or, data.sap, data.sul, data.sum, diff.dist, goe, kegg,
+#      orfs, orfs.jm, orfs.sap, orfs.sul, pgs,
+#      file = sprintf('%s/%s/all_data.RData',res_path,expt.name))
