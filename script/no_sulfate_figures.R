@@ -1,7 +1,7 @@
-##### NO SULFATE EXPERIMENT - FIGURES
+##### NO SULFATE FIGURES
 ##### Author : Saurin Parikh
 ##### Email  : dr.saurin.parikh@gmail.com
-##### Date   : 08/04/2021 
+##### Date   : 08/11/2021 
 
 ##### INITIALIZE
 library(ggplot2)
@@ -30,36 +30,8 @@ res_path <- "~/R/Projects/methionine/results"
 expt.name <- "nosulfate"
 
 source("~/R/Projects/methionine/functions/colorstrip.R")
-
-##### LOAD DATA
-load(file = sprintf('%s/%s/colonysizes2.RData', out_path, expt.name))
-load(file = sprintf('%s/%s/anova_results.RData', out_path, expt.name))
-# load(file = sprintf('%s/%s/anova_results2.RData', out_path, expt.name))
-load(file = sprintf('%s/%s/anova_results2_nopilot.RData', out_path, expt.name))
-
-##### LEVELS
-attempt.levels <- c('pilot', 'copy1', 'copy2')
-strain.levels <- c('FY4', 'met12', 'str3', 'met3','met15', 'met2', 'met6', 'met13', 'cys4', 'yll', 'BY4742', 'BY4741')
-condition.levels <- c('YPDA', 'SD-Met-Cys+Glu')
-
-data$condition <- as.character(data$condition)
-data$condition[data$condition == 'SD-MET+Glucose'] <- 'SD-Met-Cys+Glu'
-anova.res$condition <- as.character(anova.res$condition)
-anova.res$condition[anova.res$condition == 'SD-MET+Glucose'] <- 'SD-Met-Cys+Glu'
-anova.res2$condition <- as.character(anova.res2$condition)
-anova.res2$condition[anova.res2$condition == 'SD-MET+Glucose'] <- 'SD-Met-Cys+Glu'
-
-data$attempt <- factor(data$attempt, levels = attempt.levels)
-data$orf_name <- factor(data$orf_name, levels = strain.levels)
-data$condition <- factor(data$condition, levels = condition.levels)
-
-anova.res$strain1 <- factor(anova.res$strain1, levels = strain.levels)
-anova.res$strain2 <- factor(anova.res$strain2, levels = strain.levels)
-anova.res$condition <- factor(anova.res$condition, levels = condition.levels)
-
-anova.res2$strain1 <- factor(anova.res2$strain1, levels = strain.levels)
-anova.res2$strain2 <- factor(anova.res2$strain2, levels = strain.levels)
-anova.res2$condition <- factor(anova.res2$condition, levels = condition.levels)
+load(file = sprintf('%s/%s/colonysizes.RData', out_path, expt.name))
+load(file = sprintf('%s/%s/stats.RData', out_path, expt.name))
 
 ##### FIGURE SIZE
 one.c <- 90 #single column
@@ -67,111 +39,64 @@ one.5c <- 140 #1.5 column
 two.c <- 190 #full width
 
 ##### TEXT SIZE
-titles <- 7
-txt <- 7
+titles <- 8
+txt <- 8
 lbls <- 9
 
-##### STAT LABELS
-anova.res$label[anova.res$rcs_between > 0.05] <- 'ns'
-anova.res$label[anova.res$rcs_between <= 0.05] <- '*'
-anova.res$label[anova.res$rcs_between <= 0.01] <- '**'
-anova.res$label[anova.res$rcs_between <= 0.001] <- '***'
-anova.res$label[anova.res$rcs_between <= 0.0001] <- '****'
-
-anova.res2$label[anova.res2$rcs_kw > 0.05] <- 'ns'
-anova.res2$label[anova.res2$rcs_kw <= 0.05] <- '*'
-anova.res2$label[anova.res2$rcs_kw <= 0.01] <- '**'
-anova.res2$label[anova.res2$rcs_kw <= 0.001] <- '***'
-anova.res2$label[anova.res2$rcs_kw <= 0.0001] <- '****'
-
-data$attempt_label[data$attempt == 'pilot'] <- 'Replicate 0'
-data$attempt_label[data$attempt == 'copy1'] <- 'Replicate 1'
-data$attempt_label[data$attempt == 'copy2'] <- 'Replicate 2'
-
-anova.res$attempt_label[anova.res$attempt == 'pilot'] <- 'Replicate 0'
-anova.res$attempt_label[anova.res$attempt == 'copy1'] <- 'Replicate 1'
-anova.res$attempt_label[anova.res$attempt == 'copy2'] <- 'Replicate 2'
-
-##### STRAIN LABELES
-strain.labs <- c('FY4', 'FY4-*met12Δ*', 'FY4-*str3Δ*', 'FY4-*met3Δ*', 'FY4-*met15Δ*', 'FY4-*met2Δ*', 'FY4-*met6Δ*', 
-                 'FY4-*met13Δ*', 'FY4-*cys4Δ*', 'FY4-*yll058wΔ*', 'BY4742', 'BY4741')
-
 #####
-plot.rcs.box.kw <- data[data$time == 't_final' & data$attempt != 'pilot' & data$orf_name != 'yll',] %>%
-  group_by(attempt, condition, time, orf_name, bio_rep) %>%
-  # summarise(average = mean(average, na.rm = T), relative_cs = mean(relative_cs, na.rm = T)) %>%
-  data.frame() %>%
-  ggplot(aes(x = orf_name, y = relative_cs)) +
-  geom_boxplot(aes(fill = bio_rep), size = 0.3, outlier.shape = NA) +
-  # geom_jitter(aes(col = bio_rep, shape = attempt), size = 1) +
-  # geom_jitter(size = 1) +
-  geom_text(data = anova.res2[anova.res2$strain2 == 'FY4' & 
-                                anova.res2$time == 't_final' & anova.res2$strain1 != 'yll',],
-            aes(x = strain1, y = 1.5, label = label), size = 2.2, col = 'red') +
-  geom_text(data = anova.res2[anova.res2$strain2 == 'FY4' &
-                                anova.res2$time == 't_final' & anova.res2$strain1 != 'yll',],
-            aes(x = strain1, y = 1.4, label = sprintf('%0.2f%%',effect_size*100)),
-            size = 2.2) +
-  scale_x_discrete(labels = strain.labs[-10]) +
-  scale_y_continuous(minor_breaks = seq(-2,2,0.05)) +
-  facet_wrap(.~condition, nrow = 2) +
-  labs(x = 'Strains', y = 'Relative Colony Size') +
-  scale_fill_manual(name = 'Biological Replicate',
-                    values = c("1" = "#673AB7",
-                               "2" = "#009688",
-                               "3" = "#607D8B",
-                               "4" = "#FFC107")) +
-  scale_shape_discrete(name = 'Experimental Replicate') +
-  theme_linedraw() +
-  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
-        axis.title = element_text(size = titles),
-        axis.text = element_text(size = txt),
-        # axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
-        axis.text.x = ggtext::element_markdown(angle = 45, vjust = 1, hjust = 1),
-        legend.title = element_text(size = titles),
-        legend.text = element_text(size = txt),
-        legend.position = 'bottom',
-        legend.key.size = unit(3, "mm"),
-        legend.box.spacing = unit(0.5,"mm"),
-        strip.text = element_text(size = txt,
-                                  face = 'bold',
-                                  margin = margin(0.1,0,0.1,0, "mm"))) +
-  coord_cartesian(ylim = c(0,1.5))
-plot.rcs.box.kw <- colorstrip(plot.rcs.box.kw,c("#448AFF","#C2185B"))
-ggsave(sprintf("%s/%s/final/RELATIVE_COLONY_SIZE_BOX_KW.jpg",fig_path, expt.name),
-       plot.rcs.box.kw,
-       height = one.5c, width = one.5c, units = 'mm',
-       dpi = 600)
-# write.csv(anova.res2[anova.res2$strain2 == 'FY4' & anova.res2$time == 't_final',],
-#           file = sprintf('%s/%s/final/RELATIVE_COLONY_SIZE_KW.csv', res_path, expt.name))
+head(data)
+# temp <- cbind(str_split(unique(data$arm), '_', simplify = T), unique(data$arm))
+temp <- data.frame(cbind(str_split(unique(data$condition), '_', simplify = T), unique(data$condition)), stringsAsFactors = F)
+colnames(temp) <- c('ynb_type','sulfate','media','base','condition')
+temp[temp$condition == 'SD+Met+Glu_Agar',] <- c('Difco','+sulfate','SD+Met','Agar','SD+Met+Glu_Agar')
+temp$sulfate[temp$sulfate == 'YNB'] <- '+sulfate'
+temp$sulfate <- str_replace(temp$sulfate, 'sulfates', 'sulfate')
+temp$methionine <- str_remove(temp$media, 'SD')
+data <- merge(data, temp, by = 'condition')
+data.sum <- merge(data.sum, temp, by = 'condition')
 
-##### SUPPLEMENTARY FIGURES #####
-##### DENSITY PLOT WITH ANOVA RESULTS
-plot.rcs.den.aov <- data[data$attempt != 'pilot' & data$time == 't_final' & data$orf_name != 'yll',] %>%
-  ggplot(aes(x = relative_cs, y = orf_name)) +
-  geom_density_ridges(quantile_lines = TRUE,
-                      aes(fill = bio_rep),
-                      scale = 2, alpha = 0.7, size = 0.2,
-                      vline_size = 0.2, vline_color = "black") +
-  geom_text(data = anova.res[anova.res$attempt != 'pilot' &
-                               anova.res$strain2 == 'FY4' & 
-                               anova.res$time == 't_final' &
-                               anova.res$strain1 != 'yll',],
-            aes(y = strain1, x = 1.5, label = label), size = 2, col = 'red') +
-  labs(x = 'Relative Colony Size',
-       y = 'Strain') +
-  scale_y_discrete(labels = strain.labs[-10]) +
-  scale_fill_manual(name = 'Biological Replicate',
-                    values = c("1" = "#673AB7",
-                               "2" = "#009688",
-                               "3" = "#607D8B",
-                               "4" = "#FFC107")) +
-  facet_wrap(.~condition*attempt_label, nrow = 1) +
+data$stage[data$stage == 'FS'] <- 'S1'
+data$hours[data$stage == 'S1'] <- 149
+data.sum$stage[data.sum$stage == 'FS'] <- 'S1'
+data.sum$hours[data.sum$stage == 'S1'] <- 149
+
+data$stage <- factor(data$stage, levels = c('S1','S2','S3','Re1'))
+data$ynb_type <- factor(data$ynb_type, levels = c('Difco','Home'))
+data$sulfate <- factor(data$sulfate, levels = c('+sulfate','-sulfate'))
+data$base <- factor(data$base, levels = c('Agar','Agarose'))
+data$methionine <- factor(data$methionine, levels = c('+Met','-Met'))
+data$orf_name <- factor(data$orf_name, levels = c('FY4','FY4_met3del','FY4_met15del','BY4742','BY4741'))
+
+data.sum$stage <- factor(data.sum$stage, levels = c('S1','S2','S3','Re1'))
+data.sum$ynb_type <- factor(data.sum$ynb_type, levels = c('Difco','Home'))
+data.sum$sulfate <- factor(data.sum$sulfate, levels = c('+sulfate','-sulfate'))
+data.sum$base <- factor(data.sum$base, levels = c('Agar','Agarose'))
+data.sum$methionine <- factor(data.sum$methionine, levels = c('+Met','-Met'))
+data.sum$orf_name <- factor(data.sum$orf_name, levels = c('FY4','FY4_met3del','FY4_met15del','BY4742','BY4741'))
+
+strain.labs <- c('FY4','FY4-*met3Δ*','FY4-*met15Δ*','BY4742','BY4741')
+######
+head(data)
+plot.cs.box <- data %>%
+  filter(hours %in% c(92,149)) %>%
+  ggplot(aes(x = orf_name, y = average)) +
+  geom_boxplot(aes(fill = orf_name, group = orf_name), size = 0.2,
+               outlier.shape = NA) +
+  facet_grid(base*ynb_type*sulfate*methionine ~ stage,
+             labeller = labeller(stage = c('S1' = 'Pin #1',
+                                           'S2' = 'Pin #2',
+                                           'S3' = 'Pin #3',
+                                           'Re1' = 'Pin #3 - Revival'))) +
+  labs(x = 'Strain', y = 'Colony Size') +
+  scale_x_discrete(labels = strain.labs) +
+  # scale_y_continuous(trans = 'log2') +
+  scale_fill_discrete(name = '', guide = F) +
   theme_linedraw() +
-  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+  theme(plot.title = element_text(size = titles, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
-        axis.text.y = ggtext::element_markdown(),
+        axis.text.x = ggtext::element_markdown(angle = 45, vjust = 1, hjust = 1),
+        axis.ticks.x = element_blank(),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
         legend.position = 'bottom',
@@ -180,9 +105,15 @@ plot.rcs.den.aov <- data[data$attempt != 'pilot' & data$time == 't_final' & data
         strip.text = element_text(size = txt,
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")))
-plot.rcs.den.aov <- colorstrip(plot.rcs.den.aov,c("#448AFF","#448AFF","#C2185B","#C2185B"))
-ggsave(sprintf("%s/%s/final/RELATIVE_COLONY_SIZE_DENSITY_ANOVA.jpg",fig_path, expt.name), plot.rcs.den.aov,
-       height = 70, width = two.c, units = 'mm',
+ggsave(sprintf("%s/%s/RELATIVE_COLONY_SIZE_BOX.jpg",fig_path, expt.name),
+       plot.cs.box,
+       height = two.c, width = two.c, units = 'mm',
        dpi = 600)
 
+#####
+data %>%
+  # filter(stage == 'S3') %>%
+  ggplot(aes(x = hours, y = average)) +
+  stat_summary(aes(col = orf_name, group = orf_name), fun = 'mean', geom = 'line') +
+  facet_grid(base*ynb_type*sulfate*methionine ~ stage)
 

@@ -96,7 +96,7 @@ anova.res$attempt_label[anova.res$attempt == 'copy2'] <- 'Replicate 2'
 strain.labs <- c('FY4', 'FY4-*met12Δ*', 'FY4-*str3Δ*', 'FY4-*met3Δ*', 'FY4-*met15Δ*', 'FY4-*met2Δ*', 'FY4-*met6Δ*', 
                  'FY4-*met13Δ*', 'FY4-*cys4Δ*', 'FY4-*yll058wΔ*', 'BY4742', 'BY4741')
 
-#####
+##### WITHOUT YLL
 plot.rcs.box.kw <- data[data$time == 't_final' & data$attempt != 'pilot' & data$orf_name != 'yll',] %>%
   group_by(attempt, condition, time, orf_name, bio_rep) %>%
   # summarise(average = mean(average, na.rm = T), relative_cs = mean(relative_cs, na.rm = T)) %>%
@@ -105,13 +105,13 @@ plot.rcs.box.kw <- data[data$time == 't_final' & data$attempt != 'pilot' & data$
   geom_boxplot(aes(fill = bio_rep), size = 0.3, outlier.shape = NA) +
   # geom_jitter(aes(col = bio_rep, shape = attempt), size = 1) +
   # geom_jitter(size = 1) +
-  geom_text(data = anova.res2[anova.res2$strain2 == 'FY4' & 
-                               anova.res2$time == 't_final' & anova.res2$strain1 != 'yll',],
-            aes(x = strain1, y = 1.5, label = label), size = 2.2, col = 'red') +
-  geom_text(data = anova.res2[anova.res2$strain2 == 'FY4' &
-                                anova.res2$time == 't_final' & anova.res2$strain1 != 'yll',],
-            aes(x = strain1, y = 1.4, label = sprintf('%0.2f%%',effect_size*100)),
-            size = 2.2) +
+  # geom_text(data = anova.res2[anova.res2$strain2 == 'FY4' & 
+  #                              anova.res2$time == 't_final' & anova.res2$strain1 != 'yll',],
+  #           aes(x = strain1, y = 1.5, label = label), size = 2.2, col = 'red') +
+  # geom_text(data = anova.res2[anova.res2$strain2 == 'FY4' &
+  #                               anova.res2$time == 't_final' & anova.res2$strain1 != 'yll',],
+  #           aes(x = strain1, y = 1.4, label = sprintf('%0.2f%%',effect_size*100)),
+  #           size = 2.2) +
   scale_x_discrete(labels = strain.labs[-10]) +
   scale_y_continuous(minor_breaks = seq(-2,2,0.05)) +
   facet_wrap(.~condition, nrow = 2) +
@@ -137,7 +137,9 @@ plot.rcs.box.kw <- data[data$time == 't_final' & data$attempt != 'pilot' & data$
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm"))) +
   coord_cartesian(ylim = c(0,1.5))
-plot.rcs.box.kw <- colorstrip(plot.rcs.box.kw,c("#448AFF","#C2185B"))
+plot.rcs.box.kw <- colorstrip(plot.rcs.box.kw,c("#00796B","#212121"))
+fig3A <- plot.rcs.box.kw
+save(fig3A, file = 'figures/final/fig3A.RData')
 ggsave(sprintf("%s/%s/final/RELATIVE_COLONY_SIZE_BOX_KW.jpg",fig_path, expt.name),
        plot.rcs.box.kw,
        height = one.5c, width = one.5c, units = 'mm',
@@ -180,9 +182,99 @@ plot.rcs.den.aov <- data[data$attempt != 'pilot' & data$time == 't_final' & data
         strip.text = element_text(size = txt,
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")))
-plot.rcs.den.aov <- colorstrip(plot.rcs.den.aov,c("#448AFF","#448AFF","#C2185B","#C2185B"))
+plot.rcs.den.aov <- colorstrip(plot.rcs.den.aov,c("#C2185B","#C2185B","#448AFF","#448AFF"))
 ggsave(sprintf("%s/%s/final/RELATIVE_COLONY_SIZE_DENSITY_ANOVA.jpg",fig_path, expt.name), plot.rcs.den.aov,
        height = 70, width = two.c, units = 'mm',
        dpi = 600)
 
+
+##### ONLY YLL
+plot.rcs.box.kw <- data[data$time == 't_final' & data$attempt != 'pilot' & data$orf_name %in% c('FY4','yll'),] %>%
+  group_by(attempt, condition, time, orf_name, bio_rep) %>%
+  # summarise(average = mean(average, na.rm = T), relative_cs = mean(relative_cs, na.rm = T)) %>%
+  data.frame() %>%
+  ggplot(aes(x = orf_name, y = relative_cs)) +
+  geom_boxplot(aes(fill = bio_rep), size = 0.3, outlier.shape = NA) +
+  # geom_jitter(aes(col = bio_rep, shape = attempt), size = 1) +
+  # geom_jitter(size = 1) +
+  geom_text(data = anova.res2[anova.res2$strain2 == 'FY4' & 
+                                anova.res2$time == 't_final' & anova.res2$strain1 == 'yll',],
+            aes(x = strain1, y = 1.5, label = label), size = 2.2, col = 'red') +
+  geom_text(data = anova.res2[anova.res2$strain2 == 'FY4' &
+                                anova.res2$time == 't_final' & anova.res2$strain1 == 'yll',],
+            aes(x = strain1, y = 1.4, label = sprintf('%0.2f%%',effect_size*100)),
+            size = 2.2) +
+  scale_x_discrete(labels = strain.labs[c(1,10)]) +
+  scale_y_continuous(minor_breaks = seq(-2,2,0.05)) +
+  facet_wrap(.~condition, nrow = 1) +
+  labs(x = 'Strains', y = 'Relative Colony Size') +
+  scale_fill_manual(name = 'Biological Replicate',
+                    values = c("1" = "#673AB7",
+                               "2" = "#009688",
+                               "3" = "#607D8B",
+                               "4" = "#FFC107")) +
+  scale_shape_discrete(name = 'Experimental Replicate') +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        # axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        axis.text.x = ggtext::element_markdown(),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm"))) +
+  coord_cartesian(ylim = c(0,1.5))
+plot.rcs.box.kw <- colorstrip(plot.rcs.box.kw,c("#212121","#00796B"))
+fig6B <- plot.rcs.box.kw
+save(fig6B, file = 'figures/final/fig6B.RData')
+# ggsave(sprintf("%s/%s/final/RELATIVE_COLONY_SIZE_BOX_KW_YLL.jpg",fig_path, expt.name),
+#        plot.rcs.box.kw,
+#        height = 70, width = one.c, units = 'mm',
+#        dpi = 600)
+# write.csv(anova.res2[anova.res2$strain2 == 'FY4' & anova.res2$time == 't_final',],
+#           file = sprintf('%s/%s/final/RELATIVE_COLONY_SIZE_KW.csv', res_path, expt.name))
+
+## DENSITY PLOT WITH ANOVA RESULTS WITH YLL
+plot.rcs.den.aov <- data[data$attempt != 'pilot' & data$time == 't_final' & data$orf_name %in% c('FY4','yll'),] %>%
+  ggplot(aes(x = relative_cs, y = orf_name)) +
+  geom_density_ridges(quantile_lines = TRUE,
+                      aes(fill = bio_rep),
+                      scale = 2, alpha = 0.7, size = 0.2,
+                      vline_size = 0.2, vline_color = "black") +
+  geom_text(data = anova.res[anova.res$attempt != 'pilot' &
+                               anova.res$strain2 == 'FY4' & 
+                               anova.res$time == 't_final' &
+                               anova.res$strain1 == 'yll',],
+            aes(y = strain1, x = 1.5, label = label), size = 2, col = 'red') +
+  labs(x = 'Relative Colony Size',
+       y = 'Strain') +
+  scale_y_discrete(labels = strain.labs[c(1,10)]) +
+  scale_fill_manual(name = 'Biological Replicate',
+                    values = c("1" = "#673AB7",
+                               "2" = "#009688",
+                               "3" = "#607D8B",
+                               "4" = "#FFC107")) +
+  facet_wrap(.~condition*attempt_label, nrow = 1) +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        axis.text.y = ggtext::element_markdown(),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm")))
+plot.rcs.den.aov <- colorstrip(plot.rcs.den.aov,c("#C2185B","#C2185B","#448AFF","#448AFF"))
+ggsave(sprintf("%s/%s/final/RELATIVE_COLONY_SIZE_DENSITY_ANOVA_YLL.jpg",fig_path, expt.name), plot.rcs.den.aov,
+       height = 70, width = two.c, units = 'mm',
+       dpi = 600)
 

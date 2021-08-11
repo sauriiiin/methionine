@@ -46,7 +46,7 @@ two.c <- 190 #full width
 
 ##### TEXT SIZE
 titles <- 7
-txt <- 5
+txt <- 7
 lbls <- 9
 
 ##### GATHER DATA
@@ -61,7 +61,7 @@ p2c <- dbGetQuery(conn, 'select a.*, b.orf_name from MET_OE_pos2coor a, MET_OE_p
 
 info <- data.frame(rbind(c('PS1','MM',1536,'MET_OE'), c('PS1','PM',1536,'MET_OE'),
                          c('PS2','MM',1536,'MET_OE'), c('PS2','PM',1536,'MET_OE'),
-                         c('FS','PM',6144,'MET_OE')))
+                         c('FS','PM',6144,'MET_OE'),c('FS','MM',6144,'MET_OE')))
 colnames(info) <- c('stage','arm','density','p2c')
 
 pgs <- dbGetQuery(conn, 'select orf_name from PROTOGENES where pg_2012 = 1')
@@ -133,6 +133,9 @@ data.sum$stage <- factor(data.sum$stage, levels = stages)
 data.sum$arm <- factor(data.sum$arm, levels = arms)
 data.sum$phenotype <- factor(data.sum$phenotype, levels = phenotypes)
 data.sum$orf_type <- factor(data.sum$orf_type, levels = orfs)
+
+data <- data[data$hours != 180,]
+data.sum <- data.sum[data.sum$hours != 180,]
 
 for (a in unique(data$arm)) {
   for (s in unique(data$stage[data$arm == a])) {
@@ -515,12 +518,6 @@ ggsave(sprintf("%s/%s/FITNESS_DENSITY.jpg",fig_path, expt.name), plot.fit.den,
 # 
 
 
-##### EFFECT SIZE DISTRIBUTION
-data.sum %>%
-  ggplot(aes(x = es)) +
-  geom_line(stat = 'density', trim = T) +
-  facet_wrap(.~arm * stage)
-
 ##### GO/KEGG ENRICHMENT
 goe <- data.frame()
 kegg <- data.frame()
@@ -588,11 +585,11 @@ write.csv(goe, file = sprintf('%s/%s/go_enrichments.csv', res_path, expt.name))
 write.csv(kegg, file = sprintf('%s/%s/kegg_enrichments.csv', res_path, expt.name))
 
 ##### GO-KEGG PLOTS
-head(goe)
-goe$phenotype <- factor(goe$phenotype, levels = c('Beneficial','Neutral','Deleterious','Dead'))
-goe$stage <- factor(goe$stage, levels = c('Pre-Screen #1','Pre-Screen #2','Final Screen'))
-kegg$phenotype <- factor(kegg$phenotype, levels = c('Beneficial','Neutral','Deleterious','Dead'))
-kegg$stage <- factor(kegg$stage, levels = c('Pre-Screen #1','Pre-Screen #2','Final Screen'))
+# head(goe)
+# goe$phenotype <- factor(goe$phenotype, levels = c('Beneficial','Neutral','Deleterious','Dead'))
+# goe$stage <- factor(goe$stage, levels = c('Pre-Screen #1','Pre-Screen #2','Final Screen'))
+# kegg$phenotype <- factor(kegg$phenotype, levels = c('Beneficial','Neutral','Deleterious','Dead'))
+# kegg$stage <- factor(kegg$stage, levels = c('Pre-Screen #1','Pre-Screen #2','Final Screen'))
 
 ##### DEATH ANALYSIS
 data.ded <- merge(merge(data.sum[data.sum$stage == 'Pre-Screen #1' & data.sum$hours == data.sum$saturation, c('arm','orf_name','strain_id','fitness','cs','orf_type','phenotype')],

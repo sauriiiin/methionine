@@ -28,7 +28,7 @@ two.c <- 190 #full width
 
 ##### TEXT SIZE
 titles <- 7
-txt <- 5
+txt <- 7
 lbls <- 9
 
 pzfx_tables("/home/sbp29/R/Projects/methionine/data/gina/072321_gina_data.pzfx")
@@ -90,13 +90,16 @@ for (t in unique(data.gina$`Time (min)`)) {
 plot.gina.res <- data.gina %>%
   # filter(outlier == FALSE) %>%
   ggplot(aes(x = `Time (min)`, y = uM)) +
-  stat_summary(aes(group = Sample, col = Sample), fun=mean, geom="line", lwd =0.7) +
-  geom_point(aes(col = Sample)) +
-  geom_point(shape = 20, col = 'black', size = 1) +
-  geom_text(data = ttest.res %>% filter(reference == 'None'),
-            aes(x = 16, y = uM, label = label), col = 'red') +
-  labs(y = 'Log10( uM )') +
-  scale_y_log10() +
+  stat_summary(aes(group = Sample, col = Sample), fun=mean, geom="line", lwd = 0.7) +
+  stat_summary(aes(group = Sample, col = Sample), fun.data = mean_se, geom = "errorbar", lwd = 0.7) +
+  stat_summary(aes(group = Sample), fun=mean, geom="point", size =2) +
+  stat_summary(aes(group = Sample, col = Sample), fun=mean, geom="point", size = 0.5) +
+  labs(y = 'Homocysteine (log2(μM))') +
+  scale_color_manual(name = 'Sample',
+                     values = c('Met15' = "#607D8B",
+                                'Yll058w' = "#9E9E9E",
+                                'None' = "#212121")) +
+  scale_y_continuous(trans = 'log2') +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
@@ -110,8 +113,17 @@ plot.gina.res <- data.gina %>%
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm"))) +
   coord_cartesian(ylim = c(5,125))
-ggsave(sprintf("%s/%s/GINA_RESULTS.jpg",fig_path, expt.name), plot.gina.res,
-       height = one.c, width = one.c, units = 'mm',
-       dpi = 600)
+fig6C <- plot.gina.res
+save(fig6C, file = 'figures/final/fig6C.RData')
+# ggsave(sprintf("%s/%s/GINA_RESULTS.jpg",fig_path, expt.name), plot.gina.res,
+#        height = one.c, width = one.c, units = 'mm',
+#        dpi = 600)
 
 #####
+
+
+
+
+
+
+

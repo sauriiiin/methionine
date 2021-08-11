@@ -221,17 +221,32 @@ for (o in c('FY','BY')) {
          dpi = 600)
   
   plot.growth <- cowplot::plot_grid(plot.all.gc, plot.rauc.box.kw,
-                              ncol = 1, align = 'v', rel_heights = c(0.9,1))
-  ggsave(sprintf("%s/%s/GROWTH_AUC_CURVES_%s.jpg",fig_path, expt.name, o),
-         plot.growth,
-         height = 140, width = two.c, units = 'mm',
-         dpi = 600)
+                              ncol = 1, align = 'v', rel_heights = c(0.9,1),
+                              labels = c('A','B'),
+                              label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
   
-  plot.growth2 <- cowplot::plot_grid(plot.all.gc, plot.gr.box.kw,
-                                     ncol = 1, align = 'v', rel_heights = c(0.9,1))
-  ggsave(sprintf("%s/%s/GROWTH_GR_CURVES_%s.jpg",fig_path, expt.name, o),
-         plot.growth2,
-         height = 140, width = two.c, units = 'mm',
-         dpi = 600)
+  if (o == 'FY') {
+    fig5 <- plot.growth
+    save(fig5, file = 'figures/final/fig5.RData')
+    ggsave(sprintf("%s/%s/GROWTH_AUC_CURVES_%s.jpg",fig_path, expt.name, o),
+           plot.growth,
+           height = 140, width = two.c, units = 'mm',
+           dpi = 600)
+  } else {
+    figSY <- plot.growth
+    save(fig5, file = 'figures/final/figSY.RData')
+    ggsave(sprintf("%s/%s/GROWTH_AUC_CURVES_%s.jpg",fig_path, expt.name, o),
+           plot.growth,
+           height = 140, width = two.c, units = 'mm',
+           dpi = 600)
+  }
+  # plot.growth2 <- cowplot::plot_grid(plot.all.gc, plot.gr.box.kw,
+  #                                    ncol = 1, align = 'v', rel_heights = c(0.9,1),
+  #                                    labels = c('A','B'),
+  #                                    label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
+  # ggsave(sprintf("%s/%s/GROWTH_GR_CURVES_%s.jpg",fig_path, expt.name, o),
+  #        plot.growth2,
+  #        height = 140, width = two.c, units = 'mm',
+  #        dpi = 600)
 }
 

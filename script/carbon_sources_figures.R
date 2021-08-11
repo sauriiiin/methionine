@@ -31,8 +31,8 @@ one.5c <- 140 #1.5 column
 two.c <- 190 #full width
 
 ##### TEXT SIZE
-titles <- 7
-txt <- 7
+titles <- 8
+txt <- 8
 lbls <- 9
 
 info <- data.frame(rbind(c('rep1','MiM_Glu',366),
@@ -108,8 +108,9 @@ crbn_src_data$bio_rep[crbn_src_data$row%%2==0 & crbn_src_data$col%%2==1] = '3'
 crbn_src_data$bio_rep[crbn_src_data$row%%2==1 & crbn_src_data$col%%2==0] = '2'
 crbn_src_data$bio_rep[crbn_src_data$row%%2==0 & crbn_src_data$col%%2==0] = '4'
 
-crbn_src_data$condition <- factor(crbn_src_data$condition, levels = c('MiM_Glu','MiM_Gal','MiM_Et',
-                                                                      'MiU_Glu','MiU_Gal','MiU_Et',
+crbn_src_data$condition <- factor(crbn_src_data$condition, levels = c('MiM_Glu','MiU_Glu',
+                                                                      'MiM_Gal','MiU_Gal',
+                                                                      'MiM_Et','MiU_Et',
                                                                       'GLU','GAL','PlM_Glu'))
 strain.labs <- c('FY4','FY4-*met3Δ*','FY4-*met15Δ*','BY4742','BY4741')
 crbn_src_data <- crbn_src_data[crbn_src_data$expt_rep == 'rep1',c('condition','expt_rep','bio_rep','orf_name','relative_fitness')] 
@@ -146,18 +147,20 @@ anova.res$label[anova.res$rcs_between <= 0.01] <- '**'
 anova.res$label[anova.res$rcs_between <= 0.001] <- '***'
 anova.res$label[anova.res$rcs_between <= 0.0001] <- '****'
  
-anova.res$condition <- factor(anova.res$condition, levels = c('MiM_Glu','MiM_Gal','MiM_Et',
-                                                              'MiU_Glu','MiU_Gal','MiU_Et',
+anova.res$condition <- factor(anova.res$condition, levels = c('MiM_Glu','MiU_Glu',
+                                                              'MiM_Gal','MiU_Gal',
+                                                              'MiM_Et','MiU_Et',
                                                               'GLU','GAL','PlM_Glu'))
 # anova.res$condition <- factor(anova.res$condition, levels = c('MiM_Glu','MiU_Glu','MiM_Gal','MiU_Gal','MiM_Et','MiU_Et','PlM_Glu'))
 
 plot.rcs.box.aov <- crbn_src_data[crbn_src_data$orf_name != "FY4-met3del",] %>%
   # summarise(relative_fitness = median(relative_fitness, na.rm = T)) %>%
+  filter(!(condition %in% c('GLU','GAL','PlM_Glu'))) %>%
   ggplot(aes(x = orf_name, y = relative_fitness)) +
   geom_boxplot(aes(fill = as.character(bio_rep)), size = .3, outlier.shape = NA) +
-  geom_text(data = anova.res[anova.res$strain != "FY4-met3del",],
+  geom_text(data = anova.res[anova.res$strain != "FY4-met3del",] %>% filter(!(condition %in% c('GLU','GAL','PlM_Glu'))),
             aes(x = strain, y = 1.5, label = label), size = 2.2, col = 'red') +
-  geom_text(data = anova.res[anova.res$strain != "FY4-met3del",],
+  geom_text(data = anova.res[anova.res$strain != "FY4-met3del",] %>% filter(!(condition %in% c('GLU','GAL','PlM_Glu'))),
             aes(x = strain, y = 1.4, label = sprintf('%0.2f%%',effect_size*100)),
             size = 2.2) +
   labs(x = 'Strains', y = 'Relative Colony Size') +
@@ -165,20 +168,31 @@ plot.rcs.box.aov <- crbn_src_data[crbn_src_data$orf_name != "FY4-met3del",] %>%
                     values = c("1" = "#673AB7",
                                "2" = "#009688",
                                "3" = "#607D8B",
-                               "4" = "#FFC107")) +
+                               "4" = "#FFC107"),
+                    guide = F) +
   scale_x_discrete(limits = c('FY4','FY4-met3del','FY4-met15del','BY4742','BY4741')[-2],
                    labels = strain.labs[-2]) +
   facet_wrap(.~condition, nrow = 3, 
-             labeller = labeller(condition = 
-                                   c('MiM_Glu'  = 'SD-Met-Cys+Glu',
-                                     'MiM_Gal'  = 'SD-Met-Cys+Gal',
-                                     'MiM_Et'   = 'SD-Met-Cys+EtOH',
-                                     'PlM_Glu'  = 'SD+Met-Cys+Glu',
-                                     'MiU_Glu'  = 'SD-Ura+Glu',
-                                     'MiU_Gal'  = 'SD-Ura+Gal',
-                                     'MiU_Et'   = 'SD-Ura+EtOH',
-                                     'GLU'      = 'SC-Met-Cys+Glu',
-                                     'GAL'      = 'SC-Met-Cys+Gal'))) +
+             # labeller = labeller(condition =
+             #                       c('MiM_Glu'  = 'SD-Met-Cys+Glu',
+             #                         'MiM_Gal'  = 'SD-Met-Cys+Gal',
+             #                         'MiM_Et'   = 'SD-Met-Cys+EtOH',
+             #                         'PlM_Glu'  = 'SD+Met-Cys+Glu',
+             #                         'MiU_Glu'  = 'SD+Met-Cys-Ura+Glu',
+             #                         'MiU_Gal'  = 'SD+Met-Cys-Ura+Gal',
+             #                         'MiU_Et'   = 'SD+Met-Cys-Ura+EtOH',
+             #                         'GLU'      = 'SC-Met-Cys+Glu',
+             #                         'GAL'      = 'SC-Met-Cys+Gal'))) +
+             labeller = labeller(condition =
+                                   c('MiM_Glu'  = 'Synthetic Defined Media\n-Methionine | -Cysteine\nCarbon Source: Glucose',
+                                     'MiM_Gal'  = 'Synthetic Defined Media\n-Methionine | -Cysteine\nCarbon Source: Galactose',
+                                     'MiM_Et'   = 'Synthetic Defined Media\n-Methionine | -Cysteine\nCarbon Source: Ethanol',
+                                     'PlM_Glu'  = 'Synthetic Defined Media\n+Methionine | -Cysteine\nCarbon Source: Glucose',
+                                     'MiU_Glu'  = 'Synthetic Defined Media\n+Methionine | -Cysteine | -Uracil\nCarbon Source: Glucose',
+                                     'MiU_Gal'  = 'Synthetic Defined Media\n+Methionine | -Cysteine | -Uracil\nCarbon Source: Galactose',
+                                     'MiU_Et'   = 'Synthetic Defined Media\n+Methionine | -Cysteine | -Uracil\nCarbon Source: Ethanol',
+                                     'GLU'      = 'Synthetic Complete Media\n-Methionine | -Cysteine\nCarbon Source: Glucose',
+                                     'GAL'      = 'Synthetic Complete Media\n-Methionine | -Cysteine\nCarbon Source: Galactose'))) +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
@@ -194,13 +208,73 @@ plot.rcs.box.aov <- crbn_src_data[crbn_src_data$orf_name != "FY4-met3del",] %>%
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm"))) +
   coord_cartesian(ylim = c(0,1.5))
-plot.rcs.box.aov <- colorstrip(plot.rcs.box.aov, c('#7C4DFF','#9C27B0','#303F9F',
-                                                   '#D32F2F','#FF5722','#757575',
-                                                   '#448AFF','#00BCD4','#8BC34A'))
-ggsave(sprintf("%s/%s/RELATIVE_COLONY_SIZE_BOX_ANOVA.jpg",fig_path, expt.name),
-       plot.rcs.box.aov,
-       height = one.5c, width = one.5c, units = 'mm',
-       dpi = 600)
+plot.rcs.box.aov <- colorstrip(plot.rcs.box.aov, c('#D32F2F','#FF5722',
+                                                   '#303F9F','#448AFF',
+                                                   '#00796B','#388E3C'))
+fig1B <- plot.rcs.box.aov
+save(fig1B, file = 'figures/final/fig1B.RData')
+# ggsave(sprintf("%s/%s/RELATIVE_COLONY_SIZE_BOX_ANOVA.jpg",fig_path, expt.name),
+#        plot.rcs.box.aov,
+#        height = one.5c, width = one.5c, units = 'mm',
+#        dpi = 600)
+
+plot.rcs.box.aov2 <- crbn_src_data[crbn_src_data$orf_name != "FY4-met3del",] %>%
+  # summarise(relative_fitness = median(relative_fitness, na.rm = T)) %>%
+  filter(condition %in% c('GLU','GAL','PlM_Glu')) %>%
+  ggplot(aes(x = orf_name, y = relative_fitness)) +
+  geom_boxplot(aes(fill = as.character(bio_rep)), size = .3, outlier.shape = NA) +
+  geom_text(data = anova.res[anova.res$strain != "FY4-met3del",] %>% filter(condition %in% c('GLU','GAL','PlM_Glu')),
+            aes(x = strain, y = 1.5, label = label), size = 2.2, col = 'red') +
+  geom_text(data = anova.res[anova.res$strain != "FY4-met3del",] %>% filter(condition %in% c('GLU','GAL','PlM_Glu')),
+            aes(x = strain, y = 1.4, label = sprintf('%0.2f%%',effect_size*100)),
+            size = 2.2) +
+  labs(x = 'Strains', y = 'Relative Colony Size') +
+  scale_fill_manual(name = 'Biological\nReplicate',
+                    values = c("1" = "#673AB7",
+                               "2" = "#009688",
+                               "3" = "#607D8B",
+                               "4" = "#FFC107")) +
+  scale_x_discrete(limits = c('FY4','FY4-met3del','FY4-met15del','BY4742','BY4741')[-2],
+                   labels = strain.labs[-2]) +
+  facet_wrap(.~condition, nrow = 3, 
+             # labeller = labeller(condition =
+             #                       c('MiM_Glu'  = 'SD-Met-Cys+Glu',
+             #                         'MiM_Gal'  = 'SD-Met-Cys+Gal',
+             #                         'MiM_Et'   = 'SD-Met-Cys+EtOH',
+             #                         'PlM_Glu'  = 'SD+Met-Cys+Glu',
+             #                         'MiU_Glu'  = 'SD-Ura+Glu',
+             #                         'MiU_Gal'  = 'SD-Ura+Gal',
+             #                         'MiU_Et'   = 'SD-Ura+EtOH',
+             #                         'GLU'      = 'SC-Met-Cys+Glu',
+             #                         'GAL'      = 'SC-Met-Cys+Gal'))) +
+             labeller = labeller(condition =
+                                   c('MiM_Glu'  = 'Synthetic Defined Media\n-Methionine | -Cysteine\nCarbon Source: Glucose',
+                                     'MiM_Gal'  = 'Synthetic Defined Media\n-Methionine | -Cysteine\nCarbon Source: Galactose',
+                                     'MiM_Et'   = 'Synthetic Defined Media\n-Methionine | -Cysteine\nCarbon Source: Ethanol',
+                                     'PlM_Glu'  = 'Synthetic Defined Media\n+Methionine | -Cysteine\nCarbon Source: Glucose',
+                                     'MiU_Glu'  = 'Synthetic Defined Media\n+Methionine | -Cysteine | -Uracil\nCarbon Source: Glucose',
+                                     'MiU_Gal'  = 'Synthetic Defined Media\n+Methionine | -Cysteine | -Uracil\nCarbon Source: Galactose',
+                                     'MiU_Et'   = 'Synthetic Defined Media\n+Methionine | -Cysteine | -Uracil\nCarbon Source: Ethanol',
+                                     'GLU'      = 'Synthetic Complete Media\n-Methionine | -Cysteine\nCarbon Source: Glucose',
+                                     'GAL'      = 'Synthetic Complete Media\n-Methionine | -Cysteine\nCarbon Source: Galactose'))) +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        # axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+        axis.text.x = ggtext::element_markdown(angle = 45, vjust = 1, hjust = 1),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'right',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm"))) +
+  coord_cartesian(ylim = c(0,1.5))
+plot.rcs.box.aov2 <- colorstrip(plot.rcs.box.aov2, c('#212121','#03A9F4','#4CAF50'))
+fig1C <- plot.rcs.box.aov2
+save(fig1C, file = 'figures/final/fig1C.RData')
 
 ##### REMOVE MET3 and MAKE SUPPLEMENTAL FIGURES WITH FY4 and MET3 ONLY
 plot.rcs.box.aov <- crbn_src_data[crbn_src_data$orf_name %in% c("FY4", "FY4-met3del"),] %>%
@@ -221,16 +295,26 @@ plot.rcs.box.aov <- crbn_src_data[crbn_src_data$orf_name %in% c("FY4", "FY4-met3
   scale_x_discrete(limits = c('BY4742','BY4741','FY4','FY4-met3del','FY4-met15del')[c(3,4)],
                    labels = strain.labs[c(1,2)]) +
   facet_wrap(.~condition, nrow = 3, 
-             labeller = labeller(condition = 
-                                   c('MiM_Glu' = 'SD-Met-Cys+Glu',
-                                     'MiM_Gal' = 'SD-Met-Cys+Gal',
-                                     'MiM_Et' = 'SD-Met-Cys+EtOH',
-                                     'PlM_Glu' = 'SD+Met-Cys+Glu',
-                                     'MiU_Glu' = 'SD-Ura+Glu',
-                                     'MiU_Gal' = 'SD-Ura+Gal',
-                                     'MiU_Et' = 'SD-Ura+EtOH',
-                                     'GLU'      = 'SC-Met-Cys+Glu',
-                                     'GAL'      = 'SC-Met-Cys+Gal'))) +
+             # labeller = labeller(condition =
+             #                       c('MiM_Glu'  = 'SD-Met-Cys+Glu',
+             #                         'MiM_Gal'  = 'SD-Met-Cys+Gal',
+             #                         'MiM_Et'   = 'SD-Met-Cys+EtOH',
+             #                         'PlM_Glu'  = 'SD+Met-Cys+Glu',
+             #                         'MiU_Glu'  = 'SD-Ura+Glu',
+             #                         'MiU_Gal'  = 'SD-Ura+Gal',
+             #                         'MiU_Et'   = 'SD-Ura+EtOH',
+             #                         'GLU'      = 'SC-Met-Cys+Glu',
+             #                         'GAL'      = 'SC-Met-Cys+Gal'))) +
+             labeller = labeller(condition =
+                                   c('MiM_Glu'  = 'Synthetic Defined Media\n-Methionine | -Cysteine\nCarbon Source: Glucose',
+                                     'MiM_Gal'  = 'Synthetic Defined Media\n-Methionine | -Cysteine\nCarbon Source: Galactose',
+                                     'MiM_Et'   = 'Synthetic Defined Media\n-Methionine | -Cysteine\nCarbon Source: Ethanol',
+                                     'PlM_Glu'  = 'Synthetic Defined Media\n+Methionine | -Cysteine\nCarbon Source: Glucose',
+                                     'MiU_Glu'  = 'Synthetic Defined Media\n+Methionine | -Cysteine | -Uracil\nCarbon Source: Glucose',
+                                     'MiU_Gal'  = 'Synthetic Defined Media\n+Methionine | -Cysteine | -Uracil\nCarbon Source: Galactose',
+                                     'MiU_Et'   = 'Synthetic Defined Media\n+Methionine | -Cysteine | -Uracil\nCarbon Source: Ethanol',
+                                     'GLU'      = 'Synthetic Complete Media\n-Methionine | -Cysteine\nCarbon Source: Glucose',
+                                     'GAL'      = 'Synthetic Complete Media\n-Methionine | -Cysteine\nCarbon Source: Galactose'))) +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
@@ -246,11 +330,20 @@ plot.rcs.box.aov <- crbn_src_data[crbn_src_data$orf_name %in% c("FY4", "FY4-met3
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm"))) +
   coord_cartesian(ylim = c(0,1.5))
-plot.rcs.box.aov <- colorstrip(plot.rcs.box.aov, c('#7C4DFF','#9C27B0','#303F9F',
-                                                   '#D32F2F','#FF5722','#757575',
-                                                   '#448AFF','#00BCD4','#8BC34A'))
+# plot.rcs.box.aov <- colorstrip(plot.rcs.box.aov, c('#7C4DFF','#9C27B0','#303F9F',
+#                                                    '#D32F2F','#FF5722','#757575',
+#                                                    '#448AFF','#00BCD4','#8BC34A'))
 ggsave(sprintf("%s/%s/RELATIVE_COLONY_SIZE_BOX_ANOVA2.jpg",fig_path, expt.name),
        plot.rcs.box.aov,
        height = one.5c, width = one.5c, units = 'mm',
        dpi = 600)
 
+
+#####
+head(crbn_src_data)
+crbn_src_data %>%
+  filter(orf_name == 'BY4741') %>%
+  group_by(condition) %>%
+  summarize(cs = median(average, na.rm = T), .groups = 'keep')
+
+6532/11332
