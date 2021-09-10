@@ -16,7 +16,7 @@ conn <- initialize.sql("saurin_test")
 out_path <- "~/R/Projects/methionine/data"
 expt.name <- "plasmidval"
 
-tables <- read_excel(sprintf('%s/%s/PV_INFO.xlsx',out_path,expt.name))
+tables <- read_excel('/home/sbp29/RAW_Data/Methionine/PlasmidValidation/PV_INFO.xlsx')
 tables <- tables[order(tables$expt_id, tables$condition, tables$arm),] %>% data.frame()
 head(tables)
 ##### GATHER AND CLEAN DATA FROM SQL
@@ -68,10 +68,10 @@ data$hours[data$stage == 'WC' & data$hours == 0] <- 44
 data$hours[data$stage == 'WC' & data$hours == 4] <- 48
 
 data.sum <- data %>%
-  group_by(condition,expt_rep,orf_name,deletion1,deletion2,plasmid_backbone,plasmid_orf,bio_rep) %>%
-  summarize(relative_fitness = median(relative_fitness, na.rm = T), .groups = 'keep') %>%
+  group_by(stage,condition,expt_rep,hours,orf_name,deletion1,deletion2,plasmid_backbone,plasmid_orf,bio_rep) %>%
+  summarize(relative_fitness = median(relative_fitness, na.rm = T),
+            cs = median(average, na.rm = T), .groups = 'keep') %>%
   data.frame()
-
 
 ##### ANOVA ANALYSIS
 # anova.res <- NULL

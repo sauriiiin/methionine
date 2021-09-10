@@ -16,14 +16,14 @@ conn <- initialize.sql("saurin_test")
 out_path <- "~/R/Projects/methionine/data"
 expt.name <- "nosulfate"
 
-tables <- read_excel(sprintf('%s/%s/NO_SUL_INFO.xlsx',out_path,expt.name))
+tables <- read_excel('/home/sbp29/RAW_Data/Methionine/NoSulfate_/NO_SUL_INFO.xlsx')
 tables <- tables[order(tables$expt_id, tables$condition, tables$arm),] %>% filter(expt_id == 'SUL')
 head(tables)
 
 ##### GATHER AND CLEAN DATA FROM SQL
 data <- NULL
 for (s in unique(tables$stage_id)) {
-  if (s == 'S3') {
+  if (s %in% c('S3','S4','S5')) {
     p2c <- 'MET_NS_S3_pos2coor'
   } else if (s == 'Re1') {
     p2c <- 'MET_NS_Re1_pos2coor'

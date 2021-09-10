@@ -96,9 +96,9 @@ plot.gina.res <- data.gina %>%
   stat_summary(aes(group = Sample, col = Sample), fun=mean, geom="point", size = 0.5) +
   labs(y = 'Homocysteine (log2(μM))') +
   scale_color_manual(name = 'Sample',
-                     values = c('Met15' = "#607D8B",
-                                'Yll058w' = "#9E9E9E",
-                                'None' = "#212121")) +
+                     values = c('Met15' = "#D32F2F",
+                                'Yll058w' = "#4CAF50",
+                                'None' = "#1976D2")) +
   scale_y_continuous(trans = 'log2') +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),

@@ -37,8 +37,8 @@ one.5c <- 140 #1.5 column
 two.c <- 190 #full width
 
 ##### TEXT SIZE
-titles <- 7
-txt <- 5
+titles <- 8
+txt <- 8
 lbls <- 9
 
 ##### LEVELS
@@ -50,36 +50,36 @@ data <- data[data$orf_name != 'BOR',]
 data$orf_name <- factor(data$orf_name, levels = strain.levels)
 data$condition <- factor(data$condition, levels = condition.levels)
 
-for (rr in unique(data$expt_rep)) {
-  all.gc <- data %>%
-    filter(expt_rep == rr) %>% 
-    ggplot(aes(x = hours, y = average, col = bio_rep)) +
-    geom_point(size = 0.5) +
-    geom_smooth(method = 'loess') +
-    scale_x_continuous(breaks = unique(data$hours), minor_breaks = NULL) +
-    scale_color_discrete(name = 'Biological Replicate') +
-    labs(title = sprintf('Experimental Replicate #%s', rr),
-         y = 'Colony Size (pixels)',
-         x = 'Time (hours)') +
-    facet_wrap(.~condition*orf_name,
-               ncol = 8) +
-    theme_linedraw() +
-    theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
-          axis.title = element_text(size = titles),
-          axis.text = element_text(size = txt),
-          axis.text.x = element_text(size = 2, angle = 90, hjust = 0.5, vjust = 0.5),
-          legend.title = element_text(size = titles),
-          legend.text = element_text(size = txt),
-          legend.position = 'bottom',
-          legend.key.size = unit(3, "mm"),
-          legend.box.spacing = unit(0.5,"mm"),
-          strip.text = element_text(size = txt,
-                                    face = 'bold',
-                                    margin = margin(0.1,0,0.1,0, "mm")))
-  ggsave(sprintf("%s/%s/ALL_GROWTH_CURVES_%s.jpg",fig_path, expt.name, rr), all.gc,
-         height = 200, width = 400, units = 'mm',
-         dpi = 600)
-}
+# for (rr in unique(data$expt_rep)) {
+#   all.gc <- data %>%
+#     filter(expt_rep == rr) %>% 
+#     ggplot(aes(x = hours, y = average, col = bio_rep)) +
+#     geom_point(size = 0.5) +
+#     geom_smooth(method = 'loess') +
+#     scale_x_continuous(breaks = unique(data$hours), minor_breaks = NULL) +
+#     scale_color_discrete(name = 'Biological Replicate') +
+#     labs(title = sprintf('Experimental Replicate #%s', rr),
+#          y = 'Colony Size (pixels)',
+#          x = 'Time (hours)') +
+#     facet_wrap(.~condition*orf_name,
+#                ncol = 8) +
+#     theme_linedraw() +
+#     theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+#           axis.title = element_text(size = titles),
+#           axis.text = element_text(size = txt),
+#           axis.text.x = element_text(size = 2, angle = 90, hjust = 0.5, vjust = 0.5),
+#           legend.title = element_text(size = titles),
+#           legend.text = element_text(size = txt),
+#           legend.position = 'bottom',
+#           legend.key.size = unit(3, "mm"),
+#           legend.box.spacing = unit(0.5,"mm"),
+#           strip.text = element_text(size = txt,
+#                                     face = 'bold',
+#                                     margin = margin(0.1,0,0.1,0, "mm")))
+#   ggsave(sprintf("%s/%s/ALL_GROWTH_CURVES_%s.jpg",fig_path, expt.name, rr), all.gc,
+#          height = 200, width = 400, units = 'mm',
+#          dpi = 600)
+# }
 
 
 # ## CLEANED OUT PROBLEM HOURS

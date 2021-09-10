@@ -30,8 +30,8 @@ one.5c <- 140 #1.5 column
 two.c <- 190 #full width
 
 ##### TEXT SIZE
-titles <- 7
-txt <- 7
+titles <- 8
+txt <- 8
 lbls <- 9
 
 strain.levels <- c('FY4', 'FY4-met12D', 'FY4-str3D', 'FY4-met3D', 'FY4-met15D', 'FY4-met2D',
@@ -64,13 +64,14 @@ plot.bar.bis <- data.bis %>%
                  summarize(HS = mean(HS, na.rm = T), .groups = 'keep'),
                aes(fill = round(HS)), col = 'white', alpha = 0.9, size = 1,
                fun = mean, geom = "bar") +
-  stat_summary(fun.data = mean_se, geom = "errorbar") +
+  # stat_summary(fun.data = mean_se, geom = "errorbar") +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", fun.args = list(mult = 1)) +
   scale_x_discrete(labels = strain.labs) +
   scale_y_continuous(breaks = seq(0,10,1)) +
   scale_fill_gradient(low = "#D7CCC8", high = "#5D4037", guide = F) +
   labs(y = 'Relative Hydrogen Sulfide',
        x = 'Strains') +
-  facet_wrap(.~Condition, ncol = 1) +
+  facet_wrap(.~Condition, ncol = 2) +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
@@ -86,7 +87,7 @@ plot.bar.bis <- data.bis %>%
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm"))) +
   coord_cartesian(ylim = c(1,7))
-plot.bar.bis <- colorstrip(plot.bar.bis,c("#212121","#212121"))
+# plot.bar.bis <- colorstrip(plot.bar.bis,c("#212121","#212121"))
 fig3B <- plot.bar.bis
 save(fig3B, file = 'figures/final/fig3B.RData')
 

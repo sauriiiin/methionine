@@ -16,11 +16,16 @@ library(reshape2)
 
 load("~/R/Projects/methionine/figures/final/fig6C.RData")
 load("~/R/Projects/methionine/figures/final/fig6B.RData")
-load("~/R/Projects/methionine/figures/final/fig5.RData")
+# load("~/R/Projects/methionine/figures/final/fig5.RData")
 load("~/R/Projects/methionine/figures/final/fig3B.RData")
-load("~/R/Projects/methionine/figures/final/fig3A.RData")
+# load("~/R/Projects/methionine/figures/final/fig3A.RData")
 load("~/R/Projects/methionine/figures/final/fig1C.RData")
-load("~/R/Projects/methionine/figures/final/fig1B.RData")
+# load("~/R/Projects/methionine/figures/final/fig1B.RData")
+
+load("~/R/Projects/methionine/figures/final/fig5A.RData")
+load("~/R/Projects/methionine/figures/final/fig5B.RData")
+load("~/R/Projects/methionine/figures/final/fig3A.2.RData")
+load("~/R/Projects/methionine/figures/final/fig1B.2.RData")
 
 fig_path <- "~/R/Projects/methionine/figures"
 
@@ -30,15 +35,15 @@ one.5c <- 140 #1.5 column
 two.c <- 190 #full width
 
 ##### TEXT SIZE
-titles <- 7
-txt <- 7
+titles <- 8
+txt <- 8
 lbls <- 9
 
 
-fig1A <- readPNG('figures/branden/Fig1A.png')
+fig1A <- readPNG('figures/final/fig1a.png')
 fig1A <- ggplot() + 
   background_image(fig1A) +
-  theme(plot.margin = margin(t=0, l=0, r=0, b=0, unit = "mm"),
+  theme(plot.margin = margin(t=0, l=10, r=10, b=0, unit = "mm"),
         plot.background = element_blank())
 
 # fig3B <- readPNG('figures/branden/Fig3B.png')
@@ -67,29 +72,35 @@ fig6D <- ggplot() +
 
 
 
-fig1 <- cowplot::plot_grid(fig1A, cowplot::plot_grid(fig1B, fig1C, ncol = 2,
-                                                     align = 'v', axis = 'l', rel_widths = c(1.5,1),
-                                                     labels = c('B','C'),
-                                                     label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                           ncol = 1, align = 'v', axis = 'l', rel_heights = c(1,1.5),
-                           labels = c('A',''),
+# fig1 <- cowplot::plot_grid(fig1A, cowplot::plot_grid(fig1B, fig1C, ncol = 2,
+#                                                      align = 'v', axis = 'l', rel_widths = c(1.5,1),
+#                                                      labels = c('B','C'),
+#                                                      label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
+#                            ncol = 1, align = 'v', axis = 'l', rel_heights = c(1,1.5),
+#                            labels = c('A',''),
+#                            label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
+fig1 <- cowplot::plot_grid(fig1A, fig1B.2, ncol = 1, labels = c('A','B'),
+                           rel_heights = c(1,1.5),
                            label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
 ggsave(sprintf("%s/final/Figure1.jpg",fig_path), fig1,
        height = 250, width = two.c, units = 'mm',
        dpi = 600)
 
 
-fig3 <- cowplot::plot_grid(fig3A, fig3B,
-                           labels = c('A','B'), ncol = 2, rel_widths = c(2,1),
+fig3 <- cowplot::plot_grid(fig3A.2, fig3B,
+                           labels = c('A','B'), ncol = 1, rel_heights = c(1.4,1),
                            align = 'hv', axis = 'tb',
                            label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
 ggsave(sprintf("%s/final/Figure3.jpg",fig_path), fig3,
-       height = one.5c, width = two.c, units = 'mm',
+       height = 250, width = two.c, units = 'mm',
        dpi = 600)
 
+fig5A + facet_wrap(ncol = 1)
 
+fig5 <- ggpubr::ggarrange(fig5A, fig5B, nrow = 2, heights = c(1,1.5),
+                            labels = c('A','B'), font.label = list(face = 'bold', size = lbls, family = "sans"))
 ggsave(sprintf("%s/final/Figure5.jpg",fig_path), fig5,
-       height = 140, width = two.c, units = 'mm',
+       height = 250, width = two.c, units = 'mm',
        dpi = 600)
 
 
