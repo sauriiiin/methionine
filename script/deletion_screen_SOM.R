@@ -141,6 +141,9 @@ data.lim2$hours[data.lim2$arm == 'SD+Met-Cys+Gal' & data.lim2$stage == 'Final Sc
   data.lim2$hours[data.lim2$arm == 'SD+Met-Cys+Gal' & data.lim2$stage == 'Final Screen'] +
   max(data.lim2$hours[data.lim2$arm == 'SD+Met-Cys+Gal' & data.lim2$stage == 'Pre-Screen #2'])
 
+data.lim2 %>% group_by(arm, stage) %>% 
+  summarise(ep = max(hours), .groups = 'keep') %>% data.frame()
+
 ##### FITNESS THROUGH TIME
 data.som <- data.sum %>%
   group_by(arm, stage, hours) %>%
@@ -304,3 +307,42 @@ plot.ref.dyn <- data.ref %>%
 ggsave(sprintf('%s/%s/REFERENCE_DYNAMICS.png',fig_path, expt.name), plot.ref.dyn,
        height = one.c, width = two.c, units = 'mm',
        dpi = 600)
+
+
+######
+strain.lab.del <- NULL
+strain.lab.del$orf_name <- c('YNL277W','YGR155W','YGL184C','YPL023C','YGL125W',
+                             'YLR303W','YJR010W','YER091C','YLL058W','YJR137C','YFR030W')
+strain.lab.del$standard_name <- c('MET2','CYS4','STR3','MET12','MET13',
+                                  'MET15','MET3','MET6','YLL058W','MET5','MET10')
+strain.lab.del <- data.frame(strain.lab.del)
+
+data.som2 %>%
+  filter(orf_name %in% strain.lab.del$orf_name) %>%
+  ggplot(aes(x = hours, y = fitness)) +
+  geom_vline(xintercept = c(69,139), lwd = 0.2, linetype = 'dashed') +
+  geom_line(aes(group = orf_name)) +
+  geom_smooth(data = data.lim2,
+              aes(x = hours, y = fitness_ul), method = 'loess', se = F,
+              col = 'red', linetype = 'dashed', lwd = 0.5) +
+  geom_smooth(data = data.lim2,
+              aes(x = hours, y = fitness_ll), method = 'loess', se = F,
+              col = 'red', linetype = 'dashed', lwd = 0.5) +
+  geom_text_repel(data = merge(data.som2[data.som2$hours %in% c(159,166),] %>%
+                    filter(orf_name %in% strain.lab.del$orf_name),
+                    strain.lab.del, by = 'orf_name'),
+                  aes(x = hours, y = fitness, label = standard_name), size = 1.2,
+                  force = 2, max.overlaps = 30) +
+  facet_grid(.~arm) +
+  theme_linedraw() +
+  theme(plot.title = element_blank(),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  margin = margin(0.1,0,0.1,0, "mm")))
+ 

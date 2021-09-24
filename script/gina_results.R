@@ -27,8 +27,8 @@ one.5c <- 140 #1.5 column
 two.c <- 190 #full width
 
 ##### TEXT SIZE
-titles <- 7
-txt <- 7
+titles <- 8
+txt <- 8
 lbls <- 9
 
 pzfx_tables("/home/sbp29/R/Projects/methionine/data/gina/072321_gina_data.pzfx")
@@ -75,16 +75,15 @@ ttest.res <- merge(ttest.res, data.gina %>%
                      summarise(.groups = 'keep', uM = mean(uM, na.rm = T)) %>%
                      data.frame(), by.x = 'query', by.y = 'Sample')
 
-
-#####
-for (t in unique(data.gina$`Time (min)`)) {
-  for (s in unique(data.gina$Sample[data.gina$`Time (min)` == t & data.gina$Sample != 'None'])) {
-    temp.kw <- compare_means(data = data.gina[data.gina$`Time (min)` == t & data.gina$Sample %in% c(s,'None') &
-                                                data.gina$outlier == FALSE,],
-                                method = 't.test', formula = uM ~ Sample) %>% data.frame()
-    
-  }
-}
+# #####
+# for (t in unique(data.gina$`Time (min)`)) {
+#   for (s in unique(data.gina$Sample[data.gina$`Time (min)` == t & data.gina$Sample != 'None'])) {
+#     temp.kw <- compare_means(data = data.gina[data.gina$`Time (min)` == t & data.gina$Sample %in% c(s,'None') &
+#                                                 data.gina$outlier == FALSE,],
+#                                 method = 't.test', formula = uM ~ Sample) %>% data.frame()
+#     
+#   }
+# }
 
 #####
 plot.gina.res <- data.gina %>%

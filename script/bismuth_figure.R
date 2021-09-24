@@ -38,8 +38,15 @@ strain.levels <- c('FY4', 'FY4-met12D', 'FY4-str3D', 'FY4-met3D', 'FY4-met15D', 
                    'FY4-met6D', 'FY4-met13D', 'FY4-cys4D', 'BY4742', 'BY4741')
 strain.labs <- c('FY4', 'FY4-*met12Δ*', 'FY4-*str3Δ*', 'FY4-*met3Δ*', 'FY4-*met15Δ*', 'FY4-*met2Δ*',
                  'FY4-*met6Δ*', 'FY4-*met13Δ*', 'FY4-*cys4Δ*', 'BY4742', 'BY4741')
-color.levels <- colorRampPalette(c("#D7CCC8", "#5D4037"))
-color.levels <- color.levels(7)
+strain.labs2 <- data.frame(orf_name = strain.levels, labels = strain.labs)
+strain.labs2$auxotrophy[strain.labs2$orf_name %in% c('BY4742','FY4','FY4-met12D')] <- 'Prototroph'
+strain.labs2$auxotrophy[strain.labs2$orf_name %in% c('BY4741','FY4-met15D','FY4-met3D','FY4-met2D',
+                                                     'FY4-met6D','FY4-met13D','FY4-cys4D')] <- 'Presumed Auxotroph'
+strain.labs2$auxotrophy[strain.labs2$orf_name %in% c('FY4-str3D')] <- 'Unknown'
+strain.labs2$auxotrophy <- factor(strain.labs2$auxotrophy, levels = c('Prototroph', 'Presumed Auxotroph', 'Unknown'))
+
+# color.levels <- colorRampPalette(c("#D7CCC8", "#5D4037"))
+# color.levels <- color.levels(7)
 
 ##### GATHER DATA
 data.bis <- NULL

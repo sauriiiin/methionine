@@ -59,14 +59,14 @@ data.sum %>%
   summarize(hours = max(hours))
 
 ######
-plot.rfit.box <- data %>%
+plot.rfit.box <- data.sum %>%
   filter(hours %in% c(48,115,164)) %>%
   ggplot(aes(x = 1, y = relative_fitness)) +
-  geom_boxplot(aes(fill = bio_rep), 
-               outlier.shape = NA) +
+  geom_boxplot(outlier.shape = NA, alpha = 0.5) +
+  geom_jitter(size = 1, aes(col = bio_rep, shape = expt_rep)) +
   facet_grid(stage*plasmid_backbone ~ deletion1*deletion2*plasmid_orf,
              labeller = labeller(stage = c('WC' = 'YPDA', 'PS1' = 'SD-Met-Cys+Gal',
-                                           'PS2' = 'SD-Met-Cys+Gal', 'PS3' = 'SD-Met-Cys+Gal'))) +
+                                           'PS2' = 'SD-Met-Cys+Gal', 'FS' = 'SD-Met-Cys+Gal'))) +
   labs(y = 'Relative Colony Size (log10)') +
   scale_y_continuous(trans = 'log10') +
   scale_fill_discrete(name = 'Biological Replicate') +
@@ -86,12 +86,11 @@ plot.rfit.box <- data %>%
         strip.text = element_text(size = txt,
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm"))) +
-  coord_cartesian(ylim = c(0.1,10))
-ggsave(sprintf("%s/%s/RELATIVE_COLONY_SIZE_BOX.jpg",fig_path, expt.name),
-       plot.rfit.box,
-       height = two.c*2/3, width = two.c, units = 'mm',
-       dpi = 600)  
-
+  coord_cartesian(ylim = c(0.1,20))
+# ggsave(sprintf("%s/%s/RELATIVE_COLONY_SIZE_BOX.jpg",fig_path, expt.name),
+#        plot.rfit.box,
+#        height = two.c*2/3, width = two.c, units = 'mm',
+#        dpi = 600)  
 
 ##### GROWTH CURVES
 data.sum$cum_hrs <- NULL
@@ -111,8 +110,8 @@ data.sum %>%
 plot.rfit.tc <- data.sum %>%
   filter(stage != 'WC') %>%
   ggplot(aes(x = cum_hrs, y = cs)) +
-  stat_summary(data = data.sum %>% filter(stage == 'WC', cum_hrs == 48),
-               fun = median, geom='point') +
+  # stat_summary(data = data.sum %>% filter(stage == 'WC', cum_hrs == 48),
+  #              fun = median, geom='point') +
   # geom_vline(xintercept = c(48,164,329,514), linetype = 'dashed', lwd = 0.4) +
   # geom_line(aes(col = bio_rep, linetype = expt_rep)) +
   stat_summary(fun = mean, geom="line", aes(col = stage)) +

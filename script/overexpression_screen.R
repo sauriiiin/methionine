@@ -44,8 +44,8 @@ one.5c <- 140 #1.5 column
 two.c <- 190 #full width
 
 ##### TEXT SIZE
-titles <- 7
-txt <- 7
+titles <- 8
+txt <- 8
 lbls <- 9
 
 ##### GATHER DATA

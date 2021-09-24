@@ -21,6 +21,13 @@ diff.dist2 <- data.frame(diff.dist2)
 head(diff.dist2)
 
 ##### OVERLAP ANALYSIS
+strain.lab.del <- NULL
+strain.lab.del$orf_name <- c('YNL277W','YGR155W','YGL184C','YPL023C','YGL125W',
+                             'YLR303W','YJR010W','YER091C','YLL058W-A','YJR137C','YFR030W')
+strain.lab.del$standard_name <- c('MET2','CYS4','STR3','MET12','MET13',
+                                  'MET15','MET3','MET6','YLL058W-A','MET5','MET10')
+strain.lab.del <- data.frame(strain.lab.del)
+
 plot.olp <- data.diff %>%
   filter(stage == 'Final Screen') %>%
   ggplot(aes(x = fitness_MM, y = fitness_PM)) +
@@ -36,8 +43,16 @@ plot.olp <- data.diff %>%
   geom_line(data = diff.dist2 %>% filter(stage == 'Final Screen'), aes(x = x , y = y.ul)) +
   # geom_line(data = diff.dist2, aes(x = x , y = y.m), linetype = 'dashed') +
   geom_line(data = diff.dist2 %>% filter(stage == 'Final Screen'), aes(x = x , y = y.ll)) +
-  geom_point(data = data.diff %>% filter(orf_name %in% unique(data.sul$orf_name), stage == 'Final Screen'),
+  geom_point(data = data.diff %>% filter(orf_name %in% c('YNL277W','YGR155W','YGL184C','YPL023C','YGL125W',
+                                                         'YLR303W','YJR010W','YER091C','YLL058W-A','YJR137C','YFR030W'), 
+                                         stage == 'Final Screen'),
              aes(x = fitness_MM, y = fitness_PM), shape = 0) +
+  geom_text_repel(data = merge(data.diff %>% filter(orf_name %in% c('YNL277W','YGR155W','YGL184C','YPL023C','YGL125W',
+                                                              'YLR303W','YJR010W','YER091C','YLL058W-A','YJR137C','YFR030W'), 
+                                              stage == 'Final Screen'),
+                               strain.lab.del, by = 'orf_name'),
+                  aes(x = fitness_MM, y = fitness_PM, label = standard_name), size = 1.2,
+                  force = 2, max.overlaps = 30) +
   scale_x_log10(breaks = breaks_log(n = 10, base = 10),
                 minor_breaks = NULL) +
   labs(x = 'Fitness in -Met',
