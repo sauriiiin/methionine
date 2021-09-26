@@ -31,7 +31,7 @@ expt.name <- "nosulfate"
 
 source("~/R/Projects/methionine/functions/colorstrip.R")
 load(file = sprintf('%s/%s/colonysizes.RData', out_path, expt.name))
-load(file = sprintf('%s/%s/stats.RData', out_path, expt.name))
+# load(file = sprintf('%s/%s/stats.RData', out_path, expt.name))
 
 ##### FIGURE SIZE
 one.c <- 90 #single column
@@ -56,18 +56,16 @@ data <- merge(data, temp, by = 'condition')
 data.sum <- merge(data.sum, temp, by = 'condition')
 
 data$stage[data$stage == 'FS'] <- 'S1'
-data$hours[data$stage == 'S1'] <- 149
 data.sum$stage[data.sum$stage == 'FS'] <- 'S1'
-data.sum$hours[data.sum$stage == 'S1'] <- 149
 
-data$stage <- factor(data$stage, levels = c('S1','S2','S3','S4','S5','Re1'))
+data$stage <- factor(data$stage, levels = c('S1','S2','S3','S4','S5','Re1','Re2'))
 data$ynb_type <- factor(data$ynb_type, levels = c('Difco','Home'))
 data$sulfate <- factor(data$sulfate, levels = c('+sulfate','-sulfate'))
 data$base <- factor(data$base, levels = c('Agar','Agarose'))
 data$methionine <- factor(data$methionine, levels = c('+Met','-Met'))
 data$orf_name <- factor(data$orf_name, levels = c('FY4','FY4_met3del','FY4_met15del','BY4742','BY4741'))
 
-data.sum$stage <- factor(data.sum$stage, levels = c('S1','S2','S3','S4','S5','Re1'))
+data.sum$stage <- factor(data.sum$stage, levels = c('S1','S2','S3','S4','S5','Re1','Re2'))
 data.sum$ynb_type <- factor(data.sum$ynb_type, levels = c('Difco','Home'))
 data.sum$sulfate <- factor(data.sum$sulfate, levels = c('+sulfate','-sulfate'))
 data.sum$base <- factor(data.sum$base, levels = c('Agar','Agarose'))
@@ -120,61 +118,36 @@ data %>%
   geom_point(aes(col = orf_name, shape = stage)) +
   facet_wrap(.~base*ynb_type*sulfate*methionine)
 
+data$average[is.na(data$average)] <- 0
 data.tc <- data %>%
-  filter(orf_name %in% c('FY4','BY4742'), base == 'Agarose') %>%
+  # filter(orf_name %in% c('FY4','BY4742'), base == 'Agarose') %>%
   group_by(stage, base, ynb_type, sulfate, methionine, orf_name, hours) %>%
   summarize(average = median(average, na.rm = T), .groups = 'keep') %>%
   data.frame()
 
-for (b in unique(data.tc$base)) {
-  for (y in unique(data.tc$ynb_type[data.tc$base == b])) {
-    for (s in unique(data.tc$sulfate[data.tc$base == b & data.tc$ynb_type == y])) {
-      for (m in unique(data.tc$methionine[data.tc$base == b & data.tc$ynb_type == y & data.tc$sulfate == s])) {
-        data.tc$hours[data.tc$base == b & data.tc$ynb_type == y &
-                        data.tc$sulfate == s & data.tc$methionine == m &
-                        data.tc$stage == 'S2'] <- data.tc$hours[data.tc$base == b & data.tc$ynb_type == y &
-                                                                  data.tc$sulfate == s & data.tc$methionine == m &
-                                                                  data.tc$stage == 'S2'] +
-          max(data.tc$hours[data.tc$base == b & data.tc$ynb_type == y &
-                              data.tc$sulfate == s & data.tc$methionine == m &
-                              data.tc$stage == 'S1'])
-        
-        data.tc$hours[data.tc$base == b & data.tc$ynb_type == y &
-                        data.tc$sulfate == s & data.tc$methionine == m &
-                        data.tc$stage == 'S3'] <- data.tc$hours[data.tc$base == b & data.tc$ynb_type == y &
-                                                                  data.tc$sulfate == s & data.tc$methionine == m &
-                                                                  data.tc$stage == 'S3'] +
-          max(data.tc$hours[data.tc$base == b & data.tc$ynb_type == y &
-                              data.tc$sulfate == s & data.tc$methionine == m &
-                              data.tc$stage == 'S2'])
-        
-        data.tc$hours[data.tc$base == b & data.tc$ynb_type == y &
-                        data.tc$sulfate == s & data.tc$methionine == m &
-                        data.tc$stage == 'S4'] <- data.tc$hours[data.tc$base == b & data.tc$ynb_type == y &
-                                                                  data.tc$sulfate == s & data.tc$methionine == m &
-                                                                  data.tc$stage == 'S4'] +
-          max(data.tc$hours[data.tc$base == b & data.tc$ynb_type == y &
-                              data.tc$sulfate == s & data.tc$methionine == m &
-                              data.tc$stage == 'S3'])
-        
-        data.tc$hours[data.tc$base == b & data.tc$ynb_type == y &
-                        data.tc$sulfate == s & data.tc$methionine == m &
-                        data.tc$stage == 'S5'] <- data.tc$hours[data.tc$base == b & data.tc$ynb_type == y &
-                                                                  data.tc$sulfate == s & data.tc$methionine == m &
-                                                                  data.tc$stage == 'S5'] +
-          max(data.tc$hours[data.tc$base == b & data.tc$ynb_type == y &
-                              data.tc$sulfate == s & data.tc$methionine == m &
-                              data.tc$stage == 'S4'])
-      }
-    }
-  }
-}
+data.tc$cum_hrs <- NULL
+data.tc$cum_hrs[data.tc$stage == 'S1'] <- data.tc$hours[data.tc$stage == 'S1']
+data.tc$cum_hrs[data.tc$stage == 'S2'] <- data.tc$hours[data.tc$stage == 'S2'] +
+  max(data.tc$cum_hrs[data.tc$stage == 'S1'])
+data.tc$cum_hrs[data.tc$stage == 'S3'] <- data.tc$hours[data.tc$stage == 'S3'] +
+  max(data.tc$cum_hrs[data.tc$stage == 'S2'])
+data.tc$cum_hrs[data.tc$stage == 'Re1'] <- data.tc$hours[data.tc$stage == 'Re1'] +
+  max(data.tc$cum_hrs[data.tc$stage == 'S2'])
+data.tc$cum_hrs[data.tc$stage == 'S4'] <- data.tc$hours[data.tc$stage == 'S4'] +
+  max(data.tc$cum_hrs[data.tc$stage == 'S3'])
+data.tc$cum_hrs[data.tc$stage == 'S5'] <- data.tc$hours[data.tc$stage == 'S5'] +
+  max(data.tc$cum_hrs[data.tc$stage == 'S4'])
+data.tc$cum_hrs[data.tc$stage == 'Re2'] <- data.tc$hours[data.tc$stage == 'Re2'] +
+  max(data.tc$cum_hrs[data.tc$stage == 'S5'])
 
-plot.cs.tc <- data.tc %>%
-  ggplot(aes(x = hours, y = average)) +
-  geom_line(aes(col = orf_name)) +
+data.tc$id <- paste(data.tc$base, data.tc$ynb_type, data.tc$sulfate, data.tc$methionine, sep = '_')
+
+plot.cs.tc <- data.tc[!(data.tc$stage == 'S1' & data.tc$base == 'Agar'),] %>%
+  ggplot(aes(x = cum_hrs, y = average)) +
+  geom_line(aes(col = id)) +
   # geom_point(aes(col = orf_name, shape = stage)) +
-  facet_wrap(.~base*ynb_type*sulfate*methionine) +
+  # facet_wrap(.~base*ynb_type*sulfate*methionine*stage) +
+  facet_wrap(.~orf_name, nrow = 5) +
   labs(x = 'Time (hours)',
        y = 'Colony Size (pixels)') +
   scale_color_discrete(name = 'Strain') +
@@ -193,7 +166,7 @@ plot.cs.tc <- data.tc %>%
   # coord_cartesian(xlim = c(0,750))
 ggsave(sprintf("%s/%s/COLONY_SIZE_TIMECOURSE.jpg",fig_path, expt.name),
        plot.cs.tc,
-       height = one.c, width = two.c, units = 'mm',
+       height = two.c, width = two.c, units = 'mm',
        dpi = 600)
 
 

@@ -23,7 +23,7 @@ head(tables)
 ##### GATHER AND CLEAN DATA FROM SQL
 data <- NULL
 for (s in unique(tables$stage_id)) {
-  if (s %in% c('S3','S4','S5')) {
+  if (s %in% c('S3','S4','S5','Re2')) {
     p2c <- 'MET_NS_S3_pos2coor'
   } else if (s == 'Re1') {
     p2c <- 'MET_NS_Re1_pos2coor'
@@ -70,55 +70,55 @@ data.sum <- data %>%
   data.frame()
 
 ##### ANOVA ANALYSIS
-anova.res <- NULL
-for (s in unique(data$stage)) {
-  for (c in unique(data$condition[data$stage == s])) {
-    for (s1 in unique(data$orf_name[data$stage == s & data$condition == c])) {
-      for (s2 in unique(data$orf_name[data$stage == s & data$condition == c & data$orf_name != s1])) {
-        res.rcs.aov <- data[data$stage == s & data$condition == c & data$orf_name %in% c(s2, s1),] %>%
-          data.frame() %>%
-          anova_test(relative_fitness ~ orf_name * bio_rep)
-        
-        res.rcs.kw <- data.sum[data.sum$stage == s & data.sum$condition == c & data.sum$orf_name %in% c(s2, s1),] %>%
-          data.frame() %>%
-          kruskal_test(relative_fitness ~ orf_name)
-        
-        cs1 <- data$relative_fitness[data$stage == s & data$condition == c & data$orf_name == s1]
-        cs2 <- data$relative_fitness[data$stage == s & data$condition == c & data$orf_name == s2]
-        emp_effsize <- (median(cs2, na.rm = T) - median(cs1, na.rm = T))/median(cs1, na.rm = T)
-        
-        anova.res <- rbind(anova.res, cbind(s, c, s1, s2,
-                                            res.rcs.aov$p[res.rcs.aov$Effect == 'orf_name'],
-                                            res.rcs.aov$p[res.rcs.aov$Effect == 'orf_name:bio_rep'],
-                                            res.rcs.kw$p,
-                                            emp_effsize))
-      }
-    }
-  }
-}
-colnames(anova.res) <- c('stage','condition','reference','query','rcs_between','rcs_within','kw','effect_size')
-anova.res <- data.frame(anova.res, stringsAsFactors = F)
-anova.res$rcs_between <- as.numeric(anova.res$rcs_between)
-anova.res$rcs_within <- as.numeric(anova.res$rcs_within)
-anova.res$kw <- as.numeric(anova.res$kw)
-anova.res$effect_size <- as.numeric(anova.res$effect_size)
-anova.res$rcs_between <- p.adjust(anova.res$rcs_between, method = 'BH')
-anova.res$rcs_within <- p.adjust(anova.res$rcs_within, method = 'BH')
-anova.res$kw <- p.adjust(anova.res$kw, method = 'BH')
-anova.res$label_aov[anova.res$rcs_between > 0.05] <- 'ns'
-anova.res$label_aov[anova.res$rcs_between <= 0.05] <- '*'
-anova.res$label_aov[anova.res$rcs_between <= 0.01] <- '**'
-anova.res$label_aov[anova.res$rcs_between <= 0.001] <- '***'
-anova.res$label_aov[anova.res$rcs_between <= 0.0001] <- '****'
-anova.res$label_kw[anova.res$kw > 0.05] <- 'ns'
-anova.res$label_kw[anova.res$kw <= 0.05] <- '*'
-anova.res$label_kw[anova.res$kw <= 0.01] <- '**'
-anova.res$label_kw[anova.res$kw <= 0.001] <- '***'
-anova.res$label_kw[anova.res$kw <= 0.0001] <- '****'
+# anova.res <- NULL
+# for (s in unique(data$stage)) {
+#   for (c in unique(data$condition[data$stage == s])) {
+#     for (s1 in unique(data$orf_name[data$stage == s & data$condition == c])) {
+#       for (s2 in unique(data$orf_name[data$stage == s & data$condition == c & data$orf_name != s1])) {
+#         res.rcs.aov <- data[data$stage == s & data$condition == c & data$orf_name %in% c(s2, s1),] %>%
+#           data.frame() %>%
+#           anova_test(relative_fitness ~ orf_name * bio_rep)
+#         
+#         res.rcs.kw <- data.sum[data.sum$stage == s & data.sum$condition == c & data.sum$orf_name %in% c(s2, s1),] %>%
+#           data.frame() %>%
+#           kruskal_test(relative_fitness ~ orf_name)
+#         
+#         cs1 <- data$relative_fitness[data$stage == s & data$condition == c & data$orf_name == s1]
+#         cs2 <- data$relative_fitness[data$stage == s & data$condition == c & data$orf_name == s2]
+#         emp_effsize <- (median(cs2, na.rm = T) - median(cs1, na.rm = T))/median(cs1, na.rm = T)
+#         
+#         anova.res <- rbind(anova.res, cbind(s, c, s1, s2,
+#                                             res.rcs.aov$p[res.rcs.aov$Effect == 'orf_name'],
+#                                             res.rcs.aov$p[res.rcs.aov$Effect == 'orf_name:bio_rep'],
+#                                             res.rcs.kw$p,
+#                                             emp_effsize))
+#       }
+#     }
+#   }
+# }
+# colnames(anova.res) <- c('stage','condition','reference','query','rcs_between','rcs_within','kw','effect_size')
+# anova.res <- data.frame(anova.res, stringsAsFactors = F)
+# anova.res$rcs_between <- as.numeric(anova.res$rcs_between)
+# anova.res$rcs_within <- as.numeric(anova.res$rcs_within)
+# anova.res$kw <- as.numeric(anova.res$kw)
+# anova.res$effect_size <- as.numeric(anova.res$effect_size)
+# anova.res$rcs_between <- p.adjust(anova.res$rcs_between, method = 'BH')
+# anova.res$rcs_within <- p.adjust(anova.res$rcs_within, method = 'BH')
+# anova.res$kw <- p.adjust(anova.res$kw, method = 'BH')
+# anova.res$label_aov[anova.res$rcs_between > 0.05] <- 'ns'
+# anova.res$label_aov[anova.res$rcs_between <= 0.05] <- '*'
+# anova.res$label_aov[anova.res$rcs_between <= 0.01] <- '**'
+# anova.res$label_aov[anova.res$rcs_between <= 0.001] <- '***'
+# anova.res$label_aov[anova.res$rcs_between <= 0.0001] <- '****'
+# anova.res$label_kw[anova.res$kw > 0.05] <- 'ns'
+# anova.res$label_kw[anova.res$kw <= 0.05] <- '*'
+# anova.res$label_kw[anova.res$kw <= 0.01] <- '**'
+# anova.res$label_kw[anova.res$kw <= 0.001] <- '***'
+# anova.res$label_kw[anova.res$kw <= 0.0001] <- '****'
 
 ##### SAVE COLONY SIZE DATA
 save(data, data.sum, file = sprintf("%s/%s/colonysizes.RData", out_path, expt.name))
-save(anova.res, file = sprintf("%s/%s/stats.RData", out_path, expt.name))
+# save(anova.res, file = sprintf("%s/%s/stats.RData", out_path, expt.name))
 
 #####
 # END

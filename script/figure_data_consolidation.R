@@ -94,3 +94,20 @@ save(data.cbn, data.sum.cbn, strain.labs.cbn,
      data.mdl,
      file = 'figures/final/data.RData')
 
+##### NO SULFATE
+data.ns <- data
+data.sum.ns <- data.sum
+
+load(file = 'figures/final/data.RData')
+save(data.cbn, data.sum.cbn, strain.labs.cbn,
+     data.jm, data.sum.jm, strain.labs.jm,
+     data.bis, strain.labs.bis,
+     data.res, data.res.gc, data.res.gc.sum, data.res.gc.sum2, strain.labs.res,
+     data.bioc, data.bioc.ttest,
+     data.del.diff, data.del.diff.dist, data.del.tc, strain.labs.del,
+     data.pv, data.sum.pv,
+     data.mdl,
+     data.ns, data.sum.ns,
+     file = 'figures/final/data.RData')
+
+

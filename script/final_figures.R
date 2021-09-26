@@ -74,13 +74,9 @@ fig.cbn.c <- data.cbn %>%
                position = position_dodge(width = 0.6)) +
   scale_y_continuous(breaks = seq(-1,2,0.2)) +
   scale_x_discrete(labels = c( 'FY4' = 'FY4',
-                               'FY4_pet' = 'FY4 (&rho;-)' ,
                                'FY4-met15del' = 'FY4-*met15Δ*',
-                               'FY4-met15del_pet' = 'FY4-*met15Δ* (&rho;-)',
                                'BY4742' = 'BY4742',
-                               'BY4742_pet' = 'BY4742 (&rho;-)',
-                               'BY4741' = 'BY4741',
-                               'BY4741_pet' = 'BY4741 (&rho;-)')) +
+                               'BY4741' = 'BY4741')) +
   scale_fill_manual(name = 'Methionine-Uracil\nAuxotrophy',
                     values = c('None' = '#FFC107',
                                'Methionine' = '#536DFE',
@@ -382,7 +378,7 @@ fig.yll.b <- merge(data.jm, strain.labs.jm, by = 'orf_name') %>%
   scale_alpha_manual(name = 'Condition',
                      values = c('YPDA' = 0.4,
                                 'SD-Met-Cys+Glu' = 1)) +
-  scale_fill_manual(name = 'Methionine-Uracil\nAuxotrophy',
+  scale_fill_manual(name = 'Methionine\nAuxotrophy',
                     values = c('Unknown' = '#FFC107',
                                'Presumed Auxotroph' = '#536DFE',
                                'Prototroph' = '#E040FB'),
@@ -549,9 +545,125 @@ ggsave(sprintf("%s/Figure_YLL.jpg",fig_path), fig.yll,
        dpi = 600)
 
 
-#####
-data.bioc %>%
-  group_by(`Time (min)`, Sample) %>%
-  summarise(uM = median(uM, na.rm = T))
+##### NO SULFATE
+strain.labs.ns <- strain.labs.cbn
+strain.labs.ns$orf_name[strain.labs.ns$orf_name == 'FY4-met3del'] <- 'FY4_met3del'
+strain.labs.ns$orf_name[strain.labs.ns$orf_name == 'FY4-met15del'] <- 'FY4_met15del'
 
+fig3a <- merge(data.ns[data.ns$stage == 'S1' & data.ns$hours == 165 & data.ns$average != 0,],
+      strain.labs.ns, by = 'orf_name') %>%
+  ggplot(aes(x = orf_name, y = average, fill = met_aux, alpha = ynb_type)) +
+  geom_boxplot(aes(linetype = base), size = 0.2, outlier.shape = NA,
+               position = position_dodge(width = 0.6)) +
+  labs(y = 'Colony Size (pixels)') +
+  scale_x_discrete(labels = c( 'FY4' = 'FY4',
+                               'FY4_met15del' = 'FY4-*met15Δ*',
+                               'FY4_met3del' = 'FY4-*met3Δ*',
+                               'BY4742' = 'BY4742',
+                               'BY4741' = 'BY4741')) +
+  scale_alpha_manual(name = 'YNB Type',
+                     values = c('Difco' = 0.4,
+                                'Home' = 1),
+                     labels = c('Difco' = 'Commercial',
+                                'Home' = 'Homemade')) +
+  scale_fill_manual(name = 'Methionine\nAuxotrophy',
+                    values = c('Presumed Auxotroph' = '#536DFE',
+                               'Prototroph' = '#E040FB'),
+                    labels = c('Presumed Auxotroph' = 'Presumed\nAuxotroph',
+                               'Prototroph' = 'Prototroph'),
+                    position = 'bottom') +
+  scale_linetype_manual(name = 'Media Base',
+                        values = c('Agar' = 'twodash',
+                                  'Agarose' = 'solid')) +
+  facet_wrap(methionine~sulfate, nrow = 3,
+             labeller = labeller(methionine = c('+Met' = '+ Methionine',
+                                                '-Met' = '- Methionine'),
+                                 sulfate = c('+sulfate' = '+ Inorganic Sulfates',
+                                             '-sulfate' = '- Inorganic Sulfates'))) +
+  theme_linedraw() +
+  theme(plot.title = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title = element_text(size = titles),
+        axis.text.x = ggtext::element_markdown(size = txt, angle = 40, vjust = 1, hjust = 1),
+        axis.text.y = element_text(size = txt),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.box = 'vertical',
+        # legend.direction = 'vertical',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        legend.spacing.y = unit(0.5, "mm"),
+        strip.text = element_text(size = txt,
+                                  margin = margin(0.1,0,0.1,0, "mm"))) +
+  guides(fill = guide_legend(nrow=2, byrow=TRUE, order = 1),
+         alpha = guide_legend(nrow=2, byrow=TRUE, order = 3,
+                              override.aes=list(fill=hcl(c(15,195),100,0,alpha=c(1,0.4)),
+                                                colour=NA)),
+         linetype = guide_legend(nrow=2, byrow=TRUE, order = 2))
+  
+
+fig3b <- data.ns[!(data.ns$id == 'Agar_Difco_+sulfate_+Met' & data.ns$stage == 'S1'),] %>%
+  filter(id %in% c('Agar_Difco_+sulfate_+Met',
+                   'Agarose_Home_+sulfate_-Met',
+                   'Agarose_Home_-sulfate_-Met')) %>%
+  group_by(stage, base, ynb_type, sulfate, methionine, orf_name, hours, cum_hrs, id) %>%
+  summarize(average = median(average, na.rm = T), .groups = 'keep') %>%
+  data.frame() %>%
+  ggplot(aes(x = cum_hrs, y = average)) +
+  geom_line(aes(linetype = base, col = id)) +
+  scale_x_continuous(breaks = seq(0,1000,50)) +
+  scale_color_manual(name = 'Condition',
+                     breaks = c('Agarose_Home_-sulfate_-Met',
+                                'Agarose_Home_+sulfate_-Met',
+                                'Agar_Difco_+sulfate_+Met'),
+                    values = c('Agar_Difco_+sulfate_+Met' = '#212121',
+                               'Agarose_Home_+sulfate_-Met' = '#795548',
+                               'Agarose_Home_-sulfate_-Met' = '#FF5722'),
+                    labels = c('Agar_Difco_+sulfate_+Met' = 'Commercial YNB + Inorganic Sulfates - Methionine',
+                               'Agarose_Home_+sulfate_-Met' = 'Homemade YNB + Inorganic Sulfates - Methionine',
+                               'Agarose_Home_-sulfate_-Met' = 'Homemade YNB - Inorganic Sulfates - Methionine'),
+                    position = 'bottom') +
+  scale_linetype_manual(name = 'Media Base',
+                        values = c('Agar' = 'twodash',
+                                   'Agarose' = 'solid')) +
+  facet_wrap(.~orf_name, nrow = 5,
+             labeller = labeller(orf_name = c('FY4' = 'FY4',
+                                              'FY4_met15del' = 'FY4-*met15Δ*',
+                                              'FY4_met3del' = 'FY4-*met3Δ*',
+                                              'BY4742' = 'BY4742',
+                                              'BY4741' = 'BY4741'))) +
+  labs(x = 'Time (hours)',
+       y = 'Colony Size (pixels)') +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.box = 'vertical',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        legend.spacing.y = unit(0.5, "mm"),
+        strip.text = ggtext::element_markdown(size = txt, 
+                                  margin = margin(0.1,0,0.1,0, "mm"))) +
+  guides(color = guide_legend(nrow=3, byrow=TRUE, order = 1, override.aes=list(size = 3)),
+         linetype = guide_legend(nrow=2, byrow=TRUE, order = 2))
+
+
+fig3a.legend <- g_legend(fig3a)
+fig3b.legend <- g_legend(fig3b)
+
+fig3 <- cowplot::plot_grid(fig3a + theme(legend.position="none"),
+                   fig3b + theme(legend.position="none"),
+                   fig3a.legend, fig3b.legend,
+                   labels = c('A','B','',''), ncol = 2, nrow = 2, 
+                   rel_widths = c(1,2), rel_heights = c(4,1),
+                   label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold',
+                   align = 'hv', axis = 'tb')
+
+ggsave(sprintf("%s/Figure_NS.jpg",fig_path), fig3,
+       height = 250, width = two.c, units = 'mm',
+       dpi = 600)
 
