@@ -74,6 +74,7 @@ data.jm.stats <- NULL
 for (i in seq(1,dim(data.jm.pmt)[1])) {
   
   temp <- data.jm[data.jm$id %in% data.jm.pmt[i,],] %>%
+    filter(time == 't_final', attempt != 'pilot') %>%
     group_by(id, attempt_label, bio_rep) %>%
     summarise(relative_fitness = median(relative_cs, na.rm = T), .groups = 'keep') %>%
     data.frame()
@@ -90,6 +91,7 @@ for (i in seq(1,dim(data.jm.pmt)[1])) {
   data.jm.stats$p[i] <- temp.p$p.value
   
   temp <- data.jm[data.jm$id %in% data.jm.pmt[i,],] %>%
+    filter(time == 't_final', attempt != 'pilot') %>%
     group_by(id) %>%
     summarise(relative_fitness = median(relative_cs, na.rm = T), .groups = 'keep') %>%
     data.frame()
@@ -207,6 +209,98 @@ write.csv(data.sum.pv.stats, file = '/home/sbp29/R/Projects/methionine/figures/f
 
 
 ##### NO SULFATE
+data.ns$id <- paste(data.ns$condition, data.ns$orf_name, sep = '_')
+data.ns.pmt <- permutations(length(unique(data.ns$id)),2,unique(data.ns$id))
+
+data.ns <- merge(data.ns, data.ns %>%
+                   group_by(stage) %>%
+                   summarize(.groups = 'keep', max_hrs = max(hours, na.rm = T)) %>%
+                   data.frame(), by = 'stage')
+
+data.ns.stats <- NULL
+for (i in seq(1,dim(data.ns.pmt)[1])) {
+  
+  temp <- data.ns[data.ns$id %in% data.ns.pmt[i,],] %>%
+    filter(hours == max_hrs, stage == 'S1', average != 0) %>%
+    group_by(id, expt_rep, bio_rep) %>%
+    summarise(cs = median(average, na.rm = T), .groups = 'keep') %>%
+    data.frame()
+  temp.p <- kruskal.test(cs ~ id, data = temp)
+  
+  data.ns.stats$orf_name_1[i] <- as.character(unique(data.ns$orf_name[data.ns$id == data.ns.pmt[i,1]]))
+  data.ns.stats$condition_1[i] <- as.character(unique(data.ns$condition[data.ns$id == data.ns.pmt[i,1]]))
+  data.ns.stats$media_1[i] <- as.character(unique(data.ns$media[data.ns$id == data.ns.pmt[i,1]]))
+  data.ns.stats$base_1[i] <- as.character(unique(data.ns$base[data.ns$id == data.ns.pmt[i,1]]))
+  data.ns.stats$ynb_type_1[i] <- as.character(unique(data.ns$ynb_type[data.ns$id == data.ns.pmt[i,1]]))
+  data.ns.stats$methionine_1[i] <- as.character(unique(data.ns$methionine[data.ns$id == data.ns.pmt[i,1]]))
+  data.ns.stats$sulfate_1[i] <- as.character(unique(data.ns$sulfate[data.ns$id == data.ns.pmt[i,1]]))
+  
+  data.ns.stats$orf_name_2[i] <- as.character(unique(data.ns$orf_name[data.ns$id == data.ns.pmt[i,2]]))
+  data.ns.stats$condition_2[i] <- as.character(unique(data.ns$condition[data.ns$id == data.ns.pmt[i,2]]))
+  data.ns.stats$media_2[i] <- as.character(unique(data.ns$media[data.ns$id == data.ns.pmt[i,2]]))
+  data.ns.stats$base_2[i] <- as.character(unique(data.ns$base[data.ns$id == data.ns.pmt[i,2]]))
+  data.ns.stats$ynb_type_2[i] <- as.character(unique(data.ns$ynb_type[data.ns$id == data.ns.pmt[i,2]]))
+  data.ns.stats$methionine_2[i] <- as.character(unique(data.ns$methionine[data.ns$id == data.ns.pmt[i,2]]))
+  data.ns.stats$sulfate_2[i] <- as.character(unique(data.ns$sulfate[data.ns$id == data.ns.pmt[i,2]]))
+  
+  data.ns.stats$method[i] <- temp.p$method
+  data.ns.stats$statistic[i] <- temp.p$statistic[[1]]
+  data.ns.stats$p[i] <- temp.p$p.value
+  
+  temp <- data.ns[data.ns$id %in% data.ns.pmt[i,],] %>%
+    filter(hours == max_hrs, stage == 'S1', average != 0) %>%
+    group_by(id) %>%
+    summarise(cs = median(average, na.rm = T), .groups = 'keep') %>%
+    data.frame()
+  
+  data.ns.stats$effsize[i] <- (temp$cs[temp$id == data.ns.pmt[i,2]] - temp$cs[temp$id == data.ns.pmt[i,1]])/
+    temp$cs[temp$id == data.ns.pmt[i,1]]
+}
+data.ns.stats <- data.frame(data.ns.stats)
+write.csv(data.ns.stats, file = '/home/sbp29/R/Projects/methionine/figures/final/final/MET_NS_STATS.csv')
 
 
+##### REPEATED PINNING
+data.rp$id <- paste(data.rp$table_name, data.rp$orf_name, sep = '_')
+data.rp.pmt <- permutations(length(unique(data.rp$id)),2,unique(data.rp$id))
 
+data.rp.stats <- NULL
+for (i in seq(1,dim(data.rp.pmt)[1])) {
+  temp <- data.rp[data.rp$id %in% data.rp.pmt[i,],] %>%
+    filter(hours == max_hrs, average != 0) %>%
+    group_by(id) %>%
+    # summarise(cs = median(average, na.rm = T), .groups = 'keep') %>%
+    data.frame()
+  temp.p <- kruskal.test(average ~ id, data = temp)
+  
+  data.rp.stats$orf_name_1[i] <- as.character(unique(data.rp$orf_name[data.rp$id == data.rp.pmt[i,1]]))
+  data.rp.stats$condition_1[i] <- as.character(unique(data.rp$condition[data.rp$id == data.rp.pmt[i,1]]))
+  data.rp.stats$media_1[i] <- as.character(unique(data.rp$media[data.rp$id == data.rp.pmt[i,1]]))
+  data.rp.stats$base_1[i] <- as.character(unique(data.rp$base[data.rp$id == data.rp.pmt[i,1]]))
+  data.rp.stats$ynb_type_1[i] <- as.character(unique(data.rp$ynb_type[data.rp$id == data.rp.pmt[i,1]]))
+  data.rp.stats$methionine_1[i] <- as.character(unique(data.rp$methionine[data.rp$id == data.rp.pmt[i,1]]))
+  data.rp.stats$sulfate_1[i] <- as.character(unique(data.rp$sulfate[data.rp$id == data.rp.pmt[i,1]]))
+  
+  data.rp.stats$orf_name_2[i] <- as.character(unique(data.rp$orf_name[data.rp$id == data.rp.pmt[i,2]]))
+  data.rp.stats$condition_2[i] <- as.character(unique(data.rp$condition[data.rp$id == data.rp.pmt[i,2]]))
+  data.rp.stats$media_2[i] <- as.character(unique(data.rp$media[data.rp$id == data.rp.pmt[i,2]]))
+  data.rp.stats$base_2[i] <- as.character(unique(data.rp$base[data.rp$id == data.rp.pmt[i,2]]))
+  data.rp.stats$ynb_type_2[i] <- as.character(unique(data.rp$ynb_type[data.rp$id == data.rp.pmt[i,2]]))
+  data.rp.stats$methionine_2[i] <- as.character(unique(data.rp$methionine[data.rp$id == data.rp.pmt[i,2]]))
+  data.rp.stats$sulfate_2[i] <- as.character(unique(data.rp$sulfate[data.rp$id == data.rp.pmt[i,2]]))
+  
+  data.rp.stats$method[i] <- temp.p$method
+  data.rp.stats$statistic[i] <- temp.p$statistic[[1]]
+  data.rp.stats$p[i] <- temp.p$p.value
+  
+  temp <- data.rp[data.rp$id %in% data.rp.pmt[i,],] %>%
+    filter(hours == max_hrs, average != 0) %>%
+    group_by(id) %>%
+    summarise(cs = median(average, na.rm = T), .groups = 'keep') %>%
+    data.frame()
+  
+  data.rp.stats$effsize[i] <- (temp$cs[temp$id == data.rp.pmt[i,2]] - temp$cs[temp$id == data.rp.pmt[i,1]])/
+    temp$cs[temp$id == data.rp.pmt[i,1]]
+}
+data.rp.stats <- data.frame(data.rp.stats)
+write.csv(data.rp.stats, file = '/home/sbp29/R/Projects/methionine/figures/final/final/MET_RP_STATS.csv')

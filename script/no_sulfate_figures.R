@@ -119,34 +119,52 @@ data %>%
   facet_wrap(.~base*ynb_type*sulfate*methionine)
 
 data$average[is.na(data$average)] <- 0
-data.tc <- data %>%
-  # filter(orf_name %in% c('FY4','BY4742'), base == 'Agarose') %>%
-  group_by(stage, base, ynb_type, sulfate, methionine, orf_name, hours) %>%
+# data.tc <- data %>%
+#   # filter(orf_name %in% c('FY4','BY4742'), base == 'Agarose') %>%
+#   group_by(stage, base, ynb_type, sulfate, methionine, orf_name, hours) %>%
+#   summarize(average = median(average, na.rm = T), .groups = 'keep') %>%
+#   data.frame()
+
+data$cum_hrs <- NULL
+data$cum_hrs[data$stage == 'S1'] <- data$hours[data$stage == 'S1']
+data$cum_hrs[data$stage == 'S2'] <- data$hours[data$stage == 'S2'] +
+  max(data$cum_hrs[data$stage == 'S1'])
+data$cum_hrs[data$stage == 'S3'] <- data$hours[data$stage == 'S3'] +
+  max(data$cum_hrs[data$stage == 'S2'])
+data$cum_hrs[data$stage == 'Re1'] <- data$hours[data$stage == 'Re1'] +
+  max(data$cum_hrs[data$stage == 'S2'])
+data$cum_hrs[data$stage == 'S4'] <- data$hours[data$stage == 'S4'] +
+  max(data$cum_hrs[data$stage == 'S3'])
+data$cum_hrs[data$stage == 'S5'] <- data$hours[data$stage == 'S5'] +
+  max(data$cum_hrs[data$stage == 'S4'])
+data$cum_hrs[data$stage == 'Re2'] <- data$hours[data$stage == 'Re2'] +
+  max(data$cum_hrs[data$stage == 'S5'])
+
+data$id <- paste(data$base, data$ynb_type, data$sulfate, data$methionine, sep = '_')
+data$stage <- as.character(data$stage)
+
+data$stage[data$stage == 'Re1'] <- 'S3'
+data$stage[data$stage == 'Re2'] <- 'S6'
+
+data$expt_rep[str_detect(data$arm, 'R1')] <- 'R1'
+data$expt_rep[str_detect(data$arm, 'R2')] <- 'R2'
+
+# plot.cs.tc <- 
+data[!(data$id == 'Agar_Difco_+sulfate_+Met' & data$stage == 'S1'),] %>%
+  filter(id %in% c('Agar_Difco_+sulfate_+Met',
+                   'Agarose_Home_+sulfate_-Met',
+                   'Agarose_Home_-sulfate_-Met')) %>%
+  group_by(stage, base, ynb_type, sulfate, methionine, orf_name, hours, cum_hrs, id) %>%
   summarize(average = median(average, na.rm = T), .groups = 'keep') %>%
-  data.frame()
-
-data.tc$cum_hrs <- NULL
-data.tc$cum_hrs[data.tc$stage == 'S1'] <- data.tc$hours[data.tc$stage == 'S1']
-data.tc$cum_hrs[data.tc$stage == 'S2'] <- data.tc$hours[data.tc$stage == 'S2'] +
-  max(data.tc$cum_hrs[data.tc$stage == 'S1'])
-data.tc$cum_hrs[data.tc$stage == 'S3'] <- data.tc$hours[data.tc$stage == 'S3'] +
-  max(data.tc$cum_hrs[data.tc$stage == 'S2'])
-data.tc$cum_hrs[data.tc$stage == 'Re1'] <- data.tc$hours[data.tc$stage == 'Re1'] +
-  max(data.tc$cum_hrs[data.tc$stage == 'S2'])
-data.tc$cum_hrs[data.tc$stage == 'S4'] <- data.tc$hours[data.tc$stage == 'S4'] +
-  max(data.tc$cum_hrs[data.tc$stage == 'S3'])
-data.tc$cum_hrs[data.tc$stage == 'S5'] <- data.tc$hours[data.tc$stage == 'S5'] +
-  max(data.tc$cum_hrs[data.tc$stage == 'S4'])
-data.tc$cum_hrs[data.tc$stage == 'Re2'] <- data.tc$hours[data.tc$stage == 'Re2'] +
-  max(data.tc$cum_hrs[data.tc$stage == 'S5'])
-
-data.tc$id <- paste(data.tc$base, data.tc$ynb_type, data.tc$sulfate, data.tc$methionine, sep = '_')
-
-plot.cs.tc <- data.tc[!(data.tc$stage == 'S1' & data.tc$base == 'Agar'),] %>%
+  data.frame() %>%
   ggplot(aes(x = cum_hrs, y = average)) +
+  # stat_summary(fun.data=mean_sdl, fun.args = list(mult=.2),
+  #              aes(group = id, fill = id), geom="ribbon", alpha = 0.4) +
+  # stat_summary(aes(group = id, col = id), fun=mean, geom="line", lwd =0.7) +
   geom_line(aes(col = id)) +
   # geom_point(aes(col = orf_name, shape = stage)) +
   # facet_wrap(.~base*ynb_type*sulfate*methionine*stage) +
+  scale_x_continuous(breaks = seq(0,1000,50)) +
   facet_wrap(.~orf_name, nrow = 5) +
   labs(x = 'Time (hours)',
        y = 'Colony Size (pixels)') +
@@ -164,9 +182,19 @@ plot.cs.tc <- data.tc[!(data.tc$stage == 'S1' & data.tc$base == 'Agar'),] %>%
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm"))) #+
   # coord_cartesian(xlim = c(0,750))
-ggsave(sprintf("%s/%s/COLONY_SIZE_TIMECOURSE.jpg",fig_path, expt.name),
-       plot.cs.tc,
-       height = two.c, width = two.c, units = 'mm',
-       dpi = 600)
+# ggsave(sprintf("%s/%s/COLONY_SIZE_TIMECOURSE.jpg",fig_path, expt.name),
+#        plot.cs.tc,
+#        height = two.c, width = two.c, units = 'mm',
+#        dpi = 600)
+
+
+data[data$stage == 'S1' & data$hours == 165 & data$average != 0,] %>%
+  ggplot(aes(x = orf_name, y = average, fill = base, alpha = ynb_type)) +
+  geom_boxplot(size = 0.2, outlier.shape = NA,
+               position = position_dodge(width = 0.6)) +
+  facet_wrap(.~methionine*sulfate, nrow = 3) +
+  scale_alpha_manual(name = 'YNB Type',
+                     values = c('Difco' = 0.4,
+                                'Home' = 1))
 
 
