@@ -143,8 +143,13 @@ for (i in seq(1,dim(data.res.gc.sum.pmt)[1])) {
     temp$relative_fitness[temp$id == data.res.gc.sum.pmt[i,1]]
 }
 data.res.gc.sum.stats <- data.frame(data.res.gc.sum.stats)
-write.csv(data.res.gc.sum.stats, file = '/home/sbp29/R/Projects/methionine/figures/final/final/MET_RESP_STATS.csv')
+# write.csv(data.res.gc.sum.stats, file = '/home/sbp29/R/Projects/methionine/figures/final/final/MET_RESP_STATS.csv')
 
+stats.res.supp <- data.res.gc.sum.stats[(data.res.gc.sum.stats$condition_1 == data.res.gc.sum.stats$condition_2 & data.res.gc.sum.stats$orf_name_1 == 'FY4') |
+                        (data.res.gc.sum.stats$carbon_1 == data.res.gc.sum.stats$carbon_2 &
+                           data.res.gc.sum.stats$methionine_1 == '+Met' & data.res.gc.sum.stats$methionine_2 == '-Met' &
+                           data.res.gc.sum.stats$orf_name_1 == data.res.gc.sum.stats$orf_name_2),]
+write.csv(stats.res.supp, file = '/home/sbp29/R/Projects/methionine/figures/final/final/RES_STATS_SUPP.csv')
 
 ##### PLASMID VALIDATION
 head(data.sum.pv)
