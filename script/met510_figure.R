@@ -1,5 +1,8 @@
 
 
+data.510$orf_name <- factor(data.510$orf_name, levels = c('FY4','BY4741_met10del','BY4741_met5del',
+                                                          'met15del','met10del','met5del'))
+
 merge(data.510, strain.labs.510, by = 'orf_name') %>%
   filter(hours == 160) %>%
   ggplot(aes(x = condition, y = relative_fitness)) +
@@ -10,12 +13,6 @@ merge(data.510, strain.labs.510, by = 'orf_name') %>%
                               'SD+Met',
                               'SD-Met',
                               'SD-Ura')) +
-  # scale_alpha_manual(name = 'Condition',
-  #                    values = c('YPDA' = 0.4,
-  #                               'SD-Met-Cys+Glu' = 1),
-  #                    labels = c('YPDA' = 'YPDA',
-  #                               'SD-Met-Cys+Glu' = 'SD-Met-Cys+Ura+Glu'),
-  #                    guide = F) +
   labs(x = 'Strain',
        y = 'Relative Colony Size') +
   coord_cartesian(ylim = c(0,1.3)) +

@@ -22,6 +22,7 @@ library(gtools)
 library(effsize)
 library(png)
 library(ggstatsplot)
+library(cowplot)
 source("~/R/Projects/adaptivefitness/R/functions/initialize.sql.R")
 load(file = 'figures/final/data.RData')
 
@@ -89,7 +90,7 @@ fig1a <- ggplot() +
   theme(plot.margin = margin(t=0, l=20, r=20, b=0, unit = "mm"),
         plot.background = element_blank())
 
-fig1b <- readPNG('figures/final/final/Figure1B.png')
+fig1b <- readPNG('figures/final/final/ExptPipeline.png')
 fig1b <- ggplot() + 
   background_image(fig1b) +
   theme(plot.margin = margin(t=0, l=0, r=0, b=0, unit = "mm"),
@@ -151,22 +152,24 @@ fig2a <- rbind(data.cbn[,c(1,2,5,6,10)],
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
         strip.text = ggtext::element_markdown(size = txt,
-                                              margin = margin(0.1,0,0.1,0, "mm")))
+                                              margin = margin(0.1,0,0.1,0, "mm")),
+        strip.background.y = element_blank(),
+        strip.text.y = element_blank())
 
-fig2a.g <- ggplot_gtable(ggplot_build(fig2a))
-stripr <- which(grepl('strip-r', fig2a.g$layout$name))
-
-fig2a.g$grobs[[11]]$grobs[[1]]$children[[2]]$children[[1]]$label
-fig2a.g$grobs[[11]]$grobs[[1]]$children[[2]]$children[[1]]$gp$col <- 'black'
-fig2a.g$grobs[[11]]$grobs[[1]]$children[[1]]$gp$fill <- '#E040FB'
-
-fig2a.g$grobs[[12]]$grobs[[1]]$children[[2]]$children[[1]]$label
-fig2a.g$grobs[[12]]$grobs[[1]]$children[[2]]$children[[1]]$gp$col <- 'black'
-fig2a.g$grobs[[12]]$grobs[[1]]$children[[1]]$gp$fill <- '#FF5722'
-
-ggsave(sprintf("%s/CarbonSource_SD_Glu.jpg",fig_path), fig2a.g,
-       height = one.c, width = one.c, units = 'mm',
-       dpi = 600)
+# fig2a.g <- ggplot_gtable(ggplot_build(fig2a))
+# stripr <- which(grepl('strip-r', fig2a.g$layout$name))
+# 
+# fig2a.g$grobs[[11]]$grobs[[1]]$children[[2]]$children[[1]]$label
+# fig2a.g$grobs[[11]]$grobs[[1]]$children[[2]]$children[[1]]$gp$col <- 'black'
+# fig2a.g$grobs[[11]]$grobs[[1]]$children[[1]]$gp$fill <- '#E040FB'
+# 
+# fig2a.g$grobs[[12]]$grobs[[1]]$children[[2]]$children[[1]]$label
+# fig2a.g$grobs[[12]]$grobs[[1]]$children[[2]]$children[[1]]$gp$col <- 'black'
+# fig2a.g$grobs[[12]]$grobs[[1]]$children[[1]]$gp$fill <- '#FF5722'
+# 
+# ggsave(sprintf("%s/CarbonSource_SD_Glu.jpg",fig_path), fig2a.g,
+#        height = one.c, width = one.c, units = 'mm',
+#        dpi = 600)
 
 # grid.draw(fig2a.g)
 
@@ -195,6 +198,9 @@ fig2b <- data.cbn %>%
         axis.title.x = element_blank(),
         axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.y = element_blank(),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
         legend.position = 'bottom',
@@ -216,9 +222,9 @@ fig2b.g$grobs[[17]]$grobs[[1]]$children[[2]]$children[[1]]$label
 fig2b.g$grobs[[17]]$grobs[[1]]$children[[2]]$children[[1]]$gp$col <- 'black'
 fig2b.g$grobs[[17]]$grobs[[1]]$children[[1]]$gp$fill <- '#FF5722'
 
-ggsave(sprintf("%s/CarbonSource_SD_GalEth.jpg",fig_path), fig2b.g,
-       height = one.c, width = one.c, units = 'mm',
-       dpi = 600)
+# ggsave(sprintf("%s/CarbonSource_SD_GalEth.jpg",fig_path), fig2b.g,
+#        height = one.c, width = one.c, units = 'mm',
+#        dpi = 600)
 
 # grid.draw(fig2b.g)
 strain.labs.res$labels2 <- as.character(strain.labs.res$labels)
@@ -278,7 +284,8 @@ fig2c <- merge(data.res.gc[str_detect(data.res.gc$orf_name, 'FY'),],
         legend.box.spacing = unit(0.5,"mm"),
         strip.text = element_text(size = txt,
                                   margin = margin(0.1,0,0.1,0, "mm"))) +
-  guides(color = guide_legend(nrow=1, byrow=TRUE, order = 1),
+  guides(color = guide_legend(nrow=1, byrow=TRUE, order = 1,
+                              override.aes = list(size = 3)),
          linetype = guide_legend(nrow=1, byrow=TRUE, order = 2))
 
 ggsave(sprintf("%s/Respiration_FYs.jpg",fig_path), fig2c,
@@ -392,24 +399,51 @@ fig3a.g <- ggplot_gtable(ggplot_build(fig3a))
 # }
 # # grid.draw(fig3a.g)
 
+data.bis$orf_name[data.bis$Strain == 'FY4'] <- 'FY4'
+data.bis$orf_name[data.bis$Strain == 'FY4-met15D'] <- 'met15'
+data.bis$orf_name[data.bis$Strain == 'FY4-met3D'] <- 'met3'
+data.bis$orf_name[data.bis$Strain == 'FY4-met13D'] <- 'met13'
+data.bis$orf_name[data.bis$Strain == 'FY4-met12D'] <- 'met12'
+data.bis$orf_name[data.bis$Strain == 'FY4-met6D'] <- 'met6'
+data.bis$orf_name[data.bis$Strain == 'FY4-met2D'] <- 'met2'
+data.bis$orf_name[data.bis$Strain == 'FY4-str3D'] <- 'str3'
+data.bis$orf_name[data.bis$Strain == 'FY4-cys4D'] <- 'cys4'
+data.bis$orf_name[data.bis$Strain == 'FY4-met15D'] <- 'met15'
+data.bis$orf_name[data.bis$Strain == 'BY4741'] <- 'BY4741'
+data.bis$orf_name[data.bis$Strain == 'BY4742'] <- 'BY4742'
+
+
+
 data.jm$orf_name <- factor(data.jm$orf_name,
                            levels = c('FY4','BY4742','met12','met2','met6','met13',
                                       'cys4','yll','str3','met3','met15','BY4741'))
-fig3b <- merge(data.jm, strain.labs.jm, by = 'orf_name') %>%
+fig3b <- merge(merge(data.jm, strain.labs.jm, by = 'orf_name'),
+      data.bis %>% filter(Condition == 'BiGGY') %>%
+        group_by(orf_name) %>%
+        summarize(HS = median(HS, na.rm = T), .groups = 'keep') %>%
+        data.frame(), by = 'orf_name') %>%
   filter(orf_name != 'yll', time == 't_final', attempt != 'pilot', condition %in% c('YPDA','SD-Met-Cys+Glu')) %>%
   ggplot(aes(x = condition, y = relative_cs, alpha = condition)) +
-  geom_boxplot(fill = '#616161', outlier.shape = NA, size = 0.2,
+  # geom_rect(aes(fill = HS),xmin = -Inf,xmax = Inf,
+  #           ymin = -Inf,ymax = Inf) +
+  # geom_hline(yintercept = seq(-1,2,0.2), col = '#FFECB3', size = 0.2, linetype = 'dashed') +
+  # geom_vline(xintercept = seq(-1,5,1), col = '#FFECB3', size = 0.2, linetype = 'dashed') +
+  # geom_boxplot(fill = '#9E9E9E', col = 'white', outlier.shape = NA, size = 0.4,
+  #              position = position_dodge(width = 0.85)) +
+  geom_boxplot(fill = '#9E9E9E', outlier.shape = NA, size = 0.2,
                position = position_dodge(width = 0.85)) +
   scale_y_continuous(breaks = seq(-1,2,0.2)) +
   scale_x_discrete(limits = c('YPDA', 'SD-Met-Cys+Glu'),
                    labels = c('YPDA' = 'YPDA',
-                              'SD-Met-Cys+Glu' = 'SD-Met')) +
+                              'SD-Met-Cys+Glu' = 'SD-Met+Glu')) +
   scale_alpha_manual(name = 'Condition',
-                     values = c('YPDA' = 0.4,
+                     values = c('YPDA' = 1,
                                 'SD-Met-Cys+Glu' = 1),
                      labels = c('YPDA' = 'YPDA',
                                 'SD-Met-Cys+Glu' = 'SD-Met-Cys+Ura+Glu'),
                      guide = F) +
+  scale_fill_gradient(name = 'Relative Hydrogen Sulfide',
+                      low = "#D7CCC8", high = "#5D4037") +
   # scale_fill_manual(name = 'Methionine\nAuxotrophy',
   #                   values = c('Prototroph' = '#FFC107',
   #                              'Presumed Auxotroph' = '#536DFE',
@@ -418,7 +452,7 @@ fig3b <- merge(data.jm, strain.labs.jm, by = 'orf_name') %>%
   labs(x = 'Strain',
        y = 'Relative Colony Size') +
   coord_cartesian(ylim = c(0,1.3)) +
-  facet_wrap(~orf_name, ncol = 3, 
+  facet_wrap(~orf_name, nrow = 2, 
              labeller = labeller(orf_name = c('FY4'='FY4',
                                               'met12'='FY4-*met12Δ*',
                                               'str3'='FY4-*str3Δ*',
@@ -435,13 +469,13 @@ fig3b <- merge(data.jm, strain.labs.jm, by = 'orf_name') %>%
   theme(plot.title = element_blank(),
         axis.title.x = element_blank(),
         axis.title.y = element_text(size = titles),
-        axis.text.x = ggtext::element_markdown(size = txt), #angle = 30, vjust = 1, hjust = 1),
+        axis.text.x = ggtext::element_markdown(size = txt, angle = 30, vjust = 1, hjust = 1),
         axis.text.y = element_text(size = txt),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
         legend.position = 'bottom',
-        legend.direction = 'vertical',
-        legend.box = 'vertical',
+        # legend.direction = 'vertical',
+        # legend.box = 'vertical',
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
         strip.text = ggtext::element_markdown(size = txt, colour = 'black',
@@ -467,18 +501,22 @@ for (s in stripr) {
     } else if (a == 'Prototroph') {
       fig3b.g$grobs[[s]]$grobs[[1]]$children[[1]]$gp$fill <- '#FFC107'
     } else {
-      fig3b.g$grobs[[s]]$grobs[[1]]$children[[1]]$gp$fill <- '#BDBDBD'
+      fig3b.g$grobs[[s]]$grobs[[1]]$children[[1]]$gp$fill <- '#FFC107' #Unkown = '#BDBDBD'
     }
   }
 }
 # grid.draw(fig3b.g)
+# ggsave(sprintf("%s/JakesMutants.jpg",fig_path), fig3b.g,
+#        height = one.5c, width = one.5c, units = 'mm',
+#        dpi = 600)
+
 
 data.bis$Strain <- factor(data.bis$Strain,
                            levels = c('FY4','BY4742','FY4-met12D','FY4-met2D','FY4-met6D','FY4-met13D',
                                       'FY4-cys4D','FY4-yllD','FY4-str3D','FY4-met3D','FY4-met15D','BY4741'))
 fig3c <- data.bis %>%
   filter(Condition == 'BiGGY') %>%
-  ggplot(aes(x = 1, y = HS)) +
+  ggplot(aes(x = Strain, y = HS)) +
   stat_summary(data = data.bis %>%
                  filter(Condition == 'BiGGY') %>%
                  group_by(Condition, Strain) %>%
@@ -494,25 +532,24 @@ fig3c <- data.bis %>%
   labs(y = 'Relative Hydrogen Sulfide',
        x = 'Strains',
        title = 'BiGGY Media') +
-  facet_wrap(.~Strain, ncol = 3,
-             labeller = labeller(Strain = c('FY4'='FY4',
+  scale_x_discrete(labels = c('FY4'='FY4',
                                    'FY4-met12D'='FY4-*met12Δ*',
                                    'FY4-str3D'='FY4-*str3Δ*',
                                    'FY4-met3D'='FY4-*met3Δ*',
                                    'FY4-met15D'='FY4-*met15Δ*',
                                    'FY4-met2D'='FY4-*met2Δ*',
-                                   'FY4-met6D'='FY4-*met6Δ*', 
+                                   'FY4-met6D'='FY4-*met6Δ*',
                                    'FY4-met13D'='FY4-*met13Δ*',
                                    'FY4-cys4D'='FY4-*cys4Δ*',
                                    'FY4-yllD'='FY4-*yll058wΔ*',
                                    'BY4742'='BY4742',
-                                   'BY4741'='BY4741'))) +
+                                   'BY4741'='BY4741')) +
   theme_linedraw() +
-  theme(plot.title = element_text(size = titles, face = 'bold', hjust = 0.5),
+  theme(plot.title = element_blank(),#element_text(size = titles, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
         axis.title.x = element_blank(),
         axis.text = element_text(size = txt),
-        axis.text.x = element_blank(),
+        axis.text.x = ggtext::element_markdown(size = txt, angle = 30, vjust = 1, hjust = 1),
         axis.ticks.x = element_blank(),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
@@ -521,35 +558,39 @@ fig3c <- data.bis %>%
         legend.box.spacing = unit(0.5,"mm"),
         strip.text = ggtext::element_markdown(size = txt, colour = 'black',
                                   margin = margin(0.1,0,0.1,0, "mm"))) +
-  coord_cartesian(ylim = c(1,7),
-                  xlim = c(0.2,1.8))
+  coord_cartesian(ylim = c(1,7))
 
-fig3c.g <- ggplot_gtable(ggplot_build(fig3c))
-stripr <- which(grepl('strip-t', fig3c.g$layout$name))
-
-for (s in stripr) {
-  # fig3c.g$grobs[[s]]$grobs[[1]]$children[[2]]$children[[1]]$gp$col <- 'black'
-  l <- fig3c.g$grobs[[s]]$grobs[[1]]$children[[2]]$children[[1]]$children[[1]]$children[[1]]$label
-  
-  if (length(l) != 0) {
-    if (l == 'FY4-') {
-      l2 <- fig3c.g$grobs[[s]]$grobs[[1]]$children[[2]]$children[[1]]$children[[1]]$children[[2]]$label
-      a <- strain.labs.bis$auxotrophy[str_detect(strain.labs.bis$labels, l2)]
-    } else {
-      a <- strain.labs.bis$auxotrophy[strain.labs.bis$orf_name == l]
-    }
-    
-    if (a == 'Presumed Auxotroph') {
-      fig3c.g$grobs[[s]]$grobs[[1]]$children[[1]]$gp$fill <- '#536DFE'
-    } else if (a == 'Prototroph') {
-      fig3c.g$grobs[[s]]$grobs[[1]]$children[[1]]$gp$fill <- '#FFC107'
-    } else {
-      fig3c.g$grobs[[s]]$grobs[[1]]$children[[1]]$gp$fill <- '#BDBDBD'
-    }
-  }
-}
+# fig3c.g <- ggplot_gtable(ggplot_build(fig3c))
+# stripr <- which(grepl('strip-t', fig3c.g$layout$name))
+# 
+# for (s in stripr) {
+#   # fig3c.g$grobs[[s]]$grobs[[1]]$children[[2]]$children[[1]]$gp$col <- 'black'
+#   l <- fig3c.g$grobs[[s]]$grobs[[1]]$children[[2]]$children[[1]]$children[[1]]$children[[1]]$label
+# 
+#   if (length(l) != 0) {
+#     if (l == 'FY4-') {
+#       l2 <- fig3c.g$grobs[[s]]$grobs[[1]]$children[[2]]$children[[1]]$children[[1]]$children[[2]]$label
+#       a <- strain.labs.bis$auxotrophy[str_detect(strain.labs.bis$labels, l2)]
+#     } else {
+#       a <- strain.labs.bis$auxotrophy[strain.labs.bis$orf_name == l]
+#     }
+# 
+#     if (a == 'Presumed Auxotroph') {
+#       fig3c.g$grobs[[s]]$grobs[[1]]$children[[1]]$gp$fill <- '#536DFE'
+#     } else if (a == 'Prototroph') {
+#       fig3c.g$grobs[[s]]$grobs[[1]]$children[[1]]$gp$fill <- '#FFC107'
+#     } else {
+#       fig3c.g$grobs[[s]]$grobs[[1]]$children[[1]]$gp$fill <- '#BDBDBD'
+#     }
+#   }
+# }
 # grid.draw(fig3c.g)
 
+fig3cp <- readPNG('figures/final/final/BiGGY_Main.png')
+fig3cp <- ggplot() + 
+  background_image(fig3cp) +
+  theme(plot.margin = margin(t=0, l=0, r=0, b=0, unit = "mm"),
+        plot.background = element_blank())
 
 strain.labs.ns <- strain.labs.cbn
 strain.labs.ns$orf_name[strain.labs.ns$orf_name == 'FY4-met3del'] <- 'FY4_met3del'
@@ -560,25 +601,20 @@ fig3d <- merge(data.ns[data.ns$stage %in% c('S1','S2') & data.ns$hours %in% c(16
                 str_detect(data.ns$orf_name, 'FY'),],
                strain.labs.ns, by = 'orf_name') %>%
   filter(base == 'Agarose', ynb_type == 'Home') %>%
-  ggplot(aes(x = stage, y = average, fill = sulfate)) +
-  geom_boxplot(size = 0.2, outlier.shape = NA,
+  ggplot(aes(x = stage, y = average)) +
+  geom_boxplot(size = 0.2, outlier.shape = NA, fill = '#9E9E9E',
                position = position_dodge(width = 0.85)) +
   labs(y = 'Colony Size (pixels)') +
   scale_x_discrete(labels = c( 'S1' = 'Pin #1',
                                'S2' = 'Pin #2')) +
-  scale_fill_manual(name = 'Inorganic Sulfates\nin SD-Met',
-                    limits = c('+sulfate','-sulfate'),
-                    values = c('+sulfate' = '#AFB42B',
-                               '-sulfate' = '#00796B'),
-                    labels = c('+sulfate' = 'Present',
-                               '-sulfate' = 'Absent'),
-                    position = 'bottom') +
-  facet_wrap(~orf_name, nrow = 1,
+  facet_grid(sulfate~orf_name,
              labeller = labeller(orf_name = c('FY4' = 'FY4',
                                               'FY4_met15del' = 'FY4-*met15Δ*',
                                               'FY4_met3del' = 'FY4-*met3Δ*',
                                               'BY4742' = 'BY4742',
-                                              'BY4741' = 'BY4741'))) +
+                                              'BY4741' = 'BY4741'),
+                                 sulfate = c('+sulfate' = 'SD - Met + Glu<br />w/ Inorganic Sulfates',
+                                             '-sulfate' = 'SD - Met + Glu<br />w/o Inorganic Sulfates'))) +
   theme_linedraw() +
   theme(plot.title = element_blank(),
         axis.title.x = element_blank(),
@@ -593,10 +629,9 @@ fig3d <- merge(data.ns[data.ns$stage %in% c('S1','S2') & data.ns$hours %in% c(16
         legend.box.spacing = unit(0.5,"mm"),
         legend.spacing.y = unit(0.5, "mm"),
         strip.text = ggtext::element_markdown(size = txt, color = 'black',
-                                              margin = margin(0.1,0,0.1,0, "mm"))) +
-  guides(fill = guide_legend(nrow=2, byrow=TRUE, order = 1))
+                                              margin = margin(0.1,0,0.1,0, "mm")),
+        strip.text.y = ggtext::element_markdown(color = 'white'))
 
-legend.sul <- g_legend(fig3d + theme(legend.direction = 'vertical'))
 
 fig3d.g <- ggplot_gtable(ggplot_build(fig3d + theme(legend.position = 'None')))
 stripr <- which(grepl('strip-t', fig3d.g$layout$name))
@@ -605,11 +640,10 @@ for (s in stripr) {
   # fig3d.g$grobs[[s]]$grobs[[1]]$children[[2]]$children[[1]]$gp$col <- 'black'
   l <- fig3d.g$grobs[[s]]$grobs[[1]]$children[[2]]$children[[1]]$children[[1]]$children[[1]]$label
   
-  if (l == 'FY4-') {
-    l2 <- fig3d.g$grobs[[s]]$grobs[[1]]$children[[2]]$children[[1]]$children[[1]]$children[[2]]$label
-    a <- strain.labs.ns$auxotrophy[str_detect(strain.labs.ns$labels, l2)]
+  if (str_detect(l, 'FY4-')) {
+    a <- 'Methionine'
   } else {
-    a <- strain.labs.ns$auxotrophy[strain.labs.ns$orf_name == l]
+    a <- strain.labs.ns$auxotrophy[strain.labs.ns$labels == l]
   }
   
   if (a == 'Methionine') {
@@ -624,20 +658,24 @@ for (s in stripr) {
 }
 # grid.draw(fig3d.g)
 
-fig3 <- cowplot::plot_grid(legend.aux,
-                           fig3a.g,
-                           cowplot::plot_grid(fig3b.g, fig3c.g,
-                                              ncol = 2, rel_widths = c(2,1.5), align = 'h',
-                                              labels = c('B','C'), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                           cowplot::plot_grid(fig3d.g, legend.sul, nrow = 1, rel_widths = c(5,1)),
-                           ncol = 1, rel_heights = c(0.2,1,2,1),
-                           labels = c('','A','','D'), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
-ggsave(sprintf("%s/Figure3.jpg",fig_path), fig3,
-       height = 220, width = two.c, units = 'mm',
+# fig3 <- cowplot::plot_grid(legend.aux,
+#                            fig3a.g,
+#                            cowplot::plot_grid(fig3b.g, fig3c.g,
+#                                               ncol = 2, rel_widths = c(2,1.5), align = 'h',
+#                                               labels = c('B','C'), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
+#                            cowplot::plot_grid(fig3d.g, legend.sul, nrow = 1, rel_widths = c(5,1)),
+#                            ncol = 1, rel_heights = c(0.2,1,2,1),
+#                            labels = c('','A','','D'), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
+# ggsave(sprintf("%s/Figure3.jpg",fig_path), fig3,
+#        height = 220, width = two.c, units = 'mm',
+#        dpi = 600)
+
+ggsave(sprintf("%s/NoSulfate.jpg",fig_path), fig3d.g,
+       height = one.c, width = two.c, units = 'mm',
        dpi = 600)
 
 
-###### YLL RESULTS
+###### SCREEN RESULTS
 fig4a <- merge(data.del.diff %>% filter(orf_name %in% strain.labs.del$orf_name),
       strain.labs.del, by = 'orf_name') %>%
   ggplot(aes(x = fitness_MM, y = fitness_PM)) +
@@ -655,7 +693,8 @@ fig4a <- merge(data.del.diff %>% filter(orf_name %in% strain.labs.del$orf_name),
        y = 'Relative Fitness in SD+Met+Gal') +
   coord_cartesian(xlim = c(0, 15),
                   ylim = c(0, 1.5)) +
-  facet_wrap(.~stage, labeller = labeller(stage = c('Pre-Screen #1' = 'Pin #1',
+  facet_wrap(.~stage, ncol = 1,
+             labeller = labeller(stage = c('Pre-Screen #1' = 'Pin #1',
                                                     'Pre-Screen #2' = 'Pin #2',
                                                     'Final Screen' = 'Pin #3'))) +
   theme_linedraw() +
@@ -672,43 +711,30 @@ fig4a <- merge(data.del.diff %>% filter(orf_name %in% strain.labs.del$orf_name),
                                   margin = margin(0.1,0,0.1,0, "mm"))) +
   guides(color = guide_legend(nrow=3, byrow=TRUE, order = 1))
 
-fig4b <- readPNG('figures/final/final/AlphaFold_Structure.png')
-fig4b <- ggplot() + 
-  background_image(fig4b) +
-  theme(plot.margin = margin(t=0, l=0, r=0, b=0, unit = "mm"),
-        plot.background = element_blank())
+# ggsave(sprintf("%s/DeletionScreen.jpg",fig_path), fig4a,
+#        height = 80, width = two.c, units = 'mm',
+#        dpi = 600)
 
 
-fig4c <- data.pv %>%
-  filter(hours %in% c(48,115), stage %in% c('WC','PS1'),
-         deletion1 %in% c('met15', 'yll'), deletion2 %in% c('','yll'),
-         plasmid_backbone == '2M', plasmid_orf %in% c('empty','yll'),
-         orf_name %in% c('met15del_2M_empty',
-                           'met15del_2M_yll')) %>%
-  ggplot(aes(x = stage, y = average)) +
-  geom_boxplot(aes(alpha = stage), fill = 'grey40', outlier.shape = NA, size = 0.3,
-               position = position_dodge(width = 0.6)) +
-  facet_wrap(.~orf_name, labeller = labeller(orf_name = c('met15del_2M_empty' = 'FY4-*met15Δ*<br />+ Empty Plasmid',
-                                                            'met15del_2M_yll' = 'FY4-*met15Δ*<br />+ YLL058W Plasmid',
-                                                            'met15del_ylldel_2M_empty' = 'FY4-*met15Δ yll058wΔ*<br />+ Empty Plasmid',
-                                                            'met15del_ylldel_2M_yll'  = 'FY4-*met15Δ yll058wΔ*<br />+ YLL058W Plasmid',
-                                                            'ylldel_2M_empty' = 'FY4-*yll058wΔ*<br />+ Empty Plasmid'))) +
-  labs(y = 'Colony Size (pixels)') +
-  scale_x_discrete(limits = c('WC','PS1'),
-                   labels = c('WC' = 'YPDA',
-                              'PS1' = 'SD-Met+Gal')) +
-  scale_alpha_manual(name = 'Condition',
-                     values = c('WC' = 0.4,
-                                'PS1' = 1),
-                     labels = c('WC' = 'YPDA',
-                                'PS1' = 'SD-Met+Gal'),
-                     guide = F) +
+
+fig4c <- data.pv2 %>%
+  filter(orf_name %in% c('Plasmid_1','Plasmid_5','Plasmid_7','Plasmid_11'),
+         arm == 'PV_FY_MM', stage != 'PS2') %>%
+  ggplot(aes(x = orf_name, y = relative_fitness)) +
+  geom_boxplot(outlier.shape = NA, fill = '#9E9E9E', size = 0.3) +
+  scale_x_discrete(limits = c('Plasmid_1','Plasmid_5','Plasmid_7','Plasmid_11'),
+                   labels = c('Plasmid_1' = 'FY4<br />w/ Empty Plasmid',
+                              'Plasmid_5' = 'FY4-*met15Δ*<br />w/ Empty Plasmid',
+                              'Plasmid_7' = 'FY4-*met15Δ yll058wΔ*<br />w/ Empty Plasmid',
+                              'Plasmid_11' = 'FY4-*met15Δ*<br />w/ *YLL058W* Plasmid')) +
+  labs(title = 'SD - Met + Gal + G418',
+       y = 'Relative Colony Size') +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
-        axis.title.x = element_blank(),
         axis.text = element_text(size = txt),
-        axis.text.x = ggtext::element_markdown(size = txt),
+        axis.title.x = element_blank(),
+        axis.text.x = ggtext::element_markdown(size = txt-1),
         axis.ticks.x = element_blank(),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
@@ -716,7 +742,79 @@ fig4c <- data.pv %>%
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
         strip.text = ggtext::element_markdown(size = txt,
-                                  margin = margin(0.1,0,0.1,0, "mm")))
+                                              margin = margin(0.1,0,0.1,0, "mm")))
+# ggsave(sprintf("%s/YLL_PlasmidValidation.jpg",fig_path), fig4c,
+#        height = one.c, width = one.5c, units = 'mm',
+#        dpi = 600)
+
+fig4c.2 <- data.pv2 %>%
+  filter(orf_name %in% c('Plasmid_2','Plasmid_6','Plasmid_12'),
+         arm == 'PV_FY_MM', stage != 'PS2') %>%
+  ggplot(aes(x = orf_name, y = relative_fitness)) +
+  geom_boxplot(outlier.shape = NA, fill = '#9E9E9E', size = 0.3) +
+  scale_x_discrete(limits = c('Plasmid_2','Plasmid_6','Plasmid_12'),
+                   labels = c('Plasmid_2' = 'FY4<br />w/ Empty Plasmid',
+                              'Plasmid_6' = 'FY4-*met15Δ*<br />w/ Empty Plasmid',
+                              'Plasmid_12' = 'FY4-*met15Δ*<br />w/ *MET15* Plasmid')) +
+  labs(title = 'SD - Met + Gal + Hyg',
+       y = 'Relative Colony Size') +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        axis.title.x = element_blank(),
+        axis.text.x = ggtext::element_markdown(size = txt-1),
+        axis.ticks.x = element_blank(),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = ggtext::element_markdown(size = txt,
+                                              margin = margin(0.1,0,0.1,0, "mm")))
+# ggsave(sprintf("%s/MET15_PlasmidValidation.jpg",fig_path), fig4c.2,
+#        height = one.c, width = one.5c, units = 'mm',
+#        dpi = 600)
+
+
+fig4c.3 <- data.pv %>%
+  filter(hours %in% c(48,115), stage == 'PS1',
+         deletion1 %in% c('met15', 'met12'), deletion2 %in% c('','met12'),
+         plasmid_backbone == '2M', plasmid_orf %in% c('empty','met12')) %>%
+  ggplot(aes(x = orf_name, y = average)) +
+  geom_boxplot(fill = '#9E9E9E', outlier.shape = NA, size = 0.3) +
+  labs(title = 'SD - Met + Gal + G418',
+       y = 'Colony Size (pixels)') +
+  scale_x_discrete(limits = c('met15del_2M_empty',
+                              'met15del_2M_met12',
+                              'met15del_met12del_2M_empty',
+                              'met15del_met12del_2M_met12'),
+                   labels = c('met15del_2M_empty' = 'FY4-*met15Δ*<br />w/ Empty Plasmid',
+                              'met15del_2M_met12' = 'FY4-*met15Δ*<br />w/ *MET12* Plasmid',
+                              'met15del_met12del_2M_empty' = 'FY4-*met15Δ met12Δ*<br />w/ Empty Plasmid',
+                              'met15del_met12del_2M_met12'  = 'FY4-*met15Δ met12Δ*<br />w/ *MET12* Plasmid',
+                              'met12del_2M_empty' = 'FY4-*met12Δ*<br />w/ Empty Plasmid')) +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.title.x = element_blank(),
+        axis.text = element_text(size = txt),
+        axis.text.x = ggtext::element_markdown(size = txt-1),
+        axis.ticks.x = element_blank(),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm"))) +
+  coord_cartesian(ylim = c(0,6000))
+
+# ggsave(sprintf("%s/MET12_PlasmidValidation.jpg",fig_path), fig4c.3,
+#        height = one.c, width = two.c, units = 'mm',
+#        dpi = 600)
+
 
 fig4d <- data.bioc %>%
   # filter(outlier == FALSE) %>%
@@ -753,6 +851,9 @@ fig4d <- data.bioc %>%
   coord_cartesian(ylim = c(5,125)) +
   guides(fill = guide_legend(override.aes=list(shape = 15, alpha = 1)))
 
+ggsave(sprintf("%s/Biochemistry.jpg",fig_path), fig4d,
+       height = one.c, width = one.c, units = 'mm',
+       dpi = 600)
 
 fig4e <- data.mdl %>%
   filter(label %in% c('C. B + Hypothesized YLL058W reaction',
@@ -769,10 +870,10 @@ fig4e <- data.mdl %>%
                                 'B. A - All YLL058W reactions' = '#5D4037',
                                 'C. B + Hypothesized YLL058W reaction' = '#FF5722',
                                 'D. C - All MET15 reactions' = '#FFC107'),
-                     labels = c('Hypothesized YLL058W reaction',
-                                'Hypothesized YLL058W reaction\nbut without all MET15 reactions')) +
+                     labels = c('Hypothesized YLL058W reaction\nw/ all MET15 reactions',
+                                'Hypothesized YLL058W reaction\nw/o all MET15 reactions')) +
   labs(x = 'Yll058w/Met15 Kcat Ratio',
-       y = 'Biomass Flux ("Growth")') +
+       y = 'Simulated Biomass Flux\n("Growth")') +
   # facet_zoom(ylim = c(0.3225,0.3275), zoom.size = .5) +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
@@ -789,25 +890,49 @@ fig4e <- data.mdl %>%
   guides(color = guide_legend(nrow = 2, byrow=F, order = 1,
                              override.aes = list(shape = 15, size = 3, alpha = 1)))
 
-
-fig4 <- cowplot::plot_grid(cowplot::plot_grid(fig4a,
-                                              cowplot::plot_grid(fig4c, fig4b,
-                                                                 nrow = 1, rel_widths = c(1,1),
-                                                                 labels = c('B','C'),
-                                                                 label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                                              nrow = 2, rel_heights = c(1,1),
-                                              labels = c('A',''),
-                                              label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                           cowplot::plot_grid(fig4d, fig4e,
-                                              labels = c('D','E'), ncol = 2,
-                                              rel_widths = c(1,1),
-                                              label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold',
-                                              align = 'hv', axis = 'tb'),
-                           ncol = 1, rel_heights = c(2,1))
-ggsave(sprintf("%s/Figure4.jpg",fig_path), fig4,
-       height = 250, width = two.c, units = 'mm',
+ggsave(sprintf("%s/Simulation.jpg",fig_path), fig4e,
+       height = one.c, width = one.c, units = 'mm',
        dpi = 600)
 
+# fig4 <- cowplot::plot_grid(cowplot::plot_grid(fig4a,
+#                                               cowplot::plot_grid(fig4c, fig4b,
+#                                                                  nrow = 1, rel_widths = c(1,1),
+#                                                                  labels = c('B','C'),
+#                                                                  label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
+#                                               nrow = 2, rel_heights = c(1,1),
+#                                               labels = c('A',''),
+#                                               label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
+#                            cowplot::plot_grid(fig4d, fig4e,
+#                                               labels = c('D','E'), ncol = 2,
+#                                               rel_widths = c(1,1),
+#                                               label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold',
+#                                               align = 'hv', axis = 'tb'),
+#                            ncol = 1, rel_heights = c(2,1))
+# ggsave(sprintf("%s/Figure4.jpg",fig_path), fig4,
+#        height = 250, width = two.c, units = 'mm',
+#        dpi = 600)
 
+##### EVO ANALYSIS
+fig5a <- readPNG('figures/final/final/YLL_Locus.png')
+fig5a <- ggplot() + 
+  background_image(fig5a) +
+  theme(plot.margin = margin(t=17, l=0, r=0, b=17, unit = "mm"),
+        plot.background = element_blank())
 
+fig5b <- readPNG('figures/final/final/YLL_MDS.png')
+fig5b <- ggplot() + 
+  background_image(fig5b) +
+  theme(plot.margin = margin(t=10, l=0, r=0, b=10, unit = "mm"),
+        plot.background = element_blank())
 
+fig5c <- readPNG('figures/final/final/TREE_MDS.png')
+fig5c <- ggplot() + 
+  background_image(fig5c) +
+  theme(plot.margin = margin(t=10, l=0, r=0, b=10, unit = "mm"),
+        plot.background = element_blank())
+
+fig5d <- readPNG('figures/final/final/AlphaFold_Structure.png')
+fig5d <- ggplot() + 
+  background_image(fig5d) +
+  theme(plot.margin = margin(t=0, l=0, r=0, b=0, unit = "mm"),
+        plot.background = element_blank())
