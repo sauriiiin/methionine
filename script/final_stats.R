@@ -212,6 +212,21 @@ for (i in seq(1,dim(data.sum.pv.pmt)[1])) {
 data.sum.pv.stats <- data.frame(data.sum.pv.stats)
 write.csv(data.sum.pv.stats, file = '/home/sbp29/R/Projects/methionine/figures/final/final/MET_PV_STATS.csv')
 
+##### PLASMID VALIDATION 2
+head(data.sum.pv)
+head(data.pv2)
+
+data.pv %>%
+  filter(stage == 'PS1', hours %in% c(48,115),
+         orf_name %in% c('met15del_met12del_2M_empty','met15del_met12del_2M_met12')) %>%
+  group_by(orf_name) %>%
+  summarize(rel_f = median(relative_fitness, na.rm = T))
+
+data.pv2 %>%
+  filter(orf_name %in% c('Plasmid_5','Plasmid_11'),
+         arm == 'PV_FY_MM', stage != 'PS2') %>%
+  group_by(orf_name) %>%
+  summarize(rel_f = median(relative_fitness, na.rm = T))
 
 ##### NO SULFATE
 data.ns$id <- paste(data.ns$condition, data.ns$orf_name, sep = '_')

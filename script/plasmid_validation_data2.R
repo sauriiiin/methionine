@@ -171,3 +171,42 @@ data %>%
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")))
 
+
+data %>%
+  filter(stage == 'PS1_2') %>%
+  ggplot(aes(x = arm, y = relative_fitness)) +
+  geom_boxplot(aes(fill = stage), outlier.shape = NA) +
+  facet_wrap(.~orf_name * hours, ncol = 6,
+             labeller = labeller(orf_name = c('Plasmid_1' = 'FY4\nempty_KAN',
+                                              'Plasmid_2' = 'FY4\nempty_HYG',
+                                              'Plasmid_3' = 'FY4 yll\nempty_KAN',
+                                              'Plasmid_4' = 'FY4 yll\nempty_HYG',
+                                              'Plasmid_5' = 'FY4 met15\nempty_KAN',
+                                              'Plasmid_6' = 'FY4 met15\nempty_HYG',
+                                              'Plasmid_7' = 'FY4 met15 yll\nempty_KAN',
+                                              'Plasmid_8' = 'FY4 met15 yll\nempty_HYG',
+                                              'Plasmid_9' = 'FY4 yll\nyll_KAN',
+                                              'Plasmid_10' = 'FY4 yll\nmet15_HYG',
+                                              'Plasmid_11' = 'FY4 met15\nyll_KAN',
+                                              'Plasmid_12' = 'FY4 met15\nmet15_HYG',
+                                              'Plasmid_13' = 'FY4 met15 yll\nyll_KAN',
+                                              'Plasmid_14' = 'FY4 met15 yll\nmet15_HYG',
+                                              'Plasmid_15' = 'FY4 met15 yll\nyll_KAN + met15_HYG',
+                                              'Plasmid_16' = 'FY4 met15 yll\nyll_KAN + yll_CEN_HYG',
+                                              'Plasmid_17' = 'FY4 met15 yll\nempty_KAN + empty_HYG'))) +
+  scale_x_discrete(limits = c('PV_FY_PM','PV_FY_MM'),
+                   labels = c('+ Met', '- Met')) +
+  labs(y = 'Colony Size (pixels)') +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        axis.title.x = element_blank(),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  face = 'bold',
+                                  margin = margin(0.1,0,0.1,0, "mm")))

@@ -38,7 +38,7 @@ two.c <- 190 #full width
 
 ##### TEXT SIZE
 titles <- 7
-txt <- 5
+txt <- 7
 lbls <- 9
 
 ##### REMOVING BORDER RELATED DATA

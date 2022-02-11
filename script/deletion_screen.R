@@ -199,6 +199,18 @@ data.lim <- data[!(data$arm == 'MM' & data$stage == 'PS2' & data$plate %in% c(1,
             .groups = 'keep') %>%
   data.frame()
 
+for (a in arms) {
+  for (s in stages) {
+    data.lim$saturation[data.lim$arm == a & data.lim$stage == s] <- 
+      max(data.lim$hours[data.lim$arm == a & data.lim$stage == s])
+  }
+}
+
+data.cont.lim <- merge(data.lim[data.lim$arm == 'SD-Met-Cys+Gal' & data.lim$hours == data.lim$saturation,c(-3,-4,-11)],
+                       data.lim[data.lim$arm == 'SD+Met-Cys+Gal' & data.lim$hours == data.lim$saturation,c(-3,-4,-11)],
+                   by = c('stage'), suffixes = c('_MM','_PM'), all = T)
+save(data.cont.lim, file = 'data/final/211123_del_cont_lims.RData')
+
 ###### PLATEMAPS 
 plot.platemap <- p2c %>%
   filter(density > 384) %>%

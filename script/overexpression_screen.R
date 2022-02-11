@@ -68,32 +68,32 @@ pgs <- dbGetQuery(conn, 'select orf_name from PROTOGENES where pg_2012 = 1')
 data <- NULL
 data.sum <- NULL
 for (i in seq(1,dim(info)[1])) {
-  temp <- dbGetQuery(conn, sprintf('select a.*, b.density, b.plate, b.row, b.col
-                                   from MET_OE_%s_%s_%s_FITNESS a,
+  temp <- dbGetQuery(conn, sprintf('select a.*, c.orf_name, d.strain_id, b.density, b.plate, b.row, b.col
+                                   from MET_OE_%s_%s_%s_NORM a, MET_OE_pos2orf_name c, MET_OE_pos2strainid d,
                                    %s_pos2coor b
-                                   where a.pos = b.pos
+                                   where a.pos = b.pos and b.pos = c.pos and c.pos = d.pos
                                    order by a.hours, b.plate, b.col, b.row',
                                    info[i,1],info[i,2],info[i,3],
                                    info[i,4]))
   temp <- temp[!is.na(temp$orf_name) & temp$orf_name != 'NULL',]
   
-  temp2 <- dbGetQuery(conn, sprintf('select a.*, b.p
-                                    from MET_OE_%s_%s_%s_FITNESS_STATS a
-                                    left join
-                                    MET_OE_%s_%s_%s_PVALUE b
-                                    on a.hours = b.hours and a.strain_id = b.strain_id
-                                    order by a.hours',
-                                    info[i,1],info[i,2],info[i,3],
-                                    info[i,1],info[i,2],info[i,3]))
+  # temp2 <- dbGetQuery(conn, sprintf('select a.*, b.p
+  #                                   from MET_OE_%s_%s_%s_FITNESS_STATS a
+  #                                   left join
+  #                                   MET_OE_%s_%s_%s_PVALUE b
+  #                                   on a.hours = b.hours and a.strain_id = b.strain_id
+  #                                   order by a.hours',
+  #                                   info[i,1],info[i,2],info[i,3],
+  #                                   info[i,1],info[i,2],info[i,3]))
   
   temp$stage <- info[i,1]
   temp$arm <- info[i,2]
   
-  temp2$stage <- info[i,1]
-  temp2$arm <- info[i,2]
+  # temp2$stage <- info[i,1]
+  # temp2$arm <- info[i,2]
   
   data <- rbind(data,temp)
-  data.sum <- rbind(data.sum,temp2)
+  # data.sum <- rbind(data.sum,temp2)
 }
 data <- data.frame(data)
 data$orf_type[data$orf_name %in% pgs$orf_name] <- 'Proto-gene'
@@ -113,28 +113,28 @@ data$arm <- factor(data$arm, levels = arms)
 data$orf_type <- factor(data$orf_type, levels = orfs)
 head(data)
 
-data.sum <- data.frame(data.sum)
-data.sum$orf_type[data.sum$orf_name %in% pgs$orf_name] <- 'Proto-gene'
-data.sum$orf_type[data.sum$orf_name == 'BF_control'] <- 'Reference'
-data.sum$orf_type[is.na(data.sum$orf_type)] <- 'Gene'
-data.sum$arm <- as.character(data.sum$arm)
-data.sum$stage <- as.character(data.sum$stage)
-data.sum$arm[data.sum$arm == 'MM'] <- 'SD-Met-Cys-Ura+Gal'
-data.sum$arm[data.sum$arm == 'PM'] <- 'SC-Ura+Gal'
-data.sum$stage[data.sum$stage == 'PS1'] <- 'Pre-Screen #1'
-data.sum$stage[data.sum$stage == 'PS2'] <- 'Pre-Screen #2'
-data.sum$stage[data.sum$stage == 'FS'] <- 'Final Screen'
-data.sum$phenotype[data.sum$p <= 0.05 & data.sum$cs_mean > 1] <- 'Beneficial'
-data.sum$phenotype[data.sum$p <= 0.05 & data.sum$cs_mean < 1] <- 'Deleterious'
-data.sum$phenotype[is.na(data.sum$phenotype)] <- 'Neutral'
-
-data.sum$stage <- factor(data.sum$stage, levels = stages)
-data.sum$arm <- factor(data.sum$arm, levels = arms)
-data.sum$phenotype <- factor(data.sum$phenotype, levels = phenotypes)
-data.sum$orf_type <- factor(data.sum$orf_type, levels = orfs)
+# data.sum <- data.frame(data.sum)
+# data.sum$orf_type[data.sum$orf_name %in% pgs$orf_name] <- 'Proto-gene'
+# data.sum$orf_type[data.sum$orf_name == 'BF_control'] <- 'Reference'
+# data.sum$orf_type[is.na(data.sum$orf_type)] <- 'Gene'
+# data.sum$arm <- as.character(data.sum$arm)
+# data.sum$stage <- as.character(data.sum$stage)
+# data.sum$arm[data.sum$arm == 'MM'] <- 'SD-Met-Cys-Ura+Gal'
+# data.sum$arm[data.sum$arm == 'PM'] <- 'SC-Ura+Gal'
+# data.sum$stage[data.sum$stage == 'PS1'] <- 'Pre-Screen #1'
+# data.sum$stage[data.sum$stage == 'PS2'] <- 'Pre-Screen #2'
+# data.sum$stage[data.sum$stage == 'FS'] <- 'Final Screen'
+# data.sum$phenotype[data.sum$p <= 0.05 & data.sum$cs_mean > 1] <- 'Beneficial'
+# data.sum$phenotype[data.sum$p <= 0.05 & data.sum$cs_mean < 1] <- 'Deleterious'
+# data.sum$phenotype[is.na(data.sum$phenotype)] <- 'Neutral'
+# 
+# data.sum$stage <- factor(data.sum$stage, levels = stages)
+# data.sum$arm <- factor(data.sum$arm, levels = arms)
+# data.sum$phenotype <- factor(data.sum$phenotype, levels = phenotypes)
+# data.sum$orf_type <- factor(data.sum$orf_type, levels = orfs)
 
 data <- data[data$hours != 180,]
-data.sum <- data.sum[data.sum$hours != 180,]
+# data.sum <- data.sum[data.sum$hours != 180,]
 
 for (a in unique(data$arm)) {
   for (s in unique(data$stage[data$arm == a])) {
@@ -144,38 +144,38 @@ for (a in unique(data$arm)) {
 }
 head(data)
 
-for (a in unique(data.sum$arm)) {
-  for (s in unique(data.sum$stage[data.sum$arm == a])) {
-    data.sum$saturation[data.sum$arm == a & data.sum$stage == s] <- 
-      max(data.sum$hours[data.sum$arm == a & data.sum$stage == s])
-  }
-}
-head(data.sum)
+# for (a in unique(data.sum$arm)) {
+#   for (s in unique(data.sum$stage[data.sum$arm == a])) {
+#     data.sum$saturation[data.sum$arm == a & data.sum$stage == s] <- 
+#       max(data.sum$hours[data.sum$arm == a & data.sum$stage == s])
+#   }
+# }
+# head(data.sum)
 
 ##### SUMMARIZE RESULTS
 data.mad <- data %>%
-  group_by(arm, stage, hours, rep) %>%
+  group_by(arm, stage, hours, rep, orf_name, strain_id, orf_type) %>%
   summarize(fitness.median = median(fitness, na.rm = T), cs.median = median(average, na.rm = T),
             fitness.mad = mad(fitness, na.rm = T), cs.mad = mad(average, na.rm = T),
             .groups = 'keep') %>%
   data.frame()
-data <- merge(data, data.mad, by = c('stage','arm','hours','rep'))
+data <- merge(data, data.mad, by = c('stage','arm','hours','rep','orf_name','strain_id','orf_type'))
 data$fitness[data$fitness < (data$fitness.median - 2*data$fitness.mad) |
                data$fitness > (data$fitness.median + 2*data$fitness.mad)] <- NA
 data$average[data$average < (data$cs.median - 2*data$cs.mad) |
                data$average > (data$cs.median + 2*data$cs.mad)] <- NA
 
-temp <- data %>%
-  # filter(fitness <= 50) %>%
-  group_by(arm, stage, hours, orf_name) %>%
-  summarise(fitness = median(fitness, na.rm = T), cs = median(average, na.rm = T), .groups = 'keep') %>%
-  data.frame()
-data.sum <- merge(data.sum, temp, by = c('stage','arm','hours','orf_name'))
-
-data.sum <- merge(data.sum, data.sum %>%
-                    group_by(stage, arm, orf_name) %>%
-                    summarise(var = max(cs_std), .groups = 'keep') %>%
-                    data.frame(), by = c('stage','arm','orf_name'), all = T)
+# temp <- data %>%
+#   # filter(fitness <= 50) %>%
+#   group_by(arm, stage, hours, orf_name) %>%
+#   summarise(fitness = median(fitness, na.rm = T), cs = median(average, na.rm = T), .groups = 'keep') %>%
+#   data.frame()
+# data.sum <- merge(data.sum, temp, by = c('stage','arm','hours','orf_name'))
+# 
+# data.sum <- merge(data.sum, data.sum %>%
+#                     group_by(stage, arm, orf_name) %>%
+#                     summarise(var = max(cs_std), .groups = 'keep') %>%
+#                     data.frame(), by = c('stage','arm','orf_name'), all = T)
 
 data.lim <- data %>%
   filter(orf_name == 'BF_control') %>%
@@ -193,12 +193,20 @@ data.lim <- data %>%
             .groups = 'keep') %>%
   data.frame()
 
-data.sum <- merge(data.sum, data.lim[,-4], by = c('arm','stage','hours'))
-data.sum$es <- abs(data.sum$fitness - data.sum$fitness_m)/data.sum$fitness_m
+data.sum <- merge(data %>%
+        group_by(arm, stage, hours, rep, orf_name, strain_id, orf_type, saturation) %>%
+        summarize(fitness.median = median(fitness, na.rm = T), cs.median = median(average, na.rm = T),
+                  .groups = 'keep') %>%
+        data.frame(), data.lim[,-4], by = c('arm','stage','hours'))
+data.sum$phenotype[data.sum$fitness.median >= data.sum$fitness_ul] <- 'Beneficial'
+data.sum$phenotype[data.sum$fitness.median <= data.sum$fitness_ll] <- 'Deleterious'
+data.sum$phenotype[is.na(data.sum$phenotype)] <- 'Neutral'
+# data.sum <- merge(data.sum, data.lim[,-4], by = c('arm','stage','hours'))
+# data.sum$es <- abs(data.sum$fitness - data.sum$fitness_m)/data.sum$fitness_m
 
 ##### PLOT GROWTH CURVES
 plot.cs.gc <- data.sum %>%
-  ggplot(aes(x = hours, y = cs)) +
+  ggplot(aes(x = hours, y = cs.median)) +
   geom_line(aes(group = orf_name, col = orf_name), lwd = 0.7, alpha = 0.8) +
   # stat_summary(aes(group = orf_name, col = orf_name), fun=mean, geom="line", lwd =0.7) +
   scale_color_discrete(guide = F) +
@@ -230,12 +238,12 @@ orfs.sap <- orfs.sap[orfs.sap$standard_name %in% c('MET3','MET14','MET16','MET5'
 data.sap <- merge(data.sum, orfs.sap, by = 'orf_name')
 
 plot.sap.gc <- data.sap %>%
-  ggplot(aes(x = hours, y = fitness)) +
+  ggplot(aes(x = hours, y = fitness.median)) +
   geom_line(aes(group = standard_name, col = standard_name), lwd = 0.7, alpha = 0.8) +
   geom_point(data = data.sap[data.sap$hours == data.sap$saturation,],
-             aes(x = hours, y = fitness, fill = standard_name), size = 1.5, col = 'black', shape = 21) +
+             aes(x = hours, y = fitness.median, fill = standard_name), size = 1.5, col = 'black', shape = 21) +
   geom_text_repel(data = data.sap[data.sap$hours == data.sap$saturation,],
-                  aes(x = hours, y = fitness, label = standard_name, col = standard_name), size = 1.2,
+                  aes(x = hours, y = fitness.median, label = standard_name, col = standard_name), size = 1.2,
                   force = 2, max.overlaps = 30) +
   geom_line(data = data.lim, aes(x = hours, y = fitness_ll), col = 'red', linetype = 'dashed', lwd = 0.5) +
   geom_line(data = data.lim, aes(x = hours, y = fitness_m), col = 'black', linetype = 'dashed', lwd = 0.5) +
@@ -297,17 +305,18 @@ orfs.jm <- data.frame(orf_name = c('YLR303W','YNL277W','YJR010W','YER091C','YGL1
 data.jm <- merge(data.sum, orfs.jm, by = 'orf_name')
 
 plot.jm.gc <- data.jm %>%
-  ggplot(aes(x = hours, y = fitness)) +
+  ggplot(aes(x = hours, y = fitness.median)) +
   geom_line(aes(group = standard_name, col = standard_name), lwd = 0.7, alpha = 0.8) +
   geom_point(data = data.jm[data.jm$hours == data.jm$saturation,],
-             aes(x = hours, y = fitness, fill = standard_name), size = 1.5, col = 'black', shape = 21) +
+             aes(x = hours, y = fitness.median, fill = standard_name), size = 1.5, col = 'black', shape = 21) +
   geom_text_repel(data = data.jm[data.jm$hours == data.jm$saturation,],
-                  aes(x = hours, y = fitness, label = standard_name, col = standard_name), size = 1.2,
+                  aes(x = hours, y = fitness.median, label = standard_name, col = standard_name), size = 1.2,
                   force = 2, max.overlaps = 30) +
   geom_line(data = data.lim, aes(x = hours, y = fitness_ll), col = 'red', linetype = 'dashed', lwd = 0.5) +
   geom_line(data = data.lim, aes(x = hours, y = fitness_m), col = 'black', linetype = 'dashed', lwd = 0.5) +
   geom_line(data = data.lim, aes(x = hours, y = fitness_ul), col = 'red', linetype = 'dashed', lwd = 0.5) +
-  scale_color_discrete(guide = F) + scale_fill_discrete(guide = F) +
+  scale_color_discrete(guide = F) +
+  scale_fill_discrete(guide = F) +
   labs(x = 'Time (hours)', y = 'Fitness') +
   # facet_zoom(ylim = c(0, 5), zoom.data = ifelse(fitness <= 5, NA, FALSE)) +
   facet_wrap(.~arm*stage, scale = 'free_x') +
@@ -591,10 +600,16 @@ write.csv(kegg, file = sprintf('%s/%s/kegg_enrichments.csv', res_path, expt.name
 # kegg$stage <- factor(kegg$stage, levels = c('Pre-Screen #1','Pre-Screen #2','Final Screen'))
 
 ##### DEATH ANALYSIS
-data.ded <- merge(merge(data.sum[data.sum$stage == 'Pre-Screen #1' & data.sum$hours == data.sum$saturation, c('arm','orf_name','strain_id','fitness','cs','orf_type','phenotype')],
-                        data.sum[data.sum$stage == 'Pre-Screen #2' & data.sum$hours == data.sum$saturation, c('arm','orf_name','strain_id','fitness','cs','orf_type','phenotype')],
+data.ded <- merge(merge(data.sum[data.sum$stage == 'Pre-Screen #1' & data.sum$hours == data.sum$saturation, 
+                                 c('arm','orf_name','strain_id','fitness.median','cs.median','orf_type','phenotype')] %>%
+                          filter(orf_name != 'BF_control'),
+                        data.sum[data.sum$stage == 'Pre-Screen #2' & data.sum$hours == data.sum$saturation,
+                                 c('arm','orf_name','strain_id','fitness.median','cs.median','orf_type','phenotype')] %>%
+                          filter(orf_name != 'BF_control'),
                         by = c('arm','orf_name','strain_id','orf_type'), suffixes = c('_PS1','_PS2'), all = T),
-                  data.sum[data.sum$stage == 'Final Screen' & data.sum$hours == data.sum$saturation, c('arm','orf_name','strain_id','fitness','cs','orf_type','phenotype')],
+                  data.sum[data.sum$stage == 'Final Screen' & data.sum$hours == data.sum$saturation,
+                           c('arm','orf_name','strain_id','fitness.median','cs.median','orf_type','phenotype')] %>%
+                    filter(orf_name != 'BF_control'),
                   by = c('arm','orf_name','strain_id','orf_type'), suffixes = c('','_FS'), all = T)
 head(data.ded)
 data.ded$phenotype_PS2 <- as.character(data.ded$phenotype_PS2)
@@ -604,12 +619,12 @@ data.ded$phenotype[is.na(data.ded$phenotype)] <- 'Dead'
 data.ded$phenotype_PS2 <- factor(data.ded$phenotype_PS2, levels = c('Beneficial','Neutral','Deleterious','Dead'))
 data.ded$phenotype <- factor(data.ded$phenotype, levels = c('Beneficial','Neutral','Deleterious','Dead'))
 
-data.ded$fitness_PS2[data.ded$phenotype_PS2 == 'Dead'] <- 0
-data.ded$cs_PS2[data.ded$phenotype_PS2 == 'Dead'] <- 0
-data.ded$fitness[data.ded$phenotype == 'Dead'] <- 0
-data.ded$cs[data.ded$phenotype == 'Dead'] <- 0
+data.ded$fitness.median_PS2[data.ded$phenotype_PS2 == 'Dead'] <- 0
+data.ded$cs.median_PS2[data.ded$phenotype_PS2 == 'Dead'] <- 0
+data.ded$fitness.median[data.ded$phenotype == 'Dead'] <- 0
+data.ded$cs.median[data.ded$phenotype == 'Dead'] <- 0
 
-colnames(data.ded) <- c(colnames(data.ded)[1:10],'fitness_FS','cs_FS','phenotype_FS')
+colnames(data.ded) <- c(colnames(data.ded)[1:10],'fitness.median_FS','cs.median_FS','phenotype_FS')
 
 data.ded <- merge(data.ded[data.ded$arm == 'SD-Met-Cys-Ura+Gal',-1], data.ded[data.ded$arm == 'SC-Ura+Gal',-1],
                   by = c('orf_name','strain_id','orf_type'), suffixes = c('_MM','_PM'), all = T)

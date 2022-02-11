@@ -10,13 +10,27 @@ ggsave(sprintf("%s/Figure1.jpg",fig_path), fig1,
 
 
 ##### FIGURE 2
+# fig2 <- plot_grid(plot_grid(fig1c, fig2a, fig2b.g,
+#                             nrow = 1, rel_widths = c(1,1,1),
+#                             labels = c('A','B',''), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
+#                   NULL,
+#                   fig2c,
+#                   ncol = 1, rel_heights = c(1,0.1,1),
+#                   labels = c('','','C'), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
+# ggsave(sprintf("%s/Figure2.jpg",fig_path), fig2,
+#        height = two.c, width = two.c, units = 'mm',
+#        dpi = 600)
+# 
+# with repeated pinning but no petite
 fig2 <- plot_grid(plot_grid(fig1c, fig2a, fig2b.g,
                             nrow = 1, rel_widths = c(1,1,1),
                             labels = c('A','B',''), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                  legend.aux,
-                  fig2c,
-                  ncol = 1, rel_heights = c(1,0.1,1),
-                  labels = c('','','C'), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
+                  NULL,
+                  NULL,
+                  fig3a,
+                  NULL,
+                  ncol = 1, rel_heights = c(1,0.1,0.3,0.8,0.1),
+                  labels = c('','','C','',''), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
 ggsave(sprintf("%s/Figure2.jpg",fig_path), fig2,
        height = two.c, width = two.c, units = 'mm',
        dpi = 600)
@@ -43,35 +57,18 @@ ggsave(sprintf("%s/Figure4.jpg",fig_path), fig4,
        dpi = 600)
 
 ##### FIGURE 5
-# fig5 <- plot_grid(plot_grid(plot_grid(fig5a, fig5c,
-#                               ncol = 1, rel_heights = c(1,1),
-#                               labels = c('A','C'), label_size = lbls, 
-#                               label_fontfamily = 'sans', label_fontface = 'bold'), plot_grid(fig5b, fig4b,
-#                                                                                              ncol = 1, rel_heights = c(1,1),
-#                                                                                              labels = c('B','D'), label_size = lbls, 
-#                                                                                              label_fontfamily = 'sans', label_fontface = 'bold'),
-#                     nrow = 1, rel_widths = c(2,1)), plot_grid(fig4d, fig4e,
-#                                                               labels = c('E','F'), ncol = 2,
-#                                                               rel_widths = c(1,1),
-#                                                               label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold',
-#                                                               align = 'hv', axis = 'tb'),
-#           ncol = 1, rel_heights = c(2,1.5))
-
-fig5 <- plot_grid(plot_grid(fig5a, NULL, #NULL is fig5b
+fig5 <- plot_grid(fig5a,
+                  plot_grid(fig5b, fig5c,
                             nrow = 1, rel_widths = c(1.5,1),
-                            labels = c('A','B'),
+                            labels = c('B','C'),
                             label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                  plot_grid(NULL, fig5d, #NULL is fig5c
-                            nrow = 1, rel_widths = c(1.5,1),
-                            labels = c('C','D'),
-                            label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                  plot_grid(fig4d, fig4e,
+                  plot_grid(fig5d, fig5e,
                             ncol = 2, rel_widths = c(1,1),
-                            labels = c('E','F'),
+                            labels = c('D','E'),
                             label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold',
                             align = 'hv', axis = 'tb'),
                   ncol = 1, rel_heights = c(1,1,1),
-                  labels = c('','',''),
+                  labels = c('A','',''),
                   label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
 
 ggsave(sprintf("%s/Figure5.jpg",fig_path), fig5,

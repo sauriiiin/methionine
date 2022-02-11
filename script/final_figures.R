@@ -24,7 +24,7 @@ library(png)
 library(ggstatsplot)
 library(cowplot)
 source("~/R/Projects/adaptivefitness/R/functions/initialize.sql.R")
-load(file = 'figures/final/data.RData')
+# load(file = 'figures/final/data.RData')
 
 fig_path <- "~/R/Projects/methionine/figures/final/final/"
 
@@ -52,17 +52,25 @@ fill.col <- data.frame(Auxotrophy = c('None','Methionine','Uracil-Leucine','Meth
 legend.aux <- fill.col %>%
   ggplot(aes(x = seq(1,5), y = 1, fill = Auxotrophy)) +
   geom_tile() +
-  scale_fill_manual(name = 'Presumed\nAuxotrophy',
-                    limits = c('None',
-                               'Methionine',
-                               'Uracil-Leucine',
-                               'Methionine-Uracil-Leucine'),
-                    values = c('None' = '#FFC107',
-                               'Methionine' = '#536DFE',
-                               'Uracil-Leucine' = '#E040FB',
-                               'Methionine-Uracil-Leucine' = '#FF5722',
-                               'Unknown' = '#BDBDBD'),
-                    position = 'bottom') +
+  # scale_fill_manual(name = 'Presumed\nAuxotrophy',
+  #                   limits = c('None',
+  #                              'Methionine',
+  #                              'Uracil-Leucine',
+  #                              'Methionine-Uracil-Leucine'),
+  #                   values = c('None' = '#FFC107',
+  #                              'Methionine' = '#536DFE',
+  #                              'Uracil-Leucine' = '#E040FB',
+  #                              'Methionine-Uracil-Leucine' = '#FF5722',
+  #                              'Unknown' = '#BDBDBD'),
+  #                   position = 'bottom') +
+  scale_fill_manual(name = 'Presumed\nAuxotroph',
+                  limits = c('None',
+                             'Methionine'),
+                  values = c('None' = '#FFC107',
+                             'Methionine' = '#536DFE'),
+                  labels = c('None' = 'No',
+                             'Methionine' = 'Yes'),
+                  position = 'bottom') +
   theme_linedraw() +
   theme(plot.title = element_blank(),
         axis.title = element_text(size = titles),
@@ -72,7 +80,6 @@ legend.aux <- fill.col %>%
         legend.position = 'bottom',
         legend.box = 'vertical',
         legend.key.size = unit(3, "mm"),
-        legend.box.spacing = unit(0.5,"mm"),
         strip.text = element_text(size = txt,
                                   margin = margin(0.1,0,0.1,0, "mm"))) +
   guides(fill = guide_legend(nrow=2, byrow=F, order = 1))
@@ -116,14 +123,16 @@ data.cbn$condition <- factor(data.cbn$condition, levels = c('PlM_Glu', 'MiM_Glu'
                                                             'MiM_Gal', 'MiU_Gal',
                                                             'MiM_Et', 'MiU_Et',
                                                             'GLU', 'GAL'))
-fig2a <- rbind(data.cbn[,c(1,2,5,6,10)], 
+fig2a <- rbind(data.cbn[,c(1,2,5,6,10)],
                data.cbn.leu[,c(8,11,10,13,14)] %>%
                  filter(condition == 'SDmLeu')) %>%
   filter(carbon == 'Glucose', base == 'SD', orf_name %in% c('BY4741','BY4742')) %>%
   ggplot(aes(x = condition, y = relative_fitness)) +
   # geom_hline(yintercept = 0.299, linetype = 'dashed', col = '#009688') +
   geom_boxplot(fill = '#9E9E9E', size = 0.2, outlier.shape = NA) +
-  scale_y_continuous(breaks = seq(-1,2,0.2)) +
+  # stat_compare_means(method = 't.test',
+  #                    comparisons = list(c('MiM_Glu','MiU_Glu'), c('MiM_Glu','SDmLeu'))) +
+  scale_y_continuous(breaks = seq(-1.2,2,0.3)) +
   scale_x_discrete(limits = c('PlM_Glu', 'MiM_Glu', 'MiU_Glu', 'SDmLeu'),
                    labels = c('PlM_Glu' = '+ Met\n+ Ura\n+ Leu',
                               'MiM_Glu' = '- Met\n+ Ura\n+ Leu',
@@ -137,7 +146,7 @@ fig2a <- rbind(data.cbn[,c(1,2,5,6,10)],
                               'SDpMET' = '+ Met\n+ Ura\n+ Leu',
                               'YPDA' = '+ Met\n+ Ura\n+ Leu')) +
   labs(x = 'Strain', y= 'Relative Colony Size') +
-  coord_cartesian(ylim = c(0,1.3)) +
+  coord_cartesian(ylim = c(0,1.6)) +
   facet_grid(orf_name ~ carbon, scales = 'free_x') +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles, hjust = 0.5, face = 'bold'),
@@ -152,7 +161,7 @@ fig2a <- rbind(data.cbn[,c(1,2,5,6,10)],
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
         strip.text = ggtext::element_markdown(size = txt,
-                                              margin = margin(0.1,0,0.1,0, "mm")),
+                                              margin = margin(1,0,0.1,0, "mm")),
         strip.background.y = element_blank(),
         strip.text.y = element_blank())
 
@@ -178,7 +187,7 @@ fig2b <- data.cbn %>%
   ggplot(aes(x = condition, y = relative_fitness)) +
   # geom_hline(yintercept = 0.299, linetype = 'dashed', col = '#009688') +
   geom_boxplot(fill = '#9E9E9E', size = 0.2, outlier.shape = NA) +
-  scale_y_continuous(breaks = seq(-1,2,0.2)) +
+  scale_y_continuous(breaks = seq(-1.2,2,0.3)) +
   scale_x_discrete(labels = c('PlM_Glu' = '+ Met\n+ Ura\n+ Leu',
                               'MiM_Glu' = '- Met\n+ Ura\n+ Leu',
                               'MiU_Glu' = '+ Met\n- Ura\n+ Leu',
@@ -191,7 +200,7 @@ fig2b <- data.cbn %>%
                               'SDpMET' = '+ Met\n+ Ura\n+ Leu',
                               'YPDA' = '+ Met\n+ Ura\n+ Leu')) +
   labs(x = 'Strain', y= 'Relative Colony Size') +
-  coord_cartesian(ylim = c(0,1.3)) +
+  coord_cartesian(ylim = c(0,1.6)) +
   facet_grid(orf_name ~ carbon, scales = 'free_x') +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles, hjust = 0.5, face = 'bold'),
@@ -208,19 +217,40 @@ fig2b <- data.cbn %>%
         legend.box = 'vertical',
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
-        strip.text = ggtext::element_markdown(size = txt,
-                                              margin = margin(0.1,0,0.1,0, "mm")))
+        strip.text.x = ggtext::element_markdown(size = txt,
+                                                margin = margin(1,0,0.1,0, "mm")),
+        strip.text.y = ggtext::element_markdown(size = txt, face = 'bold',
+                                              margin = margin(0.1,1,0.1,0, "mm")))
 
 fig2b.g <- ggplot_gtable(ggplot_build(fig2b))
 stripr <- which(grepl('strip-r', fig2b.g$layout$name))
 
 fig2b.g$grobs[[16]]$grobs[[1]]$children[[2]]$children[[1]]$label
 fig2b.g$grobs[[16]]$grobs[[1]]$children[[2]]$children[[1]]$gp$col <- 'black'
-fig2b.g$grobs[[16]]$grobs[[1]]$children[[1]]$gp$fill <- '#E040FB'
+fig2b.g$grobs[[16]]$grobs[[1]]$children[[1]]$gp$fill <- '#FF0000'#'#E040FB'
 
 fig2b.g$grobs[[17]]$grobs[[1]]$children[[2]]$children[[1]]$label
 fig2b.g$grobs[[17]]$grobs[[1]]$children[[2]]$children[[1]]$gp$col <- 'black'
-fig2b.g$grobs[[17]]$grobs[[1]]$children[[1]]$gp$fill <- '#FF5722'
+fig2b.g$grobs[[17]]$grobs[[1]]$children[[1]]$gp$fill <- '#990000'#'#FF5722'
+
+fig2b.leg <- g_legend(data.frame(labels = c('Uracil-Leucine','Methionine-Uracil-Leucine')) %>%
+  ggplot(aes(x = 1, y = labels, col = labels)) +
+  geom_point(shape = 15) +
+  scale_color_manual(name = 'Presumed Auxotrophy',
+                     values = c('Uracil-Leucine' = '#FF0000',
+                                'Methionine-Uracil-Leucine' = '#990000')) +
+  theme_linedraw() +
+  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        legend.title =  ggtext::element_markdown(size = titles),
+        legend.text =  ggtext::element_markdown(size = txt),
+        legend.spacing = unit(0.1,"mm"),
+        legend.key.size = unit(4, "mm"),
+        legend.direction = 'horizontal',
+        legend.position = 'bottom') +
+  guides(col = guide_legend(nrow=1, override.aes=list(size = 3))))
+  
 
 # ggsave(sprintf("%s/CarbonSource_SD_GalEth.jpg",fig_path), fig2b.g,
 #        height = one.c, width = one.c, units = 'mm',
@@ -245,18 +275,18 @@ fig2c <- merge(data.res.gc[str_detect(data.res.gc$orf_name, 'FY'),],
                     group_by(orf_name, condition, Time, base, methionine, carbon, cysteine, labels, labels2, met_aux, pet) %>%
                     summarize(rel_cs = mean(rel_cs, na.rm = T), .groups = 'keep'),
                   aes(x = Time, y = rel_cs, label = labels2),
-                  parse = T, size = 2.5) +
+                  parse = T, size = 2, min.segment.length = 10) +
   facet_grid(~carbon*methionine,
              labeller = labeller(methionine = c('+Met' = 'SD + Met',
                                                 '-Met' = 'SD - Met'))) +
-  scale_color_manual(name = 'Presumed Auxotrophy',
+  scale_color_manual(name = 'Presumed Auxotroph',
                      values = c('Prototroph' = '#FFC107',
                                 'Presumed Auxotroph' = '#536DFE',
                                 'Uracil-Leucine' = '#E040FB',
                                 'Methionine-Uracil-Leucine' = '#FF5722'),
                      limits = c('Prototroph','Presumed Auxotroph'),
-                     labels = c('Prototroph'='None',
-                                'Presumed Auxotroph'='Methionine',
+                     labels = c('Prototroph'='No',
+                                'Presumed Auxotroph'='Yes',
                                 'Uracil-Leucine',
                                 'Methionine-Uracil-Leucine')) +
   scale_fill_manual(name = 'Auxotrophy',
@@ -325,6 +355,23 @@ data.rp$cum_hrs[data.rp$pin == 6] <- data.rp$cum_hrs[data.rp$pin == 6] +
 data.rp$cum_hrs[data.rp$pin == 7] <- data.rp$cum_hrs[data.rp$pin == 7] +
   max(data.rp$cum_hrs[data.rp$pin == 6], na.rm = T)
 
+data.rp %>%
+  group_by(carbon, pin) %>%
+  summarize(max_hrs = max(hours, na.rm = T)) %>%
+  data.frame()
+
+data.rp.rf <- merge(data.rp %>%
+        filter(aux == 'Met', orf_name %in% c('FY4'), carbon == 'Glu', hours == max_hrs) %>%
+        group_by(pin, orf_name, hours, cum_hrs) %>%
+        summarize(average = median(average, na.rm = T), .groups = 'keep'),
+      
+      data.rp %>%
+        filter(aux == 'Met', orf_name %in% c('FY4-met15D'), carbon == 'Glu', hours == max_hrs) %>%
+        group_by(pin, orf_name, hours, cum_hrs) %>%
+        summarize(average = median(average, na.rm = T), .groups = 'keep'),
+      by = c('pin','hours','cum_hrs'), suffixes = c('_ref',''))
+data.rp.rf$relative_fitness <- data.rp.rf$average/data.rp.rf$average_ref
+
 fig3a <- merge(data.rp, strain.labs.rp,
                by = 'orf_name') %>%
   filter(aux == 'Met', orf_name %in% c('FY4'), carbon == 'Glu') %>%
@@ -348,8 +395,12 @@ fig3a <- merge(data.rp, strain.labs.rp,
                     filter(aux == 'Met', orf_name %in% c('FY4',"FY4-met15D"), carbon == 'Glu', hours == max_hrs, pin == 7) %>%
                     group_by(orf_name, labels, carbon, cum_hrs) %>%
                     summarize(average = mean(average, na.rm = T), .groups = 'keep'),
-                  aes(x = cum_hrs, y = average + 200, label = labels),
+                  aes(x = cum_hrs, y = average + 300, label = labels),
                   parse = T, size = 2.5) +
+  geom_text(data = data.rp.rf,
+                  aes(x = cum_hrs + 10, y = average, 
+                      label = sprintf('%0.2f',relative_fitness)),
+                  size = 2.5) +
   scale_x_continuous(breaks = seq(-1000,1000,100)) +
   scale_color_manual(name = 'Auxotrophy',
                      values = c('Methionine' = '#536DFE',
@@ -358,7 +409,7 @@ fig3a <- merge(data.rp, strain.labs.rp,
                      values = c('Methionine' = '#536DFE',
                                 'None' = '#FFC107')) +
   labs(x = 'Time (hours)', y = 'Colony Size (pixels)') +
-  facet_grid(.~carbon, labeller = labeller(carbon = c('Glu'='SD-Met'))) +
+  facet_grid(.~carbon, labeller = labeller(carbon = c('Glu'='SD-Met+Glu'))) +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
@@ -369,11 +420,11 @@ fig3a <- merge(data.rp, strain.labs.rp,
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
         strip.text.x = ggtext::element_markdown(size = txt,
-                                  margin = margin(0.1,0,0.1,0, "mm")),
+                                  margin = margin(1,0,0.1,0, "mm")),
         strip.text.y = element_text(size = txt, margin = margin(0.1,0,0.1,0, "mm")))
 
   
-fig3a.g <- ggplot_gtable(ggplot_build(fig3a))
+# fig3a.g <- ggplot_gtable(ggplot_build(fig3a))
 # stripr <- which(grepl('strip-t', fig3a.g$layout$name))
 # 
 # for (s in stripr) {
@@ -613,8 +664,8 @@ fig3d <- merge(data.ns[data.ns$stage %in% c('S1','S2') & data.ns$hours %in% c(16
                                               'FY4_met3del' = 'FY4-*met3Δ*',
                                               'BY4742' = 'BY4742',
                                               'BY4741' = 'BY4741'),
-                                 sulfate = c('+sulfate' = 'SD - Met + Glu<br />w/ Inorganic Sulfates',
-                                             '-sulfate' = 'SD - Met + Glu<br />w/o Inorganic Sulfates'))) +
+                                 sulfate = c('+sulfate' = 'SD - Met + Glu w/<br /> Inorganic Sulfates',
+                                             '-sulfate' = 'SD - Met + Glu w/o<br /> Inorganic Sulfates'))) +
   theme_linedraw() +
   theme(plot.title = element_blank(),
         axis.title.x = element_blank(),
@@ -686,14 +737,19 @@ fig4a <- merge(data.del.diff %>% filter(orf_name %in% strain.labs.del$orf_name),
   geom_line(data = data.del.diff.dist, aes(x = x , y = y.ll),
             linetype = 'dashed', size = 0.5) +
   geom_point(aes(x = fitness_MM, y = fitness_PM), shape = 1, size = 2) +
+  geom_point(data = data.del.diff %>% filter(orf_name %in%
+                                               strain.labs.del$orf_name[strain.labs.del$standard_name %in% 
+                                                                          c('YLL058W','MET12','MET5','MET10')]), 
+                                             size = 1, col = '#FFC107') +
   geom_text_repel(aes(x = fitness_MM, y = fitness_PM, label = standard_name), size = 2,
+                  min.segment.length = unit(0, 'lines'), seed = 10,
                   force = 2, max.overlaps = 30) +
   scale_x_continuous(trans = 'pseudo_log') +
-  labs(x = 'Relative Fitness in SD-Met+Gal',
+  labs(x = 'Relative Fitness in SD-Met+Gal (log)',
        y = 'Relative Fitness in SD+Met+Gal') +
   coord_cartesian(xlim = c(0, 15),
                   ylim = c(0, 1.5)) +
-  facet_wrap(.~stage, ncol = 1,
+  facet_wrap(.~stage, ncol = 3,
              labeller = labeller(stage = c('Pre-Screen #1' = 'Pin #1',
                                                     'Pre-Screen #2' = 'Pin #2',
                                                     'Final Screen' = 'Pin #3'))) +
@@ -711,6 +767,11 @@ fig4a <- merge(data.del.diff %>% filter(orf_name %in% strain.labs.del$orf_name),
                                   margin = margin(0.1,0,0.1,0, "mm"))) +
   guides(color = guide_legend(nrow=3, byrow=TRUE, order = 1))
 
+head(data.del.diff)
+data.del.diff %>%
+  group_by(stage) %>%
+  summarize(max_hrs = max(hours_MM, na.rm = T), .groups = 'keep') %>%
+  data.frame()
 # ggsave(sprintf("%s/DeletionScreen.jpg",fig_path), fig4a,
 #        height = 80, width = two.c, units = 'mm',
 #        dpi = 600)
@@ -816,7 +877,7 @@ fig4c.3 <- data.pv %>%
 #        dpi = 600)
 
 
-fig4d <- data.bioc %>%
+fig5d <- data.bioc %>%
   # filter(outlier == FALSE) %>%
   ggplot(aes(x = `Time (min)`, y = uM)) +
   stat_summary(aes(group = Sample, fill = Sample), fun.data=mean_se, fun.args = list(mult=1), geom="ribbon",
@@ -851,11 +912,11 @@ fig4d <- data.bioc %>%
   coord_cartesian(ylim = c(5,125)) +
   guides(fill = guide_legend(override.aes=list(shape = 15, alpha = 1)))
 
-ggsave(sprintf("%s/Biochemistry.jpg",fig_path), fig4d,
+ggsave(sprintf("%s/Biochemistry.jpg",fig_path), fig5d,
        height = one.c, width = one.c, units = 'mm',
        dpi = 600)
 
-fig4e <- data.mdl %>%
+fig5e <- data.mdl %>%
   filter(label %in% c('C. B + Hypothesized YLL058W reaction',
                         'D. C - All MET15 reactions')) %>%
   ggplot(aes(x = log(Yll058w.Met15,10), y = Growth)) +
@@ -866,12 +927,10 @@ fig4e <- data.mdl %>%
                      breaks = seq(10,-10,-1),
                      labels = 10^seq(10,-10,-1)) +
   scale_color_manual(name = 'Model with',
-                     values = c('A. Default' = '#212121',
-                                'B. A - All YLL058W reactions' = '#5D4037',
-                                'C. B + Hypothesized YLL058W reaction' = '#FF5722',
-                                'D. C - All MET15 reactions' = '#FFC107'),
-                     labels = c('Hypothesized YLL058W reaction\nw/ all MET15 reactions',
-                                'Hypothesized YLL058W reaction\nw/o all MET15 reactions')) +
+                     values = c('C. B + Hypothesized YLL058W reaction' = '#333333',
+                                'D. C - All MET15 reactions' = '#999999'),
+                     labels = c('Hypothesized *YLL058W* reaction<br/>w/ all *MET15* reactions',
+                                'Hypothesized *YLL058W* reaction<br/>w/o all *MET15* reactions')) +
   labs(x = 'Yll058w/Met15 Kcat Ratio',
        y = 'Simulated Biomass Flux\n("Growth")') +
   # facet_zoom(ylim = c(0.3225,0.3275), zoom.size = .5) +
@@ -880,7 +939,7 @@ fig4e <- data.mdl %>%
         axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
         legend.title = element_text(size = titles),
-        legend.text = element_text(size = txt),
+        legend.text = ggtext::element_markdown(size = txt),
         legend.position = 'bottom',
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
@@ -890,7 +949,7 @@ fig4e <- data.mdl %>%
   guides(color = guide_legend(nrow = 2, byrow=F, order = 1,
                              override.aes = list(shape = 15, size = 3, alpha = 1)))
 
-ggsave(sprintf("%s/Simulation.jpg",fig_path), fig4e,
+ggsave(sprintf("%s/Simulation.jpg",fig_path), fig5e,
        height = one.c, width = one.c, units = 'mm',
        dpi = 600)
 
@@ -916,23 +975,23 @@ ggsave(sprintf("%s/Simulation.jpg",fig_path), fig4e,
 fig5a <- readPNG('figures/final/final/YLL_Locus.png')
 fig5a <- ggplot() + 
   background_image(fig5a) +
-  theme(plot.margin = margin(t=17, l=0, r=0, b=17, unit = "mm"),
+  theme(plot.margin = margin(t=0, l=5, r=5, b=0, unit = "mm"),
         plot.background = element_blank())
 
-fig5b <- readPNG('figures/final/final/YLL_MDS.png')
+# fig5b <- readPNG('figures/final/final/YLL_MDS.png')
+# fig5b <- ggplot() + 
+#   background_image(fig5b) +
+#   theme(plot.margin = margin(t=10, l=0, r=0, b=10, unit = "mm"),
+#         plot.background = element_blank())
+
+fig5b <- readPNG('figures/final/final/tree2.png')
 fig5b <- ggplot() + 
   background_image(fig5b) +
-  theme(plot.margin = margin(t=10, l=0, r=0, b=10, unit = "mm"),
-        plot.background = element_blank())
+  theme(plot.margin = margin(t=0, l=5, r=5, b=0, unit = "mm"),
+        plot.background = element_rect(fill = 'white'))
 
-fig5c <- readPNG('figures/final/final/TREE_MDS.png')
+fig5c <- readPNG('figures/final/final/active site panel v1.png')
 fig5c <- ggplot() + 
   background_image(fig5c) +
-  theme(plot.margin = margin(t=10, l=0, r=0, b=10, unit = "mm"),
-        plot.background = element_blank())
-
-fig5d <- readPNG('figures/final/final/AlphaFold_Structure.png')
-fig5d <- ggplot() + 
-  background_image(fig5d) +
-  theme(plot.margin = margin(t=0, l=0, r=0, b=0, unit = "mm"),
+  theme(plot.margin = margin(t=5, l=0, r=0, b=5, unit = "mm"),
         plot.background = element_blank())

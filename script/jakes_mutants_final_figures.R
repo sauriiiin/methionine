@@ -41,7 +41,7 @@ load(file = sprintf('%s/%s/anova_results2_nopilot.RData', out_path, expt.name))
 ##### LEVELS
 attempt.levels <- c('pilot', 'copy1', 'copy2')
 strain.levels <- c('BY4742', 'BY4741', 'FY4', 'met15', 'met3', 'met2', 'met6', 'met13', 'cys4', 'met12', 'str3', 'yll')
-condition.levels <- c('YPDA', 'SD-Met-Cys+Glu')
+condition.levels <- c('YPDA', 'SD-Met+Glu')
 
 # STRAIN LABELES
 strain.labs <- c('BY4742', 'BY4741', 'FY4', 'FY4-*met15Δ*', 'FY4-*met3Δ*', 'FY4-*met2Δ*', 'FY4-*met6Δ*', 'FY4-*met13Δ*','FY4-*cys4Δ*',
@@ -57,11 +57,11 @@ strain.labs2$auxotrophy[strain.labs2$orf_name %in% c('str3','yll')] <- 'Unknown'
 strain.labs2$auxotrophy <- factor(strain.labs2$auxotrophy, levels = c('Prototroph', 'Presumed Auxotroph', 'Unknown'))
 
 data$condition <- as.character(data$condition)
-data$condition[data$condition == 'SD-MET+Glucose'] <- 'SD-Met-Cys+Glu'
+data$condition[data$condition == 'SD-MET+Glucose'] <- 'SD-Met+Glu'
 anova.res$condition <- as.character(anova.res$condition)
-anova.res$condition[anova.res$condition == 'SD-MET+Glucose'] <- 'SD-Met-Cys+Glu'
+anova.res$condition[anova.res$condition == 'SD-MET+Glucose'] <- 'SD-Met+Glu'
 anova.res2$condition <- as.character(anova.res2$condition)
-anova.res2$condition[anova.res2$condition == 'SD-MET+Glucose'] <- 'SD-Met-Cys+Glu'
+anova.res2$condition[anova.res2$condition == 'SD-MET+Glucose'] <- 'SD-Met+Glu'
 
 data$attempt <- factor(data$attempt, levels = attempt.levels)
 data$orf_name <- factor(data$orf_name, levels = strain.levels)
@@ -113,10 +113,10 @@ temp <- data[data$time == 't_final' & data$attempt != 'pilot',] %>%
 temp.es <- data.frame()
 # data.es <- data.frame()
 for (o in unique(temp$orf_name)) {
-  es <- (temp$f[temp$orf_name == o & temp$condition == 'SD-Met-Cys+Glu'] - temp$f[temp$orf_name == o & temp$condition == 'YPDA'])/
+  es <- (temp$f[temp$orf_name == o & temp$condition == 'SD-Met+Glu'] - temp$f[temp$orf_name == o & temp$condition == 'YPDA'])/
     temp$f[temp$orf_name == o & temp$condition == 'YPDA']
   temp.es <- rbind(temp.es, data.frame(orf_name = o, effsize = es, PM = temp$f[temp$orf_name == o & temp$condition == 'YPDA'],
-                                       MM = temp$f[temp$orf_name == o & temp$condition == 'SD-Met-Cys+Glu']))
+                                       MM = temp$f[temp$orf_name == o & temp$condition == 'SD-Met+Glu']))
   # data.es <- rbind(data.es, data.frame(orf_name = o, label = strain.labs2$labels[strain.labs2$orf_name == o],
   #                                      parsed = strain.labs2$parsed[strain.labs2$orf_name == o],
   #                                      PM = temp$f[temp$orf_name == o & temp$condition == 'YPDA'],
@@ -245,7 +245,7 @@ plot.rcs.den.aov <- data[data$attempt != 'pilot' & data$time == 't_final' & data
             aes(y = strain1, x = 1.5, label = label), size = 2, col = 'red') +
   labs(x = 'Relative Colony Size',
        y = 'Strain') +
-  scale_y_discrete(labels = strain.labs[-10]) +
+  scale_y_discrete(labels = strain.labs[-12]) +
   scale_fill_manual(name = 'Biological Replicate',
                     values = c("1" = "#673AB7",
                                "2" = "#009688",
@@ -265,7 +265,7 @@ plot.rcs.den.aov <- data[data$attempt != 'pilot' & data$time == 't_final' & data
         strip.text = element_text(size = txt,
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm")))
-plot.rcs.den.aov <- colorstrip(plot.rcs.den.aov,c("#C2185B","#C2185B","#448AFF","#448AFF"))
+# plot.rcs.den.aov <- colorstrip(plot.rcs.den.aov,c("#C2185B","#C2185B","#448AFF","#448AFF"))
 ggsave(sprintf("%s/%s/final/RELATIVE_COLONY_SIZE_DENSITY_ANOVA.jpg",fig_path, expt.name), plot.rcs.den.aov,
        height = 70, width = two.c, units = 'mm',
        dpi = 600)
@@ -376,3 +376,10 @@ ggsave(sprintf("%s/%s/final/RELATIVE_COLONY_SIZE_DENSITY_ANOVA_YLL.jpg",fig_path
        height = 70, width = two.c, units = 'mm',
        dpi = 600)
 
+##### GROWTH CURVES
+head(data)
+data %>%
+  filter(orf_name %in% c('FY4','met15','BY4741'), data$attempt != 'pilot') %>%
+  ggplot(aes(x = hours, y = average, col = condition, group = condition)) +
+  geom_line() +
+  facet_wrap(.~orf_name)

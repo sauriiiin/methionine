@@ -180,11 +180,11 @@ figScbn3 <- rbind(data.cbn[,c(1,2,5,6,10)],
                               'BY4741' = 'BY4741')) +
   labs(x = 'Strain', y= 'Relative Colony Size') +
   coord_cartesian(ylim = c(0,1.3)) +
-  facet_wrap(.~condition*carbon, scales = 'free_x',
+  facet_wrap(.~condition, scales = 'free_x',
              nrow = 1,
-             labeller = labeller(condition = c('GLU' = 'SC - Met + Ura + Leu',
-                                               'SCmLeu' = 'SC + Met + Ura - Leu',
-                                               'GAL' = 'SC - Met + Ura + Leu'))) +
+             labeller = labeller(condition = c('GLU' = 'SC - Met - Cys + Glu',
+                                               'SCmLeu' = 'SC - Leu + Glu',
+                                               'GAL' = 'SC - Met - Cys + Gal'))) +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles, hjust = 0.5, face = 'bold'),
         axis.title.x = element_blank(),
@@ -545,28 +545,28 @@ ggsave(sprintf("%s/FigureS5_2.jpg",fig_path), figSrpMU,
 
 
 ##### BISMUTH
-data.bis$Strain <- as.character(data.bis$Strain)
-data.bis.3 <- data.frame(rbind(c('FY4-met5D',1.0,'BiGGY','met5'),
-                 c('FY4-met5D',1.0,'SD-Met-Cys+Bi','met5'),
-                 c('FY4-met10D',1.0,'BiGGY','met10'),
-                 c('FY4-met10D',1.0,'SD-Met-Cys+Bi','met10'),
-                 c('FY4-yllD',4.0,'BiGGY','yll'),
-                 c('FY4-yllD',4.0,'SD-Met-Cys+Bi','yll')))
-colnames(data.bis.3) <- colnames(data.bis)
-data.bis <- rbind(data.bis, data.bis.3)
-data.bis$Strain <- factor(data.bis$Strain,
-                          levels = c('FY4','BY4742','FY4-met12D','FY4-met2D','FY4-met6D','FY4-met13D',
-                                     'FY4-cys4D','FY4-yllD','FY4-str3D','FY4-met3D','FY4-met5D','FY4-met10D',
-                                     'FY4-met15D','BY4741'))
-data.bis$HS <- as.numeric(data.bis$HS)
+# data.bis$Strain <- as.character(data.bis$Strain)
+# data.bis.3 <- data.frame(rbind(c('FY4-met5D',1.0,'BiGGY','met5'),
+#                  c('FY4-met5D',1.0,'SD-Met-Cys+Bi','met5'),
+#                  c('FY4-met10D',1.0,'BiGGY','met10'),
+#                  c('FY4-met10D',1.0,'SD-Met-Cys+Bi','met10'),
+#                  c('FY4-yllD',4.0,'BiGGY','yll'),
+#                  c('FY4-yllD',4.0,'SD-Met-Cys+Bi','yll')))
+# colnames(data.bis.3) <- colnames(data.bis)
+# data.bis <- rbind(data.bis, data.bis.3)
+# data.bis$Strain <- factor(data.bis$Strain,
+#                           levels = c('FY4','BY4742','FY4-met12D','FY4-met2D','FY4-met6D','FY4-met13D',
+#                                      'FY4-cys4D','FY4-yllD','FY4-str3D','FY4-met3D','FY4-met5D','FY4-met10D',
+#                                      'FY4-met15D','BY4741'))
+# data.bis$HS <- as.numeric(data.bis$HS)
 
-figSBi <- data.bis %>%
-  filter(Condition == 'SD-Met-Cys+Bi') %>%
+figSBi <- data.bis[!(data.bis$Strain %in% c('BY4742','BY4741')),] %>%
+  filter(Condition == 'SD-Met-Cys+Bi', Strain != 'FY4-yllD') %>%
   ggplot(aes(x = Strain, y = HS)) +
-  stat_summary(data = data.bis %>%
-                 filter(Condition == 'SD-Met-Cys+Bi') %>%
+  stat_summary(data = data.bis[!(data.bis$Strain %in% c('BY4742','BY4741')),] %>%
+                 filter(Condition == 'SD-Met-Cys+Bi', Strain != 'FY4-yllD') %>%
                  group_by(Condition, Strain) %>%
-                 summarize(HS = mean(HS, na.rm = T), .groups = 'keep'),
+                 summarise(HS = mean(HS, na.rm = T), .groups = 'keep'),
                aes(fill = round(HS)), col = 'white', alpha = 0.9, size = 1,
                fun = mean, geom = "bar") +
   # stat_summary(fun.data = mean_se, geom = "errorbar") +
@@ -575,33 +575,29 @@ figSBi <- data.bis %>%
   #                  limits = c('BiGGY', 'SD-Met-Cys+Bi')) +
   scale_y_continuous(breaks = seq(0,10,1)) +
   scale_fill_gradient(low = "#D7CCC8", high = "#5D4037", guide = F) +
-  labs(y = 'Relative Hydrogen Sulfide',
+  labs(y = 'Relative\nHydrogen Sulfide',
        x = 'Strains',
-       title = 'SD-Met+Glu+Bi') +
-  scale_x_discrete(limits = c('BY4742','BY4741','FY4','FY4-met15D',
-                              'FY4-met2D','FY4-met3D','FY4-met5D','FY4-met6D',
-                              'FY4-met10D','FY4-met12D','FY4-met13D','FY4-cys4D',
-                              'FY4-str3D','FY4-yllD'),
-                   labels = c('FY4'='FY4',
+       title = 'BiGGY Media') +
+  scale_x_discrete(labels = c('FY4'='FY4',
                               'FY4-met12D'='FY4-*met12Δ*',
                               'FY4-str3D'='FY4-*str3Δ*',
                               'FY4-met3D'='FY4-*met3Δ*',
                               'FY4-met15D'='FY4-*met15Δ*',
                               'FY4-met2D'='FY4-*met2Δ*',
-                              'FY4-met6D'='FY4-*met6Δ*', 
+                              'FY4-met6D'='FY4-*met6Δ*',
                               'FY4-met13D'='FY4-*met13Δ*',
+                              'FY4-met5D'='FY4-*met5Δ*',
+                              'FY4-met10D'='FY4-*met10Δ*',
                               'FY4-cys4D'='FY4-*cys4Δ*',
                               'FY4-yllD'='FY4-*yll058wΔ*',
-                              'FY4-met5D' = 'FY4-*met5Δ*',
-                              'FY4-met10D' = 'FY4-*met10Δ*',
                               'BY4742'='BY4742',
                               'BY4741'='BY4741')) +
   theme_linedraw() +
-  theme(plot.title = element_blank(),
+  theme(plot.title = element_blank(),#element_text(size = titles, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
         axis.title.x = element_blank(),
         axis.text = element_text(size = txt),
-        axis.text.x = ggtext::element_markdown(size = txt, angle = 30, vjust = 1, hjust = 1),
+        axis.text.x = ggtext::element_markdown(size = txt, angle = 20, vjust = 1, hjust = 1),
         axis.ticks.x = element_blank(),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
@@ -611,6 +607,8 @@ figSBi <- data.bis %>%
         strip.text = ggtext::element_markdown(size = txt, colour = 'black',
                                               margin = margin(0.1,0,0.1,0, "mm"))) +
   coord_cartesian(ylim = c(1,7))
+
+
 
 # figSBi.g <- ggplot_gtable(ggplot_build(figSBi))
 # stripr <- which(grepl('strip-t', figSBi.g$layout$name))
@@ -640,18 +638,20 @@ figSBi <- data.bis %>%
 # ggsave(sprintf("%s/FigureS7.jpg",fig_path), figSBi.g,
 #        height = one.5c, width = one.5c, units = 'mm',
 #        dpi = 600)
-figSBicp <- readPNG('figures/final/final/Bismuth.png')
+figSBicp <- readPNG('figures/final/final/ColonyCrops/BismuthCrops.png')
 figSBicp <- ggplot() + 
   background_image(figSBicp) +
-  theme(plot.margin = margin(t=0, l=0, r=0, b=0, unit = "mm"),
-        plot.background = element_blank())
+  theme(plot.margin = margin(t=15, l=0, r=0, b=15, unit = "mm"),
+        plot.background = element_rect(fill = 'white'))
 
-figSBis <- plot_grid(figSBicp, figSBi,
-                     ncol = 1, rel_heights = c(2.5,1),
+figSBis <- annotate_figure(plot_grid(figSBicp, figSBi,
+                     ncol = 1, rel_heights = c(1.2,1),
                      labels = c('A','B'),
-                     label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
+                     label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
+                     top = text_grob("SD-Met+Glu+Bi", face = "bold", size = titles))
 ggsave(sprintf("%s/FigureSBi.jpg",fig_path), figSBis,
-       height = two.c, width = two.c, units = 'mm',
+       height = one.5c, width = two.c, units = 'mm',
+       bg = 'white',
        dpi = 600)
 
 ##### MET5/10 MUTANTS
@@ -798,7 +798,8 @@ for (s in stripr) {
 # grid.draw(figSns1.g)
 
 
-figSns2 <- data.ns[!(data.ns$id == 'Agar_Difco_+sulfate_+Met' & data.ns$stage == 'S1'),] %>%
+# figSns2 <- 
+data.ns[!(data.ns$id == 'Agar_Difco_+sulfate_+Met' & data.ns$stage == 'S1'),] %>%
   filter(id %in% c('Agar_Difco_+sulfate_+Met',
                    'Agarose_Home_+sulfate_-Met',
                    'Agarose_Home_-sulfate_-Met'),
@@ -965,7 +966,7 @@ data.bis.2 <- data.frame(orf_name = c('met10del','met5del','FY4','yll'),
 
 
 figSjmYLL <- data.jm.2 %>%
-  filter(orf_name %in% c('yll','met5del','met10del')) %>%
+  filter(orf_name %in% c('yll')) %>%
   ggplot() +
   # geom_rect(data = data.bis.2, aes(fill = H2S),xmin = -Inf,xmax = Inf,
   #           ymin = -Inf,ymax = Inf) +
@@ -1006,7 +1007,7 @@ figSjmYLL <- data.jm.2 %>%
   theme(plot.title = element_blank(),
         axis.title.x = element_blank(),
         axis.title.y = element_text(size = titles),
-        axis.text.x = ggtext::element_markdown(size = txt), #angle = 30, vjust = 1, hjust = 1),
+        axis.text.x = ggtext::element_markdown(size = txt),#, angle = 30, vjust = 1, hjust = 1),
         axis.text.y = element_text(size = txt),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
@@ -1016,21 +1017,16 @@ figSjmYLL <- data.jm.2 %>%
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
         strip.text = ggtext::element_markdown(size = txt, colour = 'white',
-                                              margin = margin(0.1,0,0.1,0, "mm")))
+                                              margin = margin(1,0,0.1,0, "mm")))
 
-figSjmYLLcp <- readPNG('figures/final/final/BiGGY_Supp.png')
-figSjmYLLcp <- ggplot() + 
-  background_image(figSjmYLLcp) +
-  theme(plot.margin = margin(t=0, l=0, r=0, b=0, unit = "mm"),
-        plot.background = element_blank())
 
 figSjmYLLcol <- data.bis %>%
-  filter(Condition == 'BiGGY', orf_name %in% c('yll','met5','met10')) %>%
-  ggplot(aes(x = Strain, y = HS)) +
+  filter(orf_name %in% c('yll')) %>%
+  ggplot(aes(x = Condition, y = HS)) +
   stat_summary(data = data.bis %>%
-                 filter(Condition == 'BiGGY', orf_name %in% c('yll','met5','met10')) %>%
+                 filter(orf_name %in% c('yll')) %>%
                  group_by(Condition, Strain) %>%
-                 summarize(HS = mean(HS, na.rm = T), .groups = 'keep'),
+                 summarise(HS = mean(HS, na.rm = T), .groups = 'keep'),
                aes(fill = round(HS)), col = 'white', alpha = 0.9, size = 1,
                fun = mean, geom = "bar") +
   # stat_summary(fun.data = mean_se, geom = "errorbar") +
@@ -1040,46 +1036,58 @@ figSjmYLLcol <- data.bis %>%
   scale_y_continuous(breaks = seq(0,10,1)) +
   scale_fill_gradient(low = "#D7CCC8", high = "#5D4037", guide = F) +
   labs(y = 'Relative Hydrogen Sulfide',
-       x = 'Strains',
-       title = 'BiGGY Media') +
-  scale_x_discrete(limits = c('FY4-met5D','FY4-met10D','FY4-yllD'),
-                   labels = c('FY4'='FY4',
-                              'FY4-met12D'='FY4-*met12Δ*',
-                              'FY4-str3D'='FY4-*str3Δ*',
-                              'FY4-met3D'='FY4-*met3Δ*',
-                              'FY4-met15D'='FY4-*met15Δ*',
-                              'FY4-met2D'='FY4-*met2Δ*',
-                              'FY4-met6D'='FY4-*met6Δ*',
-                              'FY4-met13D'='FY4-*met13Δ*',
-                              'FY4-cys4D'='FY4-*cys4Δ*',
-                              'FY4-yllD'='FY4-*yll058wΔ*',
-                              'BY4742'='BY4742',
-                              'BY4741'='BY4741',
-                              'FY4-met5D' = 'FY4-*met5Δ*',
-                              'FY4-met10D' = 'FY4-*met10Δ*')) +
+       x = 'Strains') +
+  scale_x_discrete(labels = c('BiGGY' = 'BiGGY',
+                              'SD-Met-Cys+Bi' = 'SD-Met+Glu+Bi')) +
+  facet_wrap(.~Strain, labeller = labeller(Strain= c('FY4'='FY4',
+                                                         'FY4-met12D'='FY4-*met12Δ*',
+                                                         'FY4-str3D'='FY4-*str3Δ*',
+                                                         'FY4-met3D'='FY4-*met3Δ*',
+                                                         'FY4-met15D'='FY4-*met15Δ*',
+                                                         'FY4-met2D'='FY4-*met2Δ*',
+                                                         'FY4-met6D'='FY4-*met6Δ*',
+                                                         'FY4-met13D'='FY4-*met13Δ*',
+                                                         'FY4-cys4D'='FY4-*cys4Δ*',
+                                                         'FY4-yllD'='FY4-*yll058wΔ*',
+                                                         'BY4742'='BY4742',
+                                                         'BY4741'='BY4741',
+                                                         'FY4-met5D' = 'FY4-*met5Δ*',
+                                                         'FY4-met10D' = 'FY4-*met10Δ*'))) +
   theme_linedraw() +
   theme(plot.title = element_blank(),#element_text(size = titles, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
         axis.title.x = element_blank(),
         axis.text = element_text(size = txt),
-        axis.text.x = ggtext::element_markdown(size = txt, angle = 30, vjust = 1, hjust = 1),
+        axis.text.x = ggtext::element_markdown(size = txt),#, angle = 30, vjust = 1, hjust = 1),
         axis.ticks.x = element_blank(),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
         legend.position = 'bottom',
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
-        strip.text = ggtext::element_markdown(size = txt, colour = 'black',
-                                              margin = margin(0.1,0,0.1,0, "mm"))) +
+        strip.text = ggtext::element_markdown(size = txt,
+                                              margin = margin(1,0,0.1,0, "mm"))) +
   coord_cartesian(ylim = c(1,7))
 
-figSYLL <- plot_grid(figSjmYLL, figSjmYLLcp, figSjmYLLcol,
-                     ncol = 1, rel_heights = c(1,1,1),
-                     labels = c('A','B','C'),
+figSjmYLLcp <- readPNG('figures/final/final/ColonyCrops/YLLCrops.png')
+figSjmYLLcp <- ggplot() + 
+  background_image(figSjmYLLcp) +
+  theme(plot.margin = margin(t=0, l=0, r=0, b=0, unit = "mm"),
+        plot.background = element_blank())
+
+figSYLL <- plot_grid(plot_grid(figSjmYLL, figSjmYLLcol, 
+                               nrow = 1, rel_widths = c(1,1),
+                               align = 'h', axis = 'tb',
+                               labels = c('A','B'),
+                               label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
+                     figSjmYLLcp, 
+                     ncol = 1, rel_heights = c(1,1.5),
+                     labels = c('','C'),
                      label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
 
 ggsave(sprintf("%s/FigureSYLLBiGGY.jpg",fig_path), figSYLL,
-       height = two.c, width = two.c, units = 'mm',
+       height = one.5c, width = two.c, units = 'mm',
+       bg = 'white',
        dpi = 600)
 
 # figSjmYLL.g <- ggplot_gtable(ggplot_build(figSjmYLL))
