@@ -723,12 +723,33 @@ temp5$Strain <- factor(temp5$Strain, levels = c('BY4742','BY4741'))
 # write.csv(temp5 %>% filter(Attempt == 'Original'),
 #           file = '/home/sbp29/R/Projects/methionine/paper/data/Figure1E.csv')
 
-
 ##### FIGURE 4D
+data.chelator.dose <- read_xlsx(path = '/home/sbp29/R/Projects/methionine/paper/data/ChelatorDose.xlsx') %>% data.frame()
+data.chelator.dose <- melt(data.chelator.dose, id.vars = c('Flask','Strain','Media_ID','Media','FeEDTA'),
+                           variable.name = 'Hours', value.name = 'OD')
+data.chelator.dose$Hours <- as.numeric(str_remove(data.chelator.dose$Hours,'X'))
+data.chelator.dose$petite[str_detect(data.chelator.dose$Strain, '-p')] <- 'Yes'
+data.chelator.dose$petite[is.na(data.chelator.dose$petite)] <- 'No'
+
+data.chelator.dose$Media_ID <- factor(data.chelator.dose$Media_ID,
+                                      levels = c("SD+Met+Glu","SD-Met+Glu","SD-Met+Glu+0.024M FeEDTA",
+                                                 "SD-Met+Glu+0.048M FeEDTA", "SD-Met+Glu+0.096M FeEDTA", "SD-Met+Glu+0.136M FeEDTA"))
+data.chelator.dose$Strain <- factor(data.chelator.dose$Strain,
+                                    levels = c("FY4","FY4-met15del","FY4-p","FY4-met15del-p"))
+data.chelator.dose <- merge(data.chelator.dose %>%
+                              filter(Hours == 53, petite == 'Yes'),
+                            data.frame(Strain = c('FY4-p','FY4-met15del-p'),
+                                       labels = c('FY4~(rho^"_")','FY4-italic(met15Δ)~(rho^"_")')), by = 'Strain')
+data.chelator.dose$labels <- factor(data.chelator.dose$labels,
+                                    levels = c('FY4~(rho^"_")','FY4-italic(met15Δ)~(rho^"_")'))
+write.csv(data.chelator.dose,
+          file = '/home/sbp29/R/Projects/methionine/paper/data/Figure4D.csv')
+
+##### FIGURE 4E
 strain.labs.res <- data.frame(orf_name = c('FY4', 'FY4_pet', 'FY4-met15del', 'FY4-met15del_pet',
                                            'BY4742', 'BY4742_pet', 'BY4741', 'BY4741_pet'), 
-                              labels = c('FY4', 'FY4~(rho)' ,'FY4-italic(met15Δ)', 'FY4-italic(met15Δ)~(rho)',
-                                         'BY4742', 'BY4742~(rho)', 'BY4741', 'BY4741~(rho)'),
+                              labels = c('FY4', 'FY4~(rho^"_")' ,'FY4-italic(met15Δ)', 'FY4-italic(met15Δ)~(rho^"_")',
+                                         'BY4742', 'BY4742~(rho^"_")', 'BY4741', 'BY4741~(rho^"_")'),
                               met_aux = c('Prototroph','Prototroph','Presumed Auxotroph','Presumed Auxotroph',
                                           'Prototroph','Prototroph','Presumed Auxotroph','Presumed Auxotroph'),
                               pet = c('No','Yes','No','Yes','No','Yes','No','Yes'))
@@ -853,10 +874,17 @@ data.res.gc <- merge(data.res.gc, conds, by = 'condition')
 data.res.gc$methionine <- factor(data.res.gc$methionine, levels = c('+Met','-Met'))
 data.res.gc$carbon <- factor(data.res.gc$carbon, levels = c('Glucose','Ethanol'))
 
+strain.labs.res$orf_name <- factor(strain.labs.res$orf_name,
+                                   levels = c("FY4","FY4-met15del","FY4_pet","FY4-met15del_pet",
+                                              "BY4742","BY4742_pet","BY4741","BY4741_pet"))
+data.res.gc$orf_name <- factor(data.res.gc$orf_name,
+                               levels = c("FY4","FY4-met15del","FY4_pet","FY4-met15del_pet",
+                                          "BY4742","BY4742_pet","BY4741","BY4741_pet"))
+
 # write.csv(merge(data.res.gc[str_detect(data.res.gc$orf_name, 'FY'),],
 #                 strain.labs.res, by = 'orf_name') %>%
 #             filter(expt_rep %in% c("1","2"), condition != 'SD+Met-Ura+Glu'),
-#           file = '/home/sbp29/R/Projects/methionine/paper/data/Figure4D.csv')
+#           file = '/home/sbp29/R/Projects/methionine/paper/data/Figure4E.csv')
 
 
 ##### SUPPLEMENTARY FIGURES #####
@@ -891,6 +919,12 @@ data.mdl$label[data.mdl$Model == 'B'] <- 'B. A - All YLL058W reactions'
 data.mdl$label[data.mdl$Model == 'C'] <- 'C. B + Hypothesized YLL058W reaction'
 data.mdl$label[data.mdl$Model == 'D'] <- 'D. C - All MET15 reactions'
 
+data.mdl.2 <- read_xlsx(path = '/home/sbp29/R/Projects/methionine/paper/data/FigureS9_2.xlsx') %>%
+  data.frame()
+
 # write.csv(data.mdl, file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS9.csv')
+
+##### FIGURE S (petite data)
+
 
 
