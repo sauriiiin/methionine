@@ -373,7 +373,8 @@ data.jm.2$orf_name <- factor(data.jm.2$orf_name, levels = c('FY4','met15','met3'
                                                             'BY4742','BY4741'))
 strain.labs.jm <- rbind(strain.labs.jm,
                         data.frame(orf_name = c('met5del','met10del'), labels = c('FY4-*met5Δ*','FY4-*met10Δ*'),
-                                   parsed = c('FY4-italic(met5Δ)','FY4-italic(met10Δ)'), auxotrophy = c('Prototroph','Prototroph')))
+                                   parsed = c('FY4-italic(met5Δ)','FY4-italic(met10Δ)'),
+                                   auxotrophy = c('Presumed Auxotroph','Presumed Auxotroph')))
 
 # write.csv(data.jm.2[!(data.jm.2$orf_name %in% c('BY4742','BY4741')),],
 #           file = '/home/sbp29/R/Projects/methionine/paper/data/Figure2B.csv')
@@ -540,6 +541,9 @@ df_yll<-data.frame(PC1=yll_mmds$coord$PC1,PC2=yll_mmds$coord$PC2,km_clust=yll058
 df_yll$km_clust<-factor(df_yll$km_clust,levels=c("Cluster 1","Cluster 2","Cluster 3"))#,"Cluster 4"))
 
 unique(df_yll$km_clust)
+
+write.csv(df_yll,
+          file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS6.csv')
 
 ## tree
 tree0<-read.tree(text='(Lipomycetaceae,(Trigonopsidaceae,(Dipodascaceae,
@@ -737,13 +741,16 @@ data.chelator.dose$Media_ID <- factor(data.chelator.dose$Media_ID,
 data.chelator.dose$Strain <- factor(data.chelator.dose$Strain,
                                     levels = c("FY4","FY4-met15del","FY4-p","FY4-met15del-p"))
 data.chelator.dose <- merge(data.chelator.dose %>%
-                              filter(Hours == 53, petite == 'Yes'),
-                            data.frame(Strain = c('FY4-p','FY4-met15del-p'),
-                                       labels = c('FY4~(rho^"_")','FY4-italic(met15Δ)~(rho^"_")')), by = 'Strain')
+                              filter(Hours == 53),
+                            data.frame(Strain = c("FY4","FY4-met15del",'FY4-p','FY4-met15del-p'),
+                                       labels = c('FY4','FY4-italic(met15Δ)',
+                                                  'FY4~(rho^"_")','FY4-italic(met15Δ)~(rho^"_")')), by = 'Strain')
 data.chelator.dose$labels <- factor(data.chelator.dose$labels,
-                                    levels = c('FY4~(rho^"_")','FY4-italic(met15Δ)~(rho^"_")'))
-write.csv(data.chelator.dose,
+                                    levels = c('FY4','FY4-italic(met15Δ)','FY4~(rho^"_")','FY4-italic(met15Δ)~(rho^"_")'))
+write.csv(data.chelator.dose %>% filter(petite == 'Yes'),
           file = '/home/sbp29/R/Projects/methionine/paper/data/Figure4D.csv')
+write.csv(data.chelator.dose %>% filter(petite == 'No'),
+          file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS11.csv')
 
 ##### FIGURE 4E
 strain.labs.res <- data.frame(orf_name = c('FY4', 'FY4_pet', 'FY4-met15del', 'FY4-met15del_pet',
@@ -888,12 +895,20 @@ data.res.gc$orf_name <- factor(data.res.gc$orf_name,
 
 
 ##### SUPPLEMENTARY FIGURES #####
-##### FIGURE S3
+##### FIGURE S2
 data.cbn.leu$orf_name[data.cbn.leu$orf_name == 'met15'] <- 'FY4-met15del'
 # write.csv(rbind(data.cbn[,c(1,2,5,6,10)],
 #                 data.cbn.leu[,c(8,11,10,13,14)] %>%
 #                   filter(condition == 'SCmLeu')) %>%
 #             filter(base == 'SC', orf_name != 'FY4-met3del'),
+#           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS2.csv')
+
+
+##### FIGURE S3
+# write.csv(rbind(data.cbn[,c(1,2,5,6,10)],
+#                 data.cbn.leu[,c(8,11,10,13,14)] %>%
+#                   filter(condition == 'SDmLeu')) %>%
+#             filter(base == 'SD', orf_name %in% c('FY4','FY4-met15del')),
 #           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS3.csv')
 
 
@@ -901,16 +916,8 @@ data.cbn.leu$orf_name[data.cbn.leu$orf_name == 'met15'] <- 'FY4-met15del'
 # write.csv(rbind(data.cbn[,c(1,2,5,6,10)],
 #                 data.cbn.leu[,c(8,11,10,13,14)] %>%
 #                   filter(condition == 'SDmLeu')) %>%
-#             filter(base == 'SD', orf_name %in% c('FY4','FY4-met15del')),
-#           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS4.csv')
-
-
-##### FIGURE S5
-# write.csv(rbind(data.cbn[,c(1,2,5,6,10)],
-#                 data.cbn.leu[,c(8,11,10,13,14)] %>%
-#                   filter(condition == 'SDmLeu')) %>%
 #             filter(base == 'SD', orf_name == 'FY4-met3del'),
-#           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS5.csv')
+#           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS4.csv')
 
 ##### FIGURE S9
 data.mdl <- read.csv('/home/sbp29/R/Projects/methionine/data/modeling/YLL_simulation.csv', stringsAsFactors = F)
@@ -923,8 +930,6 @@ data.mdl.2 <- read_xlsx(path = '/home/sbp29/R/Projects/methionine/paper/data/Fig
   data.frame()
 
 # write.csv(data.mdl, file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS9.csv')
-
-##### FIGURE S (petite data)
 
 
 

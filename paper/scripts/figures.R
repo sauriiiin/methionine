@@ -4,7 +4,6 @@ source('/home/sbp29/R/Projects/methionine/paper/scripts/initialize.R')
 load('/home/sbp29/R/Projects/methionine/paper/data/FigureData.RData')
 outsidepanels <- 'paper/figures/PanelsMadeOutsideR/'
 
-
 #####
 pinningpanelbg <- '#FFF6DB'
 flaskpanelbg <- '#E1E4E8' ##D6E4F4
@@ -314,10 +313,16 @@ ggsave(sprintf("%s/Figure1.jpg",fig_path), fig1,
        dpi = 300)
 
 ##### FIGURE 2
-fig2a <- readPNG(sprintf('%sFig2A.png',outsidepanels))
+# fig2a <- readPNG(sprintf('%sFig2A.png',outsidepanels))
+# fig2a <- ggplot() + 
+#   background_image(fig2a) +
+#   theme(plot.margin = margin(t=0, l=35, r=35, b=0, unit = "mm"),
+#         plot.background = element_blank())
+
+fig2a <- readPNG(sprintf('%sFig2A_.png',outsidepanels))
 fig2a <- ggplot() + 
   background_image(fig2a) +
-  theme(plot.margin = margin(t=0, l=35, r=35, b=0, unit = "mm"),
+  theme(plot.margin = margin(t=1, l=25, r=25, b=0, unit = "mm"),
         plot.background = element_blank())
 
 fig2b <- data.jm.2[!(data.jm.2$orf_name %in% c('yll','BY4742','BY4741')),] %>%
@@ -446,42 +451,42 @@ fig2d <- data.bis[!(data.bis$Strain %in% c('BY4742','BY4741')),] %>%
 
 fig2e <- data.ns2 %>%
   ggplot(aes(x = cum_hrs, y = average)) +
+  # stat_summary(data = data.ns2 %>% filter(stage == 'S1'),
+  #              aes(fill = id),
+  #              fun.data=mean_sdl, fun.args = list(mult=1), geom="ribbon", alpha = 0.3) +
   stat_summary(data = data.ns2 %>% filter(stage == 'S1'),
-               aes(fill = id),
-               fun.data=mean_sdl, fun.args = list(mult=1), geom="ribbon", alpha = 0.3) +
-  stat_summary(data = data.ns2 %>% filter(stage == 'S1'),
                aes(col = id),
-               fun=mean, geom="line", lwd =1) +
-  stat_summary(data = data.ns2 %>% filter(stage == 'S2'),
-               aes(fill = id),
-               fun.data=mean_sdl, fun.args = list(mult=1), geom="ribbon", alpha = 0.3) +
+               fun=mean, geom="line", lwd = 1) +
+  # stat_summary(data = data.ns2 %>% filter(stage == 'S2'),
+  #              aes(fill = id),
+  #              fun.data=mean_sdl, fun.args = list(mult=1), geom="ribbon", alpha = 0.3) +
   stat_summary(data = data.ns2 %>% filter(stage == 'S2'),
                aes(col = id),
-               fun=mean, geom="line", lwd =1) +
+               fun=mean, geom="line", lwd = 1) +
+  # stat_summary(data = data.ns2 %>% filter(stage == 'S3'),
+  #              aes(fill = id),
+  #              fun.data=mean_sdl, fun.args = list(mult=1), geom="ribbon", alpha = 0.3) +
   stat_summary(data = data.ns2 %>% filter(stage == 'S3'),
-               aes(fill = id),
-               fun.data=mean_sdl, fun.args = list(mult=1), geom="ribbon", alpha = 0.3) +
-  stat_summary(data = data.ns2 %>% filter(stage == 'S3'),
                aes(col = id),
-               fun=mean, geom="line", lwd =1) +
-  stat_summary(data = data.ns2 %>% filter(stage == 'S4'),
-               aes(fill = id),
-               fun.data=mean_sdl, fun.args = list(mult=1), geom="ribbon", alpha = 0.3) +
+               fun=mean, geom="line", lwd = 1) +
+  # stat_summary(data = data.ns2 %>% filter(stage == 'S4'),
+  #              aes(fill = id),
+  #              fun.data=mean_sdl, fun.args = list(mult=1), geom="ribbon", alpha = 0.3) +
   stat_summary(data = data.ns2 %>% filter(stage == 'S4'),
                aes(col = id),
-               fun=mean, geom="line", lwd =1) +
-  stat_summary(data = data.ns2 %>% filter(stage == 'S5'),
-               aes(fill = id),
-               fun.data=mean_sdl, fun.args = list(mult=1), geom="ribbon", alpha = 0.3) +
+               fun=mean, geom="line", lwd = 1) +
+  # stat_summary(data = data.ns2 %>% filter(stage == 'S5'),
+  #              aes(fill = id),
+  #              fun.data=mean_sdl, fun.args = list(mult=1), geom="ribbon", alpha = 0.3) +
   stat_summary(data = data.ns2 %>% filter(stage == 'S5'),
                aes(col = id),
-               fun=mean, geom="line", lwd =1) +
-  stat_summary(data = data.ns2 %>% filter(stage == 'S6'),
-               aes(fill = id),
-               fun.data=mean_sdl, fun.args = list(mult=1), geom="ribbon", alpha = 0.3) +
+               fun=mean, geom="line", lwd = 1) +
+  # stat_summary(data = data.ns2 %>% filter(stage == 'S6'),
+  #              aes(fill = id),
+  #              fun.data=mean_sdl, fun.args = list(mult=1), geom="ribbon", alpha = 0.3) +
   stat_summary(data = data.ns2 %>% filter(stage == 'S6'),
                aes(col = id),
-               fun=mean, geom="line", lwd =1) +
+               fun=mean, geom="line", lwd = 1) +
   scale_fill_manual(name = 'Condition',
                     breaks = c('Agarose_Home_-sulfate_-Met',
                                'Agarose_Home_+sulfate_-Met',
@@ -800,7 +805,7 @@ ggsave(sprintf("%s/Figure3.jpg",fig_path), fig3,
 fig4a <- readPNG(sprintf('%sFig4A.png',outsidepanels))
 fig4a <- ggplot() + 
   background_image(fig4a) +
-  theme(plot.margin = margin(t=0, l=2, r=2, b=0, unit = "mm"),
+  theme(plot.margin = margin(t=0, l=6, r=6, b=0, unit = "mm"),
         plot.background = element_blank())
 
 fig4b.ori <- rbind(temp1, temp2) %>%
@@ -881,6 +886,7 @@ fig4c <- ggplot() +
         plot.background = element_blank())
 
 fig4d <- data.chelator.dose %>%
+  filter(petite == 'Yes') %>%
   ggplot(aes(x = Media_ID, y = OD,
              fill = FeEDTA)) +
   stat_summary(col = 'black', alpha = 0.9, size = 0.3,
@@ -1034,14 +1040,14 @@ figS3a <- readPNG(sprintf('%sFigS3A.png',outsidepanels))
 figS3a <- ggplot() + 
   background_image(figS3a) +
   labs(title = 'Synthetic Defined Media') +
-  theme(plot.margin = margin(t=2, l=0, r=0, b=10, unit = "mm"),
+  theme(plot.margin = margin(t=1, l=7, r=7, b=0, unit = "mm"),
         plot.background = element_blank(),
         plot.title = element_text(size = titles, hjust = 0.5, face = 'bold'))
 
 figS3b <- rbind(data.cbn[,c(1,2,5,6,10)],
                   data.cbn.leu[,c(8,11,10,13,14)] %>%
                     filter(condition == 'SDmLeu')) %>%
-  filter(base == 'SD', orf_name %in% c('FY4','FY4-met15del')) %>%
+  filter(base == 'SD', orf_name %in% c('FY4-met15del')) %>%
   ggplot(aes(x = condition, y = relative_fitness)) +
   # geom_hline(yintercept = 0.299, linetype = 'dashed', col = '#009688') +
   geom_boxplot(fill = '#9E9E9E', size = 0.2, outlier.shape = NA) +
@@ -1063,7 +1069,7 @@ figS3b <- rbind(data.cbn[,c(1,2,5,6,10)],
              labeller = labeller(orf_name = c('FY4' = 'FY4',
                                               'FY4-met15del' = 'FY4-*met15Δ*'))) +
   theme_linedraw() +
-  theme(plot.title = element_text(size = titles, hjust = 0.5, face = 'bold'),
+  theme(plot.title = ggtext::element_markdown(size = titles, hjust = 0.5, face = 'bold'),
         axis.title.x = element_blank(),
         axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
@@ -1075,26 +1081,25 @@ figS3b <- rbind(data.cbn[,c(1,2,5,6,10)],
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
         strip.text.x = element_text(size = txt,  margin = margin(0.1,0,0.1,0, "mm")),
-        strip.text.y = ggtext::element_markdown(size = txt, colour = 'black',
-                                                margin = margin(0.1,0,0.1,0, "mm")))
+        strip.text.y = ggtext::element_markdown(size = txt, colour = 'white',
+                                                margin = margin(0.1,1,0.1,0, "mm")))
 
-figS3b <- ggplot_gtable(ggplot_build(figS4b))
-stripr <- which(grepl('strip-r', figS4b$layout$name))
-
-figS3b$grobs[[21]]$grobs[[1]]$children[[2]]$children[[1]]$children[[1]]$children[[1]]$label
-figS3b$grobs[[21]]$grobs[[1]]$children[[1]]$gp$fill <- '#FFC107'
-figS3b$grobs[[22]]$grobs[[1]]$children[[2]]$children[[1]]$children[[1]]$children[[1]]$label
-figS3b$grobs[[22]]$grobs[[1]]$children[[1]]$gp$fill <- '#536DFE'
+# figS3b <- ggplot_gtable(ggplot_build(figS4b))
+# stripr <- which(grepl('strip-r', figS4b$layout$name))
+# 
+# figS3b$grobs[[21]]$grobs[[1]]$children[[2]]$children[[1]]$children[[1]]$children[[1]]$label
+# figS3b$grobs[[21]]$grobs[[1]]$children[[1]]$gp$fill <- '#FFC107'
+# figS3b$grobs[[22]]$grobs[[1]]$children[[2]]$children[[1]]$children[[1]]$children[[1]]$label
+# figS3b$grobs[[22]]$grobs[[1]]$children[[1]]$gp$fill <- '#536DFE'
 
 
 figS3 <- plot_grid(figS3a,
                    figS3b,
-                   fig1g.leg,
-                   labels = c('A','B',''),
+                   labels = c('A','B'),
                    label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold',
-                   ncol = 1, rel_heights = c(7,7,0.4))
+                   ncol = 1, rel_heights = c(7,7))
 ggsave(sprintf("%s/FigureS3.jpg",fig_path), figS3,
-       height = two.c, width = two.c, units = 'mm',
+       height = one.5c, width = two.c, units = 'mm',
        bg = 'white',
        dpi = 300)
 
@@ -1347,18 +1352,19 @@ figS8b <- data.bis %>%
 figS8c <- readPNG(sprintf('%sFigS8C.png',outsidepanels))
 figS8c <- ggplot() + 
   background_image(figS8c) +
-  theme(plot.margin = margin(t=0, l=0, r=0, b=0, unit = "mm"),
+  theme(plot.margin = margin(t=10, l=0, r=0, b=10, unit = "mm"),
         plot.background = element_blank())
 
 figS8 <- plot_grid(plot_grid(figS8a, figS8b, 
-                               nrow = 1, rel_widths = c(1,1),
-                               align = 'h', axis = 'tb',
-                               labels = c('A','B'),
-                               label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                     figS8c, 
-                     ncol = 1, rel_heights = c(1,1.5),
-                     labels = c('','C'),
-                     label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
+                             nrow = 1, rel_widths = c(1,1),
+                             align = 'h', axis = 'tb',
+                             labels = c('A','B'),
+                             label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
+                   plot_grid(figS8c, NULL, 
+                             nrow = 1, rel_widths = c(1,1)),
+                   ncol = 1, rel_heights = c(1,1),
+                   labels = c('','C'),
+                   label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
 ggsave(sprintf("%s/FigureS8.jpg",fig_path), figS8,
        height = one.5c, width = two.c, units = 'mm',
        bg = 'white',
@@ -1383,8 +1389,8 @@ figS9a <- data.mdl.2 %>%
   scale_color_manual(name = 'Model with',
                      values = c('C' = '#333333',
                                 'D' = '#999999'),
-                     labels = c('C'='Hypothesized *YLL058W* reaction w/ all *MET15* reactions',
-                                'D'='Hypothesized *YLL058W* reaction w/o all *MET15* reactions')) +
+                     labels = c('C'='Hypothesized YLL058W reaction<br/>w/ all *MET15* reactions',
+                                'D'='Hypothesized YLL058W reaction<br/>w/o all *MET15* reactions')) +
   labs(x = 'Yll058w/Met15 Kcat Ratio',
        y = 'Simulated Biomass Flux\n("Growth")') +
   theme_linedraw() +
@@ -1402,47 +1408,51 @@ figS9a <- data.mdl.2 %>%
   guides(color = guide_legend(nrow = 2, byrow=F, order = 1,
                               override.aes = list(shape = 15, size = 3, alpha = 1)))
 
-figS9b <- data.mdl.2 %>%
-  filter(Model == 'D') %>%
-  ggplot(aes(x = HS_Flux, y = Biomass_Flux)) +
-  geom_line(aes(col = Model), lwd = 1) +
-  geom_point(size = 2) +
-  geom_point(aes(col = Model), size = 0.5) +
-  geom_vline(xintercept = 0.0584647860*13.4/120, linetype = 'dashed', col = 'red', lwd = 1) +
-  geom_hline(yintercept = 0.326*13.4/120, linetype = 'dashed', col = 'red', lwd = 1) +
-  scale_x_reverse() +
-  scale_color_manual(name = 'Model with',
-                     values = c('C' = '#333333',
-                                'D' = '#999999'),
-                     labels = c('C'='Hypothesized *YLL058W* reaction w/ all *MET15* reactions',
-                                'D'='Hypothesized *YLL058W* reaction w/o all *MET15* reactions')) +
-  labs(x = 'Simulated Flux Through Homocysteine\nProducing Reaction',
-       y = 'Simulated Biomass Flux\n("Growth")') +
-  theme_linedraw() +
-  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
-        axis.title = element_text(size = titles),
-        axis.text = element_text(size = txt),
-        legend.title = element_text(size = titles),
-        legend.text = ggtext::element_markdown(size = txt),
-        legend.position = 'bottom',
-        legend.key.size = unit(3, "mm"),
-        legend.box.spacing = unit(0.5,"mm"),
-        strip.text = element_text(size = txt,
-                                  face = 'bold',
-                                  margin = margin(0.1,0,0.1,0, "mm"))) +
-  guides(color = guide_legend(nrow = 2, byrow=F, order = 1,
-                              override.aes = list(shape = 15, size = 3, alpha = 1)))
-
-figS9 <- ggpubr::ggarrange(figS9a, figS9b,
-          nrow = 1, ncol = 2,
-          labels = c('A','B'),
-          widths = c(1,1),
-          font.label = list(face = 'bold', size = lbls, family = "sans"),
-          hjust=-1,
-          common.legend = T, legend = 'bottom',
-          align = 'hv')
-ggsave(sprintf("%s/FigureS9.jpg",fig_path), figS9,
-       height = one.c, width = two.c, units = 'mm',
+# figS9b <- data.mdl.2 %>%
+#   filter(Model == 'D') %>%
+#   ggplot(aes(x = HS_Flux, y = Biomass_Flux)) +
+#   geom_line(aes(col = Model), lwd = 1) +
+#   geom_point(size = 2) +
+#   geom_point(aes(col = Model), size = 0.5) +
+#   geom_vline(xintercept = 0.0584647860*13.4/120, linetype = 'dashed', col = 'red', lwd = 1) +
+#   geom_hline(yintercept = 0.326*13.4/120, linetype = 'dashed', col = 'red', lwd = 1) +
+#   scale_x_reverse() +
+#   scale_color_manual(name = 'Model with',
+#                      values = c('C' = '#333333',
+#                                 'D' = '#999999'),
+#                      labels = c('C'='Hypothesized YLL058W reaction<br/>w/ all *MET15* reactions',
+#                                 'D'='Hypothesized YLL058W reaction<br/>w/o all *MET15* reactions')) +
+#   labs(x = 'Simulated Flux Through Homocysteine\nProducing Reaction',
+#        y = 'Simulated Biomass Flux\n("Growth")') +
+#   theme_linedraw() +
+#   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+#         axis.title = element_text(size = titles),
+#         axis.text = element_text(size = txt),
+#         legend.title = element_text(size = titles),
+#         legend.text = ggtext::element_markdown(size = txt),
+#         legend.position = 'bottom',
+#         legend.key.size = unit(3, "mm"),
+#         legend.box.spacing = unit(0.5,"mm"),
+#         strip.text = element_text(size = txt,
+#                                   face = 'bold',
+#                                   margin = margin(0.1,0,0.1,0, "mm"))) +
+#   guides(color = guide_legend(nrow = 2, byrow=F, order = 1,
+#                               override.aes = list(shape = 15, size = 3, alpha = 1)))
+# 
+# figS9 <- ggpubr::ggarrange(figS9a, figS9b,
+#           nrow = 1, ncol = 2,
+#           labels = c('A','B'),
+#           widths = c(1,1),
+#           font.label = list(face = 'bold', size = lbls, family = "sans"),
+#           hjust=-1,
+#           common.legend = T, legend = 'bottom',
+#           align = 'hv')
+# ggsave(sprintf("%s/FigureS9.jpg",fig_path), figS9,
+#        height = one.c, width = two.c, units = 'mm',
+#        bg = 'white',
+#        dpi = 300)
+ggsave(sprintf("%s/FigureS9.jpg",fig_path), figS9a,
+       height = one.c, width = one.c, units = 'mm',
        bg = 'white',
        dpi = 300)
 
@@ -1450,9 +1460,9 @@ ggsave(sprintf("%s/FigureS9.jpg",fig_path), figS9,
 ##### purified protein used in the in vitro homocysteine biosynthesis assay
 
 
-##### FIGURE
+##### FIGURE S11: Titration of the H2S chelator Fe-EDTA.
 unique(data.chelator.dose$Media_ID)
-figS10 <- data.chelator.dose %>%
+figS11 <- data.chelator.dose %>%
   filter(Hours == 53, petite == 'No') %>%
   ggplot(aes(x = Media_ID, y = OD,
              fill = as.factor(Media_ID))) +
@@ -1486,7 +1496,7 @@ figS10 <- data.chelator.dose %>%
         strip.text.x = ggtext::element_markdown(size = txt,
                                                 margin = margin(1,0,0.1,0, "mm"))) +
   coord_cartesian(ylim = c(0,6.5))
-ggsave(sprintf("%s/FigureS10_.jpg",fig_path), figS10,
+ggsave(sprintf("%s/FigureS11.jpg",fig_path), figS11,
        height = one.c, width = two.c, units = 'mm',
        bg = 'white',
        dpi = 300)
