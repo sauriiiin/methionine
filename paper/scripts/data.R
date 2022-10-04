@@ -380,34 +380,6 @@ strain.labs.jm <- rbind(strain.labs.jm,
 #           file = '/home/sbp29/R/Projects/methionine/paper/data/Figure2B.csv')
 
 ##### FIGURE 2D
-data.bis <- NULL
-for (t in pzfx_tables("/home/sbp29/R/Projects/methionine/data/bismuth/bismuth_graphs_2.pzfx")) {
-  temp <- read_pzfx("/home/sbp29/R/Projects/methionine/data/bismuth/bismuth_graphs_2.pzfx", table = t)
-  temp <- melt(temp, variable.name = 'Strain', value.name = 'HS')
-  temp$Condition = t
-  data.bis <- rbind(data.bis, temp)
-}
-data.bis <- data.frame(data.bis)
-data.bis$Strain <- as.character(data.bis$Strain)
-data.bis$Strain <- factor(data.bis$Strain,
-                          levels = c('FY4','FY4-met15D','FY4-met3D','FY4-met5D','FY4-met10D','FY4-met2D',
-                                     'FY4-met6D','FY4-met13D','FY4-cys4D','FY4-str3D','FY4-met12D','FY4-yllD',
-                                     'BY4742','BY4741'))
-data.bis.2 <- data.frame(Strain = c('FY4-met5D','FY4-met10D','FY4-yllD',
-                                    'FY4-met5D','FY4-met10D','FY4-yllD',
-                                    'FY4-met5D','FY4-met10D','FY4-yllD',
-                                    'FY4-met5D','FY4-met10D','FY4-yllD'),
-                         HS = c(1,1,4,1,1,4,
-                                1,1,4,1,1,4),
-                         Condition = c('BiGGY','BiGGY','BiGGY','BiGGY','BiGGY','BiGGY',
-                                       'SD-Met-Cys+Bi','SD-Met-Cys+Bi','SD-Met-Cys+Bi',
-                                       'SD-Met-Cys+Bi','SD-Met-Cys+Bi','SD-Met-Cys+Bi'))
-data.bis <- rbind(data.bis, data.bis.2)
-
-# write.csv(data.bis,
-#           file = '/home/sbp29/R/Projects/methionine/paper/data/Figure2D.csv')
-
-##### FIGURE 2E
 tables <- read_excel('/home/sbp29/RAW_Data/Methionine/NoSulfate_/NO_SUL_INFO.xlsx')
 tables <- tables[order(tables$expt_id, tables$condition, tables$arm),] %>% filter(expt_id == 'SUL')
 # head(tables)
@@ -542,8 +514,8 @@ df_yll$km_clust<-factor(df_yll$km_clust,levels=c("Cluster 1","Cluster 2","Cluste
 
 unique(df_yll$km_clust)
 
-write.csv(df_yll,
-          file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS6.csv')
+# write.csv(df_yll,
+#           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS6.csv')
 
 ## tree
 tree0<-read.tree(text='(Lipomycetaceae,(Trigonopsidaceae,(Dipodascaceae,
@@ -577,60 +549,57 @@ clus3colors2[c(12,13,15,18,19,20,21,22,23,24,25,26,27,28,29,30)]<-"#9E9E9E"
 
 
 ##### FIGURE 3D
-tables <- data.frame(
-  expt_id = c('PV_FY_MM', 'PV_FY_MM', 'PV_FY_PM', 'PV_FY_PM'),
-  stage_id = c('PS1_2', 'PS1_2', 'PS1_2', 'PS1_2'),
-  arm = c('R1', 'R2', 'R1', 'R2')
-)
+table <- rbind(c('MM','R1','SD-Met-Cys+Glu'),
+               c('MM','R2','SD-Met-Cys+Glu')) %>%
+  data.frame()
 
-data.pv2 <- NULL
-for (e in unique(tables$expt_id)) {
-  for (s in unique(tables$stage_id[tables$expt_id == e])) {
-    for (a in unique(tables$arm[tables$expt_id == e & tables$stage_id == s])) {
-      temp <- dbGetQuery(conn, sprintf('select a.pos, a.hours, a.average, b.density, b.plate, b.row, b.col, c.orf_name
-                                       from %s_%s_%s_384_CLEAN a, PV2_FY_pos2coor b, PV2_FY_pos2orf_name c
-                                       where a.pos = b.pos and b.pos = c.pos
-                                       order by a.hours, b.plate, b.col, b.row', e, s, a))
-      temp$bio_rep[temp$row%%2==1 & temp$col%%2==1] = '1'
-      temp$bio_rep[temp$row%%2==0 & temp$col%%2==1] = '3'
-      temp$bio_rep[temp$row%%2==1 & temp$col%%2==0] = '2'
-      temp$bio_rep[temp$row%%2==0 & temp$col%%2==0] = '4'
-      
-      for (h in unique(temp$hours)) {
-        for (o in unique(temp$orf_name)) {
-          for (b in unique(temp$bio_rep)) {
-            temp$average[temp$orf_name == o & temp$hours == h & temp$bio_rep == b][isoutlier(temp$average[temp$orf_name == o & temp$hours == h & temp$bio_rep == b], 2)] <- NA
-          }
-        }
-        temp$relative_fitness[temp$hours == h] <- temp$average[temp$hours == h]/median(temp$average[temp$hours == h & 
-                                                                                                      temp$orf_name %in% c('Plasmid_1')], na.rm = T)
+colnames(table) <- c('id','expt_rep','condition')
+
+data.pv3 <- NULL
+for (i in seq(1,dim(table)[1])) {
+  temp <- dbGetQuery(conn, sprintf('select a.*, b.density, b.plate_no, b.plate_row, b.plate_col, c.orf_name
+                                  from PV3_FS_%s_%s_384_CLEAN a, PV3_pos2coor b, PV3_pos2orf_name c
+                                  where a.pos = b.pos and b.pos = c.pos
+                                  order by a.hours, b.plate_no, b.plate_col, b.plate_row',
+                                   table$id[i],table$expt_rep[i]))
+  
+  temp$bio_rep[temp$plate_row%%2==1 & temp$plate_col%%2==1] = '1'
+  temp$bio_rep[temp$plate_row%%2==0 & temp$plate_col%%2==1] = '3'
+  temp$bio_rep[temp$plate_row%%2==1 & temp$plate_col%%2==0] = '2'
+  temp$bio_rep[temp$plate_row%%2==0 & temp$plate_col%%2==0] = '4'
+  
+  for (h in unique(temp$hours)) {
+    for (o in unique(temp$orf_name)) {
+      for (b in unique(temp$bio_rep)) {
+        temp$average[temp$orf_name == o & temp$hours == h & temp$bio_rep == b][isoutlier(temp$average[temp$orf_name == o & temp$hours == h & temp$bio_rep == b], 2)] <- NA
       }
-      temp$arm <- e
-      temp$stage <- s
-      temp$expt_rep <- a
-      # temp$condition <- unique(tables$condition[tables$expt_id == e & tables$stage == s & tables$arm == a])
-      
-      data.pv2 <- rbind(data.pv2,temp)
     }
+    temp$relative_fitness[temp$hours == h] <- temp$average[temp$hours == h]/median(temp$average[temp$hours == h & 
+                                                                                                  temp$orf_name %in% c('FY4_empty')], na.rm = T)
   }
+  
+  temp$id <- table$id[i]
+  temp$expt_rep <- table$expt_rep[i]
+  temp$condition <- table$condition[i]
+  data.pv3 <- rbind(data.pv3, temp)
 }
-data.pv2 <- data.frame(data.pv2)
+head(data.pv3)
 
-# write.csv(data.pv2,
+data.pv3$average[data.pv3$plate_no == 2 & data.pv3$bio_rep == '4'] <- NA
+data.pv3$average[data.pv3$plate_no == 8 & data.pv3$plate_col == 15 & data.pv3$plate_row == 6] <- NA
+data.pv3$relative_fitness[is.na(data.pv3$average)] <- NA
+
+data.pv3$orf_name <- factor(data.pv3$orf_name,
+                            levels = c("FY4_empty","FY4_ylldel_empty","FY4_met15del_empty","FY4_met15ylldel_empty",
+                                       "FY4_ylldel_yll","FY4_met15del_yll","FY4_met15ylldel_yll",
+                                       "FY4_met15del_yll_k376a","FY4_met15ylldel_yll_k376a"))
+
+# write.csv(data.pv3 %>% filter(hours == 120, id %in% c('MM')),
 #           file = '/home/sbp29/R/Projects/methionine/paper/data/Figure3D.csv')
 
 
-
 ##### FIGURE 3E
-data.bioc <- read_pzfx("/home/sbp29/R/Projects/methionine/data/gina/072321_gina_data.pzfx", table = "Data 2")
-data.bioc <- melt(data.bioc, id.vars = 'Time (min)', variable.name = 'ID', value.name = 'uM')
-data.bioc <- cbind(data.bioc, str_split(data.bioc$ID, '_', simplify = T))
-colnames(data.bioc) <- c(colnames(data.bioc)[1:3], 'Sample', 'Replicate')
-data.bioc$Sample <- factor(data.bioc$Sample, levels = c('Met15', 'Yll058w', 'None'))
-
-# write.csv(data.bioc,
-#           file = '/home/sbp29/R/Projects/methionine/paper/data/Figure3E.csv')
-
+oah_data <- read.csv('/home/sbp29/R/Projects/methionine/data/gina/OAH_data.csv')
 
 
 ##### FIGURE 4B
@@ -727,7 +696,7 @@ temp5$Strain <- factor(temp5$Strain, levels = c('BY4742','BY4741'))
 # write.csv(temp5 %>% filter(Attempt == 'Original'),
 #           file = '/home/sbp29/R/Projects/methionine/paper/data/Figure1E.csv')
 
-##### FIGURE 4D
+##### FIGURE 4D & S12
 data.chelator.dose <- read_xlsx(path = '/home/sbp29/R/Projects/methionine/paper/data/ChelatorDose.xlsx') %>% data.frame()
 data.chelator.dose <- melt(data.chelator.dose, id.vars = c('Flask','Strain','Media_ID','Media','FeEDTA'),
                            variable.name = 'Hours', value.name = 'OD')
@@ -747,12 +716,12 @@ data.chelator.dose <- merge(data.chelator.dose %>%
                                                   'FY4~(rho^"_")','FY4-italic(met15Δ)~(rho^"_")')), by = 'Strain')
 data.chelator.dose$labels <- factor(data.chelator.dose$labels,
                                     levels = c('FY4','FY4-italic(met15Δ)','FY4~(rho^"_")','FY4-italic(met15Δ)~(rho^"_")'))
-write.csv(data.chelator.dose %>% filter(petite == 'Yes'),
-          file = '/home/sbp29/R/Projects/methionine/paper/data/Figure4D.csv')
-write.csv(data.chelator.dose %>% filter(petite == 'No'),
-          file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS11.csv')
+# write.csv(data.chelator.dose %>% filter(petite == 'Yes'),
+#           file = '/home/sbp29/R/Projects/methionine/paper/data/Figure4D.csv')
+# write.csv(data.chelator.dose %>% filter(petite == 'No'),
+#           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS12.csv')
 
-##### FIGURE 4E
+##### FIGURE S11
 strain.labs.res <- data.frame(orf_name = c('FY4', 'FY4_pet', 'FY4-met15del', 'FY4-met15del_pet',
                                            'BY4742', 'BY4742_pet', 'BY4741', 'BY4741_pet'), 
                               labels = c('FY4', 'FY4~(rho^"_")' ,'FY4-italic(met15Δ)', 'FY4-italic(met15Δ)~(rho^"_")',
@@ -891,25 +860,25 @@ data.res.gc$orf_name <- factor(data.res.gc$orf_name,
 # write.csv(merge(data.res.gc[str_detect(data.res.gc$orf_name, 'FY'),],
 #                 strain.labs.res, by = 'orf_name') %>%
 #             filter(expt_rep %in% c("1","2"), condition != 'SD+Met-Ura+Glu'),
-#           file = '/home/sbp29/R/Projects/methionine/paper/data/Figure4E.csv')
+#           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS11.csv')
 
 
 ##### SUPPLEMENTARY FIGURES #####
-##### FIGURE S2
+##### FIGURE S3A
 data.cbn.leu$orf_name[data.cbn.leu$orf_name == 'met15'] <- 'FY4-met15del'
 # write.csv(rbind(data.cbn[,c(1,2,5,6,10)],
 #                 data.cbn.leu[,c(8,11,10,13,14)] %>%
 #                   filter(condition == 'SCmLeu')) %>%
 #             filter(base == 'SC', orf_name != 'FY4-met3del'),
-#           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS2.csv')
+#           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS3A.csv')
 
 
-##### FIGURE S3
+##### FIGURE S3B
 # write.csv(rbind(data.cbn[,c(1,2,5,6,10)],
 #                 data.cbn.leu[,c(8,11,10,13,14)] %>%
 #                   filter(condition == 'SDmLeu')) %>%
 #             filter(base == 'SD', orf_name %in% c('FY4','FY4-met15del')),
-#           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS3.csv')
+#           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS3B.csv')
 
 
 ##### FIGURE S4
@@ -919,17 +888,61 @@ data.cbn.leu$orf_name[data.cbn.leu$orf_name == 'met15'] <- 'FY4-met15del'
 #             filter(base == 'SD', orf_name == 'FY4-met3del'),
 #           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS4.csv')
 
-##### FIGURE S9
-data.mdl <- read.csv('/home/sbp29/R/Projects/methionine/data/modeling/YLL_simulation.csv', stringsAsFactors = F)
-data.mdl$label[data.mdl$Model == 'A'] <- 'A. Default'
-data.mdl$label[data.mdl$Model == 'B'] <- 'B. A - All YLL058W reactions'
-data.mdl$label[data.mdl$Model == 'C'] <- 'C. B + Hypothesized YLL058W reaction'
-data.mdl$label[data.mdl$Model == 'D'] <- 'D. C - All MET15 reactions'
+##### FIGURE S5B
+h2s.col <- read.csv(file = 'paper/data/bismuth_results2.csv')
+h2s.col[is.na(h2s.col)] <- 0
+h2s.col <- h2s.col %>%
+  mutate(color_intensity = (255*2 - (red + green)))
+h2s.col$color_intensity[h2s.col$blue == 0 | h2s.col$red == 0 | h2s.col$green == 0] <- 0
+head(h2s.col)
+
+h2s.col.sum <- h2s.col %>%
+  group_by(condition, strain) %>%
+  summarise(red = round(mean(red, na.rm = T)),
+            blue = round(mean(blue, na.rm = T)),
+            green = round(mean(green, na.rm = T)),
+            color_intensity = round(mean(color_intensity, na.rm = T)),
+            .groups = 'keep') %>%
+  data.frame()
+
+h2s.col <- merge(h2s.col, h2s.col.sum %>% filter(strain == 'FY4-*met3Δ*'),
+                 by = 'condition', suffixes = c('','_control')) %>%
+  # mutate(relative_color_intensity = color_intensity/color_intensity_control)
+  mutate(relative_color_intensity = color_intensity)
+h2s.col$strain <- factor(h2s.col$strain, levels = c('BY4742','BY4741','FY4','FY4-*met15Δ*',
+                                                    'FY4-*met3Δ*','FY4-*met5Δ*',
+                                                    'FY4-*met10Δ*','FY4-*met2Δ*','FY4-*met6Δ*','FY4-*met13Δ*',
+                                                    'FY4-*cys4Δ*','FY4-*str3Δ*','FY4-*met12Δ*','FY4-*yll058wΔ*'))
+h2s.col.sum <- merge(h2s.col.sum, h2s.col.sum %>% filter(strain == 'FY4-*met3Δ*'),
+                     by = 'condition', suffixes = c('','_control')) %>%
+  # mutate(relative_color_intensity = color_intensity/color_intensity_control)
+  mutate(relative_color_intensity = color_intensity)
+h2s.col.sum$strain <- factor(h2s.col.sum$strain, levels = c('BY4742','BY4741','FY4','FY4-*met15Δ*',
+                                                            'FY4-*met3Δ*','FY4-*met5Δ*',
+                                                            'FY4-*met10Δ*','FY4-*met2Δ*','FY4-*met6Δ*','FY4-*met13Δ*',
+                                                            'FY4-*cys4Δ*','FY4-*str3Δ*','FY4-*met12Δ*','FY4-*yll058wΔ*'))
+
+
+##### FIGURE S10A
+data.bioc <- read_pzfx("/home/sbp29/R/Projects/methionine/data/gina/072321_gina_data.pzfx", table = "Data 2")
+data.bioc <- melt(data.bioc, id.vars = 'Time (min)', variable.name = 'ID', value.name = 'uM')
+data.bioc <- cbind(data.bioc, str_split(data.bioc$ID, '_', simplify = T))
+colnames(data.bioc) <- c(colnames(data.bioc)[1:3], 'Sample', 'Replicate')
+data.bioc$Sample <- factor(data.bioc$Sample, levels = c('Met15', 'Yll058w', 'None'))
+
+# write.csv(data.bioc,
+#           file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS10A.csv')
+
+
+##### FIGURE S10B
+# data.mdl <- read.csv('/home/sbp29/R/Projects/methionine/data/modeling/YLL_simulation.csv', stringsAsFactors = F)
+# data.mdl$label[data.mdl$Model == 'A'] <- 'A. Default'
+# data.mdl$label[data.mdl$Model == 'B'] <- 'B. A - All YLL058W reactions'
+# data.mdl$label[data.mdl$Model == 'C'] <- 'C. B + Hypothesized YLL058W reaction'
+# data.mdl$label[data.mdl$Model == 'D'] <- 'D. C - All MET15 reactions'
 
 data.mdl.2 <- read_xlsx(path = '/home/sbp29/R/Projects/methionine/paper/data/FigureS9_2.xlsx') %>%
   data.frame()
 
-# write.csv(data.mdl, file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS9.csv')
-
-
+# write.csv(data.mdl.2, file = '/home/sbp29/R/Projects/methionine/paper/data/FigureS10B.csv')
 

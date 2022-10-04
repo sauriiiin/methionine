@@ -4,11 +4,11 @@ source('/home/sbp29/R/Projects/methionine/paper/scripts/initialize.R')
 load('/home/sbp29/R/Projects/methionine/paper/data/FigureData.RData')
 outsidepanels <- 'paper/figures/PanelsMadeOutsideR/'
 
-#####
+##### PANEL BACKGROUND COLOR
 pinningpanelbg <- '#FFF6DB'
 flaskpanelbg <- '#E1E4E8' ##D6E4F4
 
-##### FIGURE 1: 
+##### FIGURE 1: The unexpected growth of met15Δ cells on organosulfur-free media is both stable and dependent on cell propagation method.
 fig1a <- readPNG(sprintf('%sFig1A.png',outsidepanels))
 fig1a <- ggplot() + 
   background_image(fig1a) +
@@ -40,13 +40,14 @@ fig1c.glu <- rbind(data.cbn[,c(1,2,5,6,10)],
                               'SDmLeu' = '+ Met\n+ Ura\n- Leu',
                               'SDpMET' = '+ Met\n+ Ura\n+ Leu',
                               'YPDA' = '+ Met\n+ Ura\n+ Leu')) +
-  labs(x = 'Strain', y= 'Relative Colony Size') +
+  labs(x = '', y= 'Relative Colony Size') +
   coord_cartesian(ylim = c(0,1.6)) +
   facet_grid(orf_name ~ carbon, scales = 'free_x') +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles, hjust = 0.5, face = 'bold'),
+        plot.margin = margin(2,5,0,5),
         panel.background = element_rect(fill = pinningpanelbg),
-        axis.title.x = element_blank(),
+        # axis.title.x = element_blank(),
         axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
         legend.title = element_text(size = titles),
@@ -78,13 +79,14 @@ fig1c.galeth <- data.cbn %>%
                               'SDmLeu' = '+ Met\n+ Ura\n- Leu',
                               'SDpMET' = '+ Met\n+ Ura\n+ Leu',
                               'YPDA' = '+ Met\n+ Ura\n+ Leu')) +
-  labs(x = 'Strain', y= 'Relative Colony Size') +
+  labs(x = '', y= 'Relative Colony Size') +
   coord_cartesian(ylim = c(0,1.6)) +
   facet_grid(orf_name ~ carbon, scales = 'free_x') +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles, hjust = 0.5, face = 'bold'),
+        plot.margin = margin(2,5,0,5),
         panel.background = element_rect(fill = pinningpanelbg),
-        axis.title.x = element_blank(),
+        # axis.title.x = element_blank(),
         axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
         axis.text.y = element_blank(),
@@ -123,6 +125,7 @@ fig1c.leg <- g_legend(data.frame(labels = c('Uracil-Leucine','Methionine-Uracil-
                         theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
                               axis.title = element_text(size = titles),
                               axis.text = element_text(size = txt),
+                              legend.margin = margin(0,0,0,0),
                               legend.title =  ggtext::element_markdown(size = titles),
                               legend.text =  ggtext::element_markdown(size = txt),
                               legend.spacing = unit(0.1,"mm"),
@@ -149,10 +152,11 @@ fig1e <- temp5 %>%
                      label.x = 1.5, label.y = 6.5,
                      hjust = 0.5, size = 2.5) +
   labs(x = '',
-       y = 'OD<sub>600</sub> at Saturation') +
+       y = 'OD<sub>600</sub> at Saturation',
+       title = 'SD-Met-Cys+Glu') +
   # facet_wrap(.~Attempt, ncol = 1) +
   theme_linedraw() +
-  theme(plot.title = element_blank(),
+  theme(plot.title = element_text(size = titles, hjust = 0.5),
         panel.background = element_rect(fill = flaskpanelbg),
         axis.title.x = element_blank(),
         axis.title.y = ggtext::element_markdown(size = txt),
@@ -173,7 +177,7 @@ fig1f <- ggplot() +
         plot.background = element_blank())
 
 fig1g <-merge(data.rp, strain.labs.rp,
-                by = 'orf_name') %>%
+              by = 'orf_name') %>%
   filter(aux == 'Met', orf_name %in% c('FY4'), carbon == 'Glu') %>%
   ggplot(aes(x = cum_hrs, y = average)) +
   stat_summary(aes(fill = auxotrophy, group = pin),
@@ -214,16 +218,17 @@ fig1g <-merge(data.rp, strain.labs.rp,
                                'Methionine' = 'Yes'),
                     guide = "none") +
   labs(x = 'Time (hours)', y = 'Colony Size (pixels)') +
-  facet_grid(.~carbon, labeller = labeller(carbon = c('Glu'='SD-Met+Glu'))) +
+  facet_grid(.~carbon, labeller = labeller(carbon = c('Glu'='SD-Met-Cys+Glu'))) +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles, face = 'bold', hjust = 0.5),
         panel.background = element_rect(fill = pinningpanelbg),
         axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
+        legend.margin = margin(0,0,0,0),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
-        legend.position = 'none',
-        # legend.key.size = unit(3, "mm"),
+        legend.position = 'bottom',
+        legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.1,"mm"),
         strip.text.x = ggtext::element_markdown(size = txt,
                                                 margin = margin(1,0,0.1,0, "mm")),
@@ -292,34 +297,33 @@ fig1g.leg <- g_legend(data.frame(labels = c('Yes','No')) %>%
                         guides(col = guide_legend(nrow=1, override.aes=list(size = 3))))
 
 fig1 <- plot_grid(fig1a,
-                  plot_grid(fig1b, plot_grid(plot_grid(fig1c.glu, fig1c.galeth, nrow = 1, rel_widths = c(1,1)),
-                                               fig1c.leg, ncol = 1, rel_heights = c(10,0.8)),
+                  plot_grid(NULL, plot_grid(plot_grid(fig1c.glu, fig1c.galeth, nrow = 1, rel_widths = c(1,1)),
+                                               fig1c.leg, ncol = 1, rel_heights = c(10,0.7)),
                             nrow = 1, 
                             rel_widths = c(1,2),
                             labels = c('B','C'), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                  plot_grid(fig1d, fig1e, fig1f,
+                  plot_grid(NULL, fig1e, NULL,
                             nrow = 1, 
                             rel_widths = c(1,1,1),
                             labels = c('D','E','F'), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
                   plot_grid(fig1g.expt, fig1g,
                             ncol = 1, align = 'hv', axis = 'lr',
                             rel_heights = c(0.3,1)),
-                  fig1g.leg,
-                  ncol = 1, rel_heights = c(0.8,1,0.8,1.03,0.07),
-                  labels = c('A','','','G',''), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
+                  ncol = 1, rel_heights = c(0.8,1,0.8,1.03),
+                  labels = c('A','','','G'), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
 ggsave(sprintf("%s/Figure1.jpg",fig_path), fig1,
        height = 230, width = two.c, units = 'mm',
        bg = 'white',
        dpi = 300)
 
-##### FIGURE 2
+##### FIGURE 2: Growth of met15Δ colonies in organosulfur-free media is specific and dependent on the utilization of inorganic sulfates.
 # fig2a <- readPNG(sprintf('%sFig2A.png',outsidepanels))
 # fig2a <- ggplot() + 
 #   background_image(fig2a) +
 #   theme(plot.margin = margin(t=0, l=35, r=35, b=0, unit = "mm"),
 #         plot.background = element_blank())
 
-fig2a <- readPNG(sprintf('%sFig2A_.png',outsidepanels))
+fig2a <- readPNG(sprintf('%sFig2A.png',outsidepanels))
 fig2a <- ggplot() + 
   background_image(fig2a) +
   theme(plot.margin = margin(t=1, l=25, r=25, b=0, unit = "mm"),
@@ -333,7 +337,7 @@ fig2b <- data.jm.2[!(data.jm.2$orf_name %in% c('yll','BY4742','BY4741')),] %>%
   scale_y_continuous(breaks = seq(-1,2,0.4)) +
   scale_x_discrete(limits = c('YPDA', 'SD-Met'),
                    labels = c('YPDA' = 'YPDA',
-                              'SD-Met' = 'SD-Met+Glu')) +
+                              'SD-Met' = 'SD-Met-Cys+Glu')) +
   scale_fill_gradient(name = 'Relative Hydrogen Sulfide',
                       low = "#D7CCC8", high = "#5D4037",
                       limits = c(1,7)) +
@@ -404,52 +408,7 @@ fig2c <- ggplot() +
   theme(plot.margin = margin(t=0, l=10, r=8, b=0, unit = "mm"),
         plot.background = element_blank())
 
-fig2d <- data.bis[!(data.bis$Strain %in% c('BY4742','BY4741')),] %>%
-  filter(Condition == 'BiGGY', Strain != 'FY4-yllD') %>%
-  ggplot(aes(x = Strain, y = HS)) +
-  stat_summary(data = data.bis[!(data.bis$Strain %in% c('BY4742','BY4741')),] %>%
-                 filter(Condition == 'BiGGY', Strain != 'FY4-yllD') %>%
-                 group_by(Condition, Strain) %>%
-                 summarize(HS = mean(HS, na.rm = T), .groups = 'keep'),
-               aes(fill = round(HS)), col = 'white', alpha = 0.9, size = 1,
-               fun = mean, geom = "bar") +
-  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", fun.args = list(mult = 1)) +
-  scale_y_continuous(breaks = seq(0,10,1)) +
-  scale_fill_gradient(low = "#D7CCC8", high = "#5D4037", guide = F) +
-  labs(y = 'Relative\nHydrogen Sulfide',
-       x = 'Strains',
-       title = 'BiGGY Media') +
-  scale_x_discrete(labels = c('FY4'='FY4',
-                              'FY4-met12D'='FY4-*met12Δ*',
-                              'FY4-str3D'='FY4-*str3Δ*',
-                              'FY4-met3D'='FY4-*met3Δ*',
-                              'FY4-met15D'='FY4-*met15Δ*',
-                              'FY4-met2D'='FY4-*met2Δ*',
-                              'FY4-met6D'='FY4-*met6Δ*',
-                              'FY4-met13D'='FY4-*met13Δ*',
-                              'FY4-met5D'='FY4-*met5Δ*',
-                              'FY4-met10D'='FY4-*met10Δ*',
-                              'FY4-cys4D'='FY4-*cys4Δ*',
-                              'FY4-yllD'='FY4-*yll058wΔ*',
-                              'BY4742'='BY4742',
-                              'BY4741'='BY4741')) +
-  theme_linedraw() +
-  theme(plot.title = element_blank(),#element_text(size = titles, face = 'bold', hjust = 0.5),
-        axis.title = element_text(size = titles),
-        axis.title.x = element_blank(),
-        axis.text = element_text(size = txt),
-        axis.text.x = ggtext::element_markdown(size = txt, angle = 15, vjust = 1, hjust = 1),
-        axis.ticks.x = element_blank(),
-        legend.title = element_text(size = titles),
-        legend.text = element_text(size = txt),
-        legend.position = 'bottom',
-        legend.key.size = unit(3, "mm"),
-        legend.box.spacing = unit(0.5,"mm"),
-        strip.text = ggtext::element_markdown(size = txt, colour = 'black',
-                                              margin = margin(0.1,0,0.1,0, "mm"))) +
-  coord_cartesian(ylim = c(1,7))
-
-fig2e <- data.ns2 %>%
+fig2d <- data.ns2 %>%
   ggplot(aes(x = cum_hrs, y = average)) +
   # stat_summary(data = data.ns2 %>% filter(stage == 'S1'),
   #              aes(fill = id),
@@ -494,9 +453,9 @@ fig2e <- data.ns2 %>%
                     values = c('Agar_Difco_+sulfate_+Met' = '#9E9E9E',
                                'Agarose_Home_+sulfate_-Met' = '#212121',
                                'Agarose_Home_-sulfate_-Met' = '#FF5722'),
-                    labels = c('Agar_Difco_+sulfate_+Met' = 'SD+Met+Glu w/\nInorganic Sulfates',
-                               'Agarose_Home_+sulfate_-Met' = 'SD-Met+Glu w/\nInorganic Sulfates',
-                               'Agarose_Home_-sulfate_-Met' = 'SD-Met+Glu w/o\nInorganic Sulfates'),
+                    labels = c('Agar_Difco_+sulfate_+Met' = 'SD+Met-Cys+Glu w/\nInorganic Sulfates',
+                               'Agarose_Home_+sulfate_-Met' = 'SD-Met-Cys+Glu w/\nInorganic Sulfates',
+                               'Agarose_Home_-sulfate_-Met' = 'SD-Met-Cys+Glu w/o\nInorganic Sulfates'),
                     guide = F) +
   scale_color_manual(name = 'Condition',
                      breaks = c('Agarose_Home_-sulfate_-Met',
@@ -505,9 +464,9 @@ fig2e <- data.ns2 %>%
                      values = c('Agar_Difco_+sulfate_+Met' = '#9E9E9E',
                                 'Agarose_Home_+sulfate_-Met' = '#212121',
                                 'Agarose_Home_-sulfate_-Met' = '#FF5722'),
-                     labels = c('Agar_Difco_+sulfate_+Met' = 'SD+Met+Glu w/ Inorganic Sulfates',
-                                'Agarose_Home_+sulfate_-Met' = 'SD-Met+Glu w/ Inorganic Sulfates',
-                                'Agarose_Home_-sulfate_-Met' = 'SD-Met+Glu w/o Inorganic Sulfates')) +
+                     labels = c('Agar_Difco_+sulfate_+Met' = 'SD+Met-Cys+Glu w/ Inorganic Sulfates',
+                                'Agarose_Home_+sulfate_-Met' = 'SD-Met-Cys+Glu w/ Inorganic Sulfates',
+                                'Agarose_Home_-sulfate_-Met' = 'SD-Met-Cys+Glu w/o Inorganic Sulfates')) +
   # scale_x_discrete(breaks = c('FY4','FY4_met15del','FY4_met3del'),
   #                  labels = c('FY4' = 'FY4',
   #                             'FY4_met15del' = 'FY4-*met15Δ*',
@@ -532,12 +491,13 @@ fig2e <- data.ns2 %>%
         # panel.grid = element_line(color = '#FFFFFF'),
         axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
-        legend.title = element_text(size = titles, hjust = 0.5),
+        legend.margin = margin(2,20,2,-5),
+        legend.title = element_blank(),
         legend.text = element_text(size = txt),
         legend.position = 'bottom',
         legend.box = 'vertical',
         legend.key.size = unit(3, "mm"),
-        legend.box.spacing = unit(0.5,"mm"),
+        legend.box.spacing = unit(0.2,"mm"),
         legend.spacing.y = unit(1, "mm"),
         panel.spacing.x = unit(0, "lines"),
         strip.text = ggtext::element_markdown(size = txt, 
@@ -548,7 +508,7 @@ fig2e <- data.ns2 %>%
                               override.aes = list(size = 3))) +
   coord_cartesian(xlim = c(0,910))
 
-fig2e.expt <- merge(data.ns2 %>%
+fig2d.expt <- merge(data.ns2 %>%
   filter(id %in% c('Agarose_Home_-sulfate_-Met',
                    'Agarose_Home_+sulfate_-Met',
                    'Agar_Difco_+sulfate_+Met')) %>%
@@ -596,20 +556,20 @@ fig2e.expt <- merge(data.ns2 %>%
         panel.grid = element_blank()) +
   coord_cartesian(xlim = c(0,910))
 
-fig2 <- plot_grid(fig2a, fig2b, fig2c, fig2d,
-                  plot_grid(fig2e.expt, fig2e,
+fig2 <- plot_grid(fig2a, fig2b, NULL,
+                  plot_grid(fig2d.expt, fig2d,
                             ncol = 1, align = 'hv', axis = 'lr',
                             rel_heights = c(0.275,1)) ,
-                  ncol = 1, rel_heights = c(1.2,1,0.8,0.7,1.6),
-                  labels = c('A','B','C','D','E'),
+                  ncol = 1, rel_heights = c(1.2,1,0.8,1.6),
+                  labels = c('A','B','C','D'),
                   label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
 ggsave(sprintf("%s/Figure2.jpg",fig_path), fig2,
-       height = 250, width = two.c, units = 'mm',
+       height = 230, width = two.c, units = 'mm',
        bg = 'white',
        dpi = 300)
 
 
-##### FIGURE 3
+##### FIGURE 3: Yll058w functions as an inefficient homocysteine synthase.
 fig3a <- readPNG(sprintf('%sFig3A.png',outsidepanels))
 fig3a <- ggplot() + 
   background_image(fig3a) +
@@ -695,28 +655,35 @@ fig3c.leg <- g_legend(data.frame(labels = c('Met15','Yll058w','MetY')) %>%
                               legend.position = 'bottom') +
                         guides(col = guide_legend(nrow=1, override.aes=list(size = 3))))
 
-fig3d.cp <- readPNG(sprintf('%sFig3D.png',outsidepanels))
-fig3d.cp <- ggplot() + 
-  background_image(fig3d.cp) +
-  theme(plot.margin = margin(t=3, l=16, r=5, b=0, unit = "mm"),
-        plot.background = element_blank()) 
 
-fig3d <- data.pv2 %>%
-  filter(orf_name %in% c('Plasmid_1','Plasmid_3','Plasmid_5','Plasmid_7','Plasmid_11','Plasmid_13'),
-         arm == 'PV_FY_MM', stage == 'PS1_2', hours == 336) %>%
+fig3d <- data.pv3 %>%
+  filter(hours == 120, id %in% c('MM')) %>%
   ggplot(aes(x = orf_name, y = relative_fitness)) +
   geom_boxplot(outlier.shape = NA, fill = '#9E9E9E', size = 0.3) +
-  scale_x_discrete(limits = c('Plasmid_1','Plasmid_3','Plasmid_5','Plasmid_7','Plasmid_11','Plasmid_13'),
-                   labels = c('Plasmid_1' = 'FY4<br />w/ Empty Plasmid',
-                              'Plasmid_3' = 'FY4-*yll058wΔ*<br />w/ Empty Plasmid',
-                              'Plasmid_5' = 'FY4-*met15Δ*<br />w/ Empty Plasmid',
-                              'Plasmid_7' = 'FY4-*met15Δ yll058wΔ*<br />w/ Empty Plasmid',
-                              'Plasmid_13' = 'FY4-*met15Δ yll058wΔ*<br />w/ YLL058W Plasmid',
-                              'Plasmid_11' = 'FY4-*met15Δ*<br />w/ YLL058W Plasmid'),
-                   position = "top") +
-  labs(y = 'Relative Colony Size\nin SD-Met+Gal+G418') +
+  scale_x_discrete(limits = c(
+    'FY4_empty',
+    # 'FY4_ylldel_empty',
+    'FY4_met15del_empty',
+    'FY4_met15ylldel_empty',
+    # 'FY4_ylldel_yll',
+    'FY4_met15del_yll',
+    'FY4_met15ylldel_yll',
+    'FY4_met15del_yll_k376a',
+    'FY4_met15ylldel_yll_k376a'),
+    labels = c('FY4_empty' = 'FY4<br />w/ Empty<br />Plasmid',
+               'FY4_ylldel_empty' = 'FY4-*yll058wΔ*<br />w/ Empty<br />Plasmid',
+               'FY4_met15del_empty' = 'FY4-*met15Δ*<br />w/ Empty<br />Plasmid',
+               'FY4_met15ylldel_empty' = 'FY4-*met15Δ yll058wΔ*<br />w/ Empty<br />Plasmid',
+               'FY4_ylldel_yll' = 'FY4-*yll058wΔ*<br />w/ YLL058W<br />Plasmid',
+               'FY4_met15del_yll' = 'FY4-*met15Δ*<br />w/ YLL058W<br />Plasmid',
+               'FY4_met15ylldel_yll' = 'FY4-*met15Δ yll058wΔ*<br />w/ YLL058W<br />Plasmid',
+               'FY4_met15del_yll_k376a' = 'FY4-*met15Δ*<br />w/ YLL058W<br />(K376A) Plasmid',
+               'FY4_met15ylldel_yll_k376a' = 'FY4-*met15Δ yll058wΔ*<br />w/ YLL058W<br />(K376A) Plasmid'),
+    position = "top") +
+  labs(y = 'Relative Colony Size in\nSD-Met-Cys+Gal+G418') +
   theme_linedraw() +
-  theme(plot.title = element_text(size = titles, face = 'bold', hjust = 0.5),
+  theme(plot.margin = margin(0,3,10,0),
+        plot.title = element_text(size = titles, face = 'bold', hjust = 0.5),
         panel.background = element_rect(fill = pinningpanelbg),
         axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
@@ -731,54 +698,62 @@ fig3d <- data.pv2 %>%
         legend.box.spacing = unit(0.5,"mm"),
         strip.text = ggtext::element_markdown(size = txt,
                                               margin = margin(0.1,0,0.1,0, "mm"))) +
-  coord_cartesian(ylim = c(0,2))
+  coord_cartesian(ylim = c(0,1.2))
 
-
-fig3e <- data.bioc %>%
-  # filter(outlier == FALSE) %>%
-  ggplot(aes(x = `Time (min)`, y = uM)) +
+fig3e <- oah_data %>%
+  ggplot(aes(x = OAH, y = Rate)) +
   stat_summary(aes(group = Sample, fill = Sample), fun.data=mean_se, fun.args = list(mult=1), geom="ribbon",
                alpha = 0.4) +
-  stat_summary(aes(group = Sample, col = Sample), fun=mean, geom="line", lwd = 0.7) +
-  geom_segment(aes(x = 15.3, y = 8, xend = 15.3, yend = 119), size = 0.5) +
-  annotate("text", x = 15.6, y = 30, 
-           label = "p == 4.46~X~10^-5",
-           angle = 270, size = 2,
-           parse = TRUE) +
-  geom_segment(aes(x = 16, y = 8, xend = 16, yend = 12), size = 0.5) +
-  annotate("text", x = 16.3, y = 9.8, 
-           label = "p == 0.00018",
-           angle = 270, size = 2,
-           parse = TRUE) +
-  stat_summary(aes(group = Sample), fun=mean, geom="point", size =2) +
-  stat_summary(aes(group = Sample, col = Sample), fun=mean, geom="point", size = 0.5) +
-  labs(x = 'Time (minutes)',
-       y = 'Homocysteine (μM)') +
+  stat_summary(aes(group = Sample, col = Sample, linetype = Sample), fun=mean, geom="line", lwd = 0.7) +
+  # stat_summary(aes(group = Sample, shape = Sample), fun=mean, geom="point", size =2) +
+  stat_summary(aes(group = Sample, col = Sample, shape = Sample), fun=mean, geom="point", size = 2) +
+  annotate("text", x = 10.1, y = 0.25, 
+           label = "Met15:V[max]==list(89.210,K[m]==8.033)",
+           size = 2, parse = T, hjust = 0) +
+  annotate("text", x = 10.1, y = 0.25/2, 
+           label = "Yll058w:V[max]==list(1.624,K[m]==4.292)",
+           size = 2, parse = T, hjust = 0) +
+  annotate("text", x = 10.1, y = 0.25/4, 
+           label = "Yll058w (K376A):V[max]==list(0.003,K[m]<0.001)",
+           size = 2, parse = T, hjust = 0) +
+  labs(x = 'OAH (mM)',
+       y = 'Rate (μM/min)') +
   scale_color_manual(name = 'Sample',
                      values = c('Met15' = "#330099", #6600CC
                                 'Yll058w' = "#CC33FF",
-                                'None' = "#CC99CC"),
+                                'Yll058w (K376A)' = "#CC33FF"),
                      guide = 'none') +
   scale_fill_manual(name = 'Sample',
                     values = c('Met15' = "#330099",
                                'Yll058w' = "#CC33FF",
-                               'None' = "#CC99CC")) +
-  scale_y_continuous(trans = 'log2') +
+                               'Yll058w (K376A)' = "#CC33FF"),
+                    guide = 'none') +
+  scale_linetype_manual(name = 'Sample',
+                        values = c('Met15' = 1,
+                                   'Yll058w' = 1,
+                                   'Yll058w (K376A)' = 6)) +
+  scale_shape_manual(name = 'Sample',
+                     values = c('Met15' = 16,
+                                'Yll058w' = 16,
+                                'Yll058w (K376A)' = 15)) +
+  scale_y_continuous(trans = 'log2', breaks = c(0.016,0.25,4,64)) +
   theme_linedraw() +
-  theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+  theme(plot.margin = margin(0,7,5,2),
+        plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
         axis.title = element_text(size = titles),
+        axis.title.x = element_text(margin = margin(-2,0,0,0)),
         axis.text = element_text(size = txt),
-        legend.title = element_text(size = titles),
+        legend.title = element_blank(),
         legend.text = element_text(size = txt),
         legend.position = 'bottom',
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
+        legend.margin = margin(0,0,-5,0),
         strip.text = element_text(size = txt,
                                   face = 'bold',
                                   margin = margin(0.1,0,0.1,0, "mm"))) +
-  coord_cartesian(xlim = c(0,16),
-                  ylim = c(5,125)) +
-  guides(fill = guide_legend(override.aes=list(shape = 15, alpha = 1)))
+  guides(linetype = guide_legend(keywidth = 1.5,
+                                 override.aes = list(color = c("#330099", "#CC33FF", "#CC33FF"))))
 
 
 fig3 <- plot_grid(plot_grid(plot_grid(fig3a, fig3c, fig3c.leg, 
@@ -789,24 +764,27 @@ fig3 <- plot_grid(plot_grid(plot_grid(fig3a, fig3c, fig3c.leg,
                             nrow = 1, rel_widths = c(1.5,1),
                             labels = c('','B'),
                             label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                  fig3d.cp,
-                  fig3d,
-                  fig3e,
-                  ncol = 1, rel_heights = c(2.2,0.6,0.9,1),
-                  labels = c('','D','','E'),
+                  NULL,
+                  plot_grid(fig3d, fig3e,
+                            ncol = 1, rel_heights = c(0.9,1),
+                            labels = c('','E'),
+                            label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
+                  ncol = 1, rel_heights = c(2.2,0.6,1.9),
+                  labels = c('','D',''),
                   label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
+
 ggsave(sprintf("%s/Figure3.jpg",fig_path), fig3,
        height = 230, width = two.c, units = 'mm',
        bg = 'white',
        dpi = 300)
 
 
-##### FIGURE 4
-fig4a <- readPNG(sprintf('%sFig4A.png',outsidepanels))
-fig4a <- ggplot() + 
-  background_image(fig4a) +
-  theme(plot.margin = margin(t=0, l=6, r=6, b=0, unit = "mm"),
-        plot.background = element_blank())
+##### FIGURE 4: Chelation of H2S facilitates the growth of met15Δ cells in the absence of exogenous organosulfurs.
+# fig4a <- readPNG(sprintf('%sFig4A.png',outsidepanels))
+# fig4a <- ggplot() + 
+#   background_image(fig4a) +
+#   theme(plot.margin = margin(t=0, l=6, r=6, b=0, unit = "mm"),
+#         plot.background = element_blank())
 
 fig4b.ori <- rbind(temp1, temp2) %>%
   filter(escapee == 'No') %>%
@@ -830,7 +808,8 @@ fig4b.ori <- rbind(temp1, temp2) %>%
   facet_grid(.~Strain, labeller = labeller(Strain = c('FY4' = 'FY4',
                                                       'met15del' = 'FY4-*met15Δ*'))) +
   theme_linedraw() +
-  theme(plot.title = element_blank(),
+  theme(plot.margin = margin(1,1,1,1),
+        plot.title = element_blank(),
         panel.background = element_rect(fill = flaskpanelbg, color = 'transparent'),
         # axis.title.x = ggtext::element_markdown(size = txt),
         axis.title.x = element_blank(),
@@ -865,7 +844,8 @@ fig4b.re <- rbind(temp3, temp4) %>%
   facet_grid(.~ORF, labeller = labeller(ORF = c('FY4' = 'FY4',
                                                 'met15D' = 'FY4-*met15Δ*'))) +
   theme_linedraw() +
-  theme(plot.title = element_blank(),
+  theme(plot.margin = margin(1,1,1,1),
+        plot.title = element_blank(),
         panel.background = element_rect(fill = flaskpanelbg, color = 'transparent'),
         axis.title.x = ggtext::element_markdown(size = txt),
         axis.title.y = ggtext::element_markdown(size = txt),
@@ -879,11 +859,11 @@ fig4b.re <- rbind(temp3, temp4) %>%
                                                 margin = margin(1,0,0.1,0, "mm")))  +
   coord_cartesian(ylim = c(0,9))
 
-fig4c <- readPNG(sprintf('%sFig4C.png',outsidepanels))
-fig4c <- ggplot() + 
-  background_image(fig4c) +
-  theme(plot.margin = margin(t=0, l=0, r=0, b=0, unit = "mm"),
-        plot.background = element_blank())
+# fig4c <- readPNG(sprintf('%sFig4C.png',outsidepanels))
+# fig4c <- ggplot() + 
+#   background_image(fig4c) +
+#   theme(plot.margin = margin(t=0, l=0, r=0, b=0, unit = "mm"),
+#         plot.background = element_blank())
 
 fig4d <- data.chelator.dose %>%
   filter(petite == 'Yes') %>%
@@ -906,7 +886,8 @@ fig4d <- data.chelator.dose %>%
   labs(x = 'H<sub>2</sub>S Chelator',
        y = 'OD<sub>600</sub> at Saturation') +
   theme_linedraw() +
-  theme(plot.title = element_blank(),
+  theme(plot.margin = margin(5,1,5,5),
+        plot.title = element_blank(),
         panel.background = element_rect(fill = flaskpanelbg, color = 'transparent'),
         axis.title.x = ggtext::element_markdown(size = txt),
         axis.title.y = ggtext::element_markdown(size = txt),
@@ -921,82 +902,28 @@ fig4d <- data.chelator.dose %>%
                                     margin = margin(0.1,0,0.1,0, "mm"))) +
   coord_cartesian(ylim = c(0,6.5))
 
-fig4e <- merge(data.res.gc[str_detect(data.res.gc$orf_name, 'FY'),],
-               strain.labs.res, by = 'orf_name') %>%
-  filter(expt_rep %in% c("1","2"), condition != 'SD+Met-Ura+Glu') %>% 
-  ggplot(aes(x = Time, y = rel_cs)) +
-  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1),
-               aes(group = orf_name, fill = met_aux), geom="ribbon", alpha = 0.4) +
-  stat_summary(aes(group = orf_name, col = met_aux, linetype = pet), fun=mean, geom="line", lwd =0.7) +
-  geom_text_repel(data = merge(data.res.gc[str_detect(data.res.gc$orf_name, 'FY') &
-                                             data.res.gc$Time == max(data.res.gc$Time),],
-                               strain.labs.res, by = 'orf_name') %>%
-                    filter(expt_rep %in% c("1","2"), condition != 'SD+Met-Ura+Glu') %>%
-                    group_by(orf_name, condition, Time, base, methionine, carbon, cysteine, labels, met_aux, pet) %>%
-                    summarize(rel_cs = mean(rel_cs, na.rm = T), .groups = 'keep'),
-                  aes(x = Time, y = rel_cs, label = labels),
-                  parse = T, size = 2.2, min.segment.length = 10) +
-  facet_grid(~carbon*methionine,
-             labeller = labeller(methionine = c('+Met' = 'SD + Met',
-                                                '-Met' = 'SD - Met'))) +
-  scale_color_manual(name = 'Presumed Auxotroph',
-                     values = c('Prototroph' = '#FFC107',
-                                'Presumed Auxotroph' = '#536DFE',
-                                'Uracil-Leucine' = '#E040FB',
-                                'Methionine-Uracil-Leucine' = '#FF5722'),
-                     limits = c('Presumed Auxotroph','Prototroph'),
-                     labels = c('Prototroph'='No',
-                                'Presumed Auxotroph'='Yes',
-                                'Uracil-Leucine',
-                                'Methionine-Uracil-Leucine')) +
-  scale_fill_manual(name = 'Auxotrophy',
-                    values = c('Prototroph' = '#FFC107',
-                               'Presumed Auxotroph' = '#536DFE'),
-                    limits = c('Prototroph','Presumed Auxotroph'),
-                    guide = 'none') +
-  scale_linetype_manual(name = 'Petite',
-                        values = c('Yes' = 'dotdash',
-                                   'No' = 'solid'),
-                        limits = c('Yes','No')) +
-  scale_y_continuous(breaks = seq(-1,2,0.2)) +
-  labs(x = 'Time (hours)', y= 'Relative Colony Size') +
-  coord_cartesian(xlim = c(0,350),
-                  ylim = c(0,1.3)) +
-  theme_linedraw() +
-  theme(plot.title = element_blank(),
-        panel.background = element_rect(fill = pinningpanelbg, color = 'transparent'),
-        axis.title = element_text(size = titles),
-        axis.text = element_text(size = txt),
-        legend.title = element_text(size = titles),
-        legend.text = element_text(size = txt),
-        legend.position = 'bottom',
-        legend.direction = 'horizontal',
-        legend.key.size = unit(3, "mm"),
-        legend.box.spacing = unit(0.5,"mm"),
-        strip.text = element_text(size = txt,
-                                  margin = margin(0.1,0,0.1,0, "mm"))) +
-  guides(color = guide_legend(nrow=1, byrow=TRUE, order = 1,
-                              override.aes = list(size = 3)),
-         linetype = guide_legend(nrow=1, byrow=TRUE, order = 2))
 
-fig4 <- plot_grid(plot_grid(fig4a, plot_grid(fig4b.ori, fig4b.re, ncol = 1, rel_heights = c(1,1.2),
+fig4 <- plot_grid(plot_grid(NULL, plot_grid(fig4b.ori, fig4b.re, ncol = 1, rel_heights = c(1,1.2),
                                              labels = c('B',''), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
                             nrow = 1, rel_widths = c(1.25,1), 
                             labels = c('A',''), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                  plot_grid(fig4c, fig4d, nrow = 1, rel_widths = c(3,1),
+                  plot_grid(NULL, fig4d, nrow = 1, rel_widths = c(3,1),
                             labels = c('C','D'), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                  fig4e,
-                  ncol = 1, rel_heights = c(1,1.2,1),
-                  labels = c('','','E'), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
+                  ncol = 1, rel_heights = c(1,1.2),
+                  labels = c('',''), label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
 ggsave(sprintf("%s/Figure4.jpg",fig_path), fig4,
-       height = 230, width = two.c, units = 'mm',
+       height = 163, width = two.c, units = 'mm',
        bg = 'white',
        dpi = 300)
 
-##### FIGURE S1. met15Δ-associated growth phenotype segregates 2:2 in a heterozygous cross
+# 6.85/two.c * 67
 
-##### FIGURE S2: met15Δ cells also grow robustly in “synthetic complete” (SC) media lacking organosulfurs
-figS2 <- rbind(data.cbn[,c(1,2,5,6,10)],
+##### FIGURE S1: Growth of met15Δ cells in an organosulfur-deficient medium at earlier incubation times. 
+
+##### FIGURE S2: met15Δ-associated growth phenotype segregates 2:2 in a heterozygous cross. 
+
+##### FIGURE S3: Robust growth of met15Δ cells in media lacking organosulfurs
+figS3a <- rbind(data.cbn[,c(1,2,5,6,10)],
                   data.cbn.leu[,c(8,11,10,13,14)] %>%
                     filter(condition == 'SCmLeu')) %>%
   filter(base == 'SC', orf_name != 'FY4-met3del') %>%
@@ -1008,19 +935,20 @@ figS2 <- rbind(data.cbn[,c(1,2,5,6,10)],
                               'FY4-met15del' = 'FY4-*met15Δ*',
                               'BY4742' = 'BY4742',
                               'BY4741' = 'BY4741')) +
-  labs(x = 'Strain', y= 'Relative Colony Size') +
+  labs(x = 'Strain', y= 'Relative Colony Size\nat Saturation') +
   coord_cartesian(ylim = c(0,1.3)) +
   facet_wrap(.~condition, scales = 'free_x',
              nrow = 1,
-             labeller = labeller(condition = c('GLU' = 'SC - Met - Cys + Glu',
-                                               'SCmLeu' = 'SC - Leu + Glu',
-                                               'GAL' = 'SC - Met - Cys + Gal'))) +
+             labeller = labeller(condition = c('GLU' = 'SC-Met-Cys+Glu',
+                                               'SCmLeu' = 'SC+Met-Cys-Leu+Glu',
+                                               'GAL' = 'SC-Met-Cys+Gal'))) +
   theme_linedraw() +
   theme(plot.title = element_text(size = titles, hjust = 0.5, face = 'bold'),
+        panel.background = element_rect(fill = pinningpanelbg, color = 'transparent'),
         axis.title.x = element_blank(),
         axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
-        axis.text.x = ggtext::element_markdown(angle = 30, vjust = 1, hjust = 1),
+        axis.text.x = ggtext::element_markdown(), #angle = 30, vjust = 1, hjust = 1
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
         legend.position = 'bottom',
@@ -1029,20 +957,6 @@ figS2 <- rbind(data.cbn[,c(1,2,5,6,10)],
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
         strip.text.x = element_text(size = txt,  margin = margin(0.1,0,0.1,0, "mm")))
-ggsave(sprintf("%s/FigureS2.jpg",fig_path), 
-       figS2,
-       height = one.c, width = two.c, units = 'mm',
-       dpi = 300)
-
-
-##### FIGURE S3: Robust growth of met15Δ cells in an organosulfur-deficient medium.
-figS3a <- readPNG(sprintf('%sFigS3A.png',outsidepanels))
-figS3a <- ggplot() + 
-  background_image(figS3a) +
-  labs(title = 'Synthetic Defined Media') +
-  theme(plot.margin = margin(t=1, l=7, r=7, b=0, unit = "mm"),
-        plot.background = element_blank(),
-        plot.title = element_text(size = titles, hjust = 0.5, face = 'bold'))
 
 figS3b <- rbind(data.cbn[,c(1,2,5,6,10)],
                   data.cbn.leu[,c(8,11,10,13,14)] %>%
@@ -1063,14 +977,15 @@ figS3b <- rbind(data.cbn[,c(1,2,5,6,10)],
                               'SDmLeu' = '+ Met\n+ Ura\n- Leu',
                               'SDpMET' = '+ Met\n+ Ura\n+ Leu',
                               'YPDA' = '+ Met\n+ Ura\n+ Leu')) +
-  labs(x = 'Strain', y= 'Relative Colony Size') +
+  labs(x = 'SD-Cys Media', y= 'Relative Colony Size\nat Saturation') +
   coord_cartesian(ylim = c(0,1.3)) +
   facet_grid(orf_name ~ carbon, scales = 'free_x', space = 'free_x',
              labeller = labeller(orf_name = c('FY4' = 'FY4',
                                               'FY4-met15del' = 'FY4-*met15Δ*'))) +
   theme_linedraw() +
-  theme(plot.title = ggtext::element_markdown(size = titles, hjust = 0.5, face = 'bold'),
-        axis.title.x = element_blank(),
+  theme(plot.margin = margin(5,5,1,5),
+        plot.title = ggtext::element_markdown(size = titles, hjust = 0.5, face = 'bold'),
+        panel.background = element_rect(fill = pinningpanelbg, color = 'transparent'),
         axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
         legend.title = element_text(size = titles),
@@ -1084,22 +999,14 @@ figS3b <- rbind(data.cbn[,c(1,2,5,6,10)],
         strip.text.y = ggtext::element_markdown(size = txt, colour = 'white',
                                                 margin = margin(0.1,1,0.1,0, "mm")))
 
-# figS3b <- ggplot_gtable(ggplot_build(figS4b))
-# stripr <- which(grepl('strip-r', figS4b$layout$name))
-# 
-# figS3b$grobs[[21]]$grobs[[1]]$children[[2]]$children[[1]]$children[[1]]$children[[1]]$label
-# figS3b$grobs[[21]]$grobs[[1]]$children[[1]]$gp$fill <- '#FFC107'
-# figS3b$grobs[[22]]$grobs[[1]]$children[[2]]$children[[1]]$children[[1]]$children[[1]]$label
-# figS3b$grobs[[22]]$grobs[[1]]$children[[1]]$gp$fill <- '#536DFE'
-
 
 figS3 <- plot_grid(figS3a,
                    figS3b,
                    labels = c('A','B'),
                    label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold',
-                   ncol = 1, rel_heights = c(7,7))
+                   ncol = 1, rel_heights = c(1,1))
 ggsave(sprintf("%s/FigureS3.jpg",fig_path), figS3,
-       height = one.5c, width = two.c, units = 'mm',
+       height = two.c, width = two.c, units = 'mm',
        bg = 'white',
        dpi = 300)
 
@@ -1125,14 +1032,13 @@ figS4 <- rbind(data.cbn[,c(1,2,5,6,10)],
                               'SDpMET' = '+ Met\n+ Ura\n+ Leu',
                               'YPDA' = '+ Met\n+ Ura\n+ Leu')) +
   labs(title = 'FY4-*met3Δ* in Synthetic Defined Media',
-       x = 'Strain', y= 'Relative Colony Size') +
+       x = 'SD Media', y= 'Relative Colony Size') +
   coord_cartesian(ylim = c(0,1.3)) +
-  facet_grid(.~carbon, scales = 'free_x', space = 'free_x',
-             labeller = labeller(orf_name = c('FY4' = 'FY4',
-                                              'FY4-met15del' = 'FY4-*met15Δ*'))) +
+  facet_grid(orf_name~carbon, scales = 'free_x', space = 'free_x',
+             labeller = labeller(orf_name = c('FY4-met3del' = 'FY4-*met3Δ*'))) +
   theme_linedraw() +
-  theme(plot.title = ggtext::element_markdown(size = titles, hjust = 0.5, face = 'bold'),
-        axis.title.x = element_blank(),
+  theme(plot.title = element_blank(),
+        panel.background = element_rect(fill = pinningpanelbg, color = 'transparent'),
         axis.title = element_text(size = titles),
         axis.text = element_text(size = txt),
         legend.title = element_text(size = titles),
@@ -1142,74 +1048,58 @@ figS4 <- rbind(data.cbn[,c(1,2,5,6,10)],
         legend.box = 'vertical',
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
-        strip.text = element_text(size = txt,  margin = margin(0.1,0,0.1,0, "mm")))
+        strip.text = element_text(size = txt,  margin = margin(0.1,0,0.1,0, "mm")),
+        strip.text.y = ggtext::element_markdown(size = txt, margin = margin(0.1,1,0.1,0, "mm")))
+
 ggsave(sprintf("%s/FigureS4.jpg",fig_path), figS4,
        height = one.c, width = two.c, units = 'mm',
        dpi = 300)
 
 
-##### FIGURE S5: H2S levels of mutant strains in an organosulfur-free medium
+##### FIGURE S5: Relative H2S levels of mutant strains
 figS5a <- readPNG(sprintf('%sFigS5A.png',outsidepanels))
 figS5a <- ggplot() + 
   background_image(figS5a) +
-  theme(plot.margin = margin(t=5, l=0, r=0, b=5, unit = "mm"),
+  theme(plot.margin = margin(t=10, l=0, r=0, b=10, unit = "mm"),
         plot.background = element_rect(fill = 'white'))
 
-figS5b <- data.bis[!(data.bis$Strain %in% c('BY4742','BY4741')),] %>%
-  filter(Condition == 'SD-Met-Cys+Bi', Strain != 'FY4-yllD') %>%
-  ggplot(aes(x = Strain, y = HS)) +
-  stat_summary(data = data.bis[!(data.bis$Strain %in% c('BY4742','BY4741')),] %>%
-                 filter(Condition == 'SD-Met-Cys+Bi', Strain != 'FY4-yllD') %>%
-                 group_by(Condition, Strain) %>%
-                 summarise(HS = mean(HS, na.rm = T), .groups = 'keep'),
-               aes(fill = round(HS)), col = 'white', alpha = 0.9, size = 1,
+figS5b <- h2s.col %>%
+  filter(strain %notin% c('BY4742','BY4741','FY4-*yll058wΔ*')) %>%
+  ggplot(aes(x = condition, y = relative_color_intensity)) +
+  stat_summary(data = h2s.col.sum %>%
+                 filter(strain %notin% c('BY4742','BY4741','FY4-*yll058wΔ*')),
+               aes(fill = relative_color_intensity), col = 'transparent', alpha = 1, size = 1,
                fun = mean, geom = "bar") +
-  # stat_summary(fun.data = mean_se, geom = "errorbar") +
   stat_summary(fun.data = mean_cl_normal, geom = "errorbar", fun.args = list(mult = 1)) +
-  # scale_x_discrete(labels = c('BiGGY' = 'BiGGY', 'SD-Met-Cys+Bi' = 'SD-Met+Bi'),
-  #                  limits = c('BiGGY', 'SD-Met-Cys+Bi')) +
-  scale_y_continuous(breaks = seq(0,10,1)) +
-  scale_fill_gradient(low = "#D7CCC8", high = "#5D4037", guide = F) +
-  labs(y = 'Relative\nHydrogen Sulfide',
-       x = 'Strains',
-       title = 'BiGGY Media') +
-  scale_x_discrete(labels = c('FY4'='FY4',
-                              'FY4-met12D'='FY4-*met12Δ*',
-                              'FY4-str3D'='FY4-*str3Δ*',
-                              'FY4-met3D'='FY4-*met3Δ*',
-                              'FY4-met15D'='FY4-*met15Δ*',
-                              'FY4-met2D'='FY4-*met2Δ*',
-                              'FY4-met6D'='FY4-*met6Δ*',
-                              'FY4-met13D'='FY4-*met13Δ*',
-                              'FY4-met5D'='FY4-*met5Δ*',
-                              'FY4-met10D'='FY4-*met10Δ*',
-                              'FY4-cys4D'='FY4-*cys4Δ*',
-                              'FY4-yllD'='FY4-*yll058wΔ*',
-                              'BY4742'='BY4742',
-                              'BY4741'='BY4741')) +
+  stat_compare_means(method = 'kruskal', size = 1.8) +
+  scale_fill_gradient2(high = "#5D4037", low = "white", guide = "none") +
+  scale_x_discrete(labels = c('BiGGY' = 'BiGGY',
+                              'SD-Met-Cys+Glu+Bi' = 'SD-Met\n-Cys+Glu\n+Bi')) +
+  scale_y_continuous(breaks = seq(0,1000,150)) +
+  labs(y = 'Color Intensity (~H<sub>2</sub>S levels)',
+       x = 'Strains') +
+  facet_wrap(.~strain, nrow = 2) +
   theme_linedraw() +
-  theme(plot.title = element_blank(),#element_text(size = titles, face = 'bold', hjust = 0.5),
-        axis.title = element_text(size = titles),
+  theme(plot.title = element_blank(), #element_text(size = titles, face = 'bold', hjust = 0.5),
         axis.title.x = element_blank(),
+        axis.title.y = ggtext::element_markdown(size = titles),
         axis.text = element_text(size = txt),
-        axis.text.x = ggtext::element_markdown(size = txt, angle = 20, vjust = 1, hjust = 1),
-        axis.ticks.x = element_blank(),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
         legend.position = 'bottom',
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
-        strip.text = ggtext::element_markdown(size = txt, colour = 'black',
-                                              margin = margin(0.1,0,0.1,0, "mm"))) +
-  coord_cartesian(ylim = c(1,7))
+        strip.text = ggtext::element_markdown(size = txt, colour = 'white',
+                                              margin = margin(1,0,0.1,0, "mm")))
 
-figS5 <- annotate_figure(plot_grid(figS5a, figS5b,
-                                     ncol = 1, rel_heights = c(1.2,1),
-                                     labels = c('A','B'),
-                                     label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                           top = text_grob("SD-Met+Glu+Bi", face = "bold", size = titles))
+
+figS5 <- plot_grid(annotate_figure(figS5a, top = text_grob("SD-Met-Cys+Glu+Bi Media", face = "bold", size = titles)),
+                   figS5b,
+                   ncol = 1, rel_heights = c(1,2),
+                   labels = c('A','B'),
+                   label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
 ggsave(sprintf("%s/FigureS5.jpg",fig_path), figS5,
-       height = one.5c, width = two.c, units = 'mm',
+       height = 200, width = two.c, units = 'mm',
        bg = 'white',
        dpi = 300)
 
@@ -1264,30 +1154,16 @@ figS8a <- data.jm.2 %>%
   scale_y_continuous(breaks = seq(-1,2,0.2)) +
   scale_x_discrete(limits = c('YPDA', 'SD-Met'),
                    labels = c('YPDA' = 'YPDA',
-                              'SD-Met' = 'SD-Met+Glu')) +
+                              'SD-Met' = 'SD-Met-Cys+Glu')) +
   scale_fill_gradient(name = 'Relative Hydrogen Sulfide',
                       low = "#D7CCC8", high = "#5D4037",
                       limits = c(1,7)) +
   labs(x = 'Strain',
        y = 'Relative Colony Size') +
   coord_cartesian(ylim = c(0,1.3)) +
-  facet_wrap(~orf_name, nrow = 1, 
-             labeller = labeller(orf_name = c('FY4'='FY4',
-                                              'met12'='FY4-*met12Δ*',
-                                              'str3'='FY4-*str3Δ*',
-                                              'met3'='FY4-*met3Δ*',
-                                              'met15'='FY4-*met15Δ*',
-                                              'met2'='FY4-*met2Δ*',
-                                              'met6'='FY4-*met6Δ*', 
-                                              'met13'='FY4-*met13Δ*',
-                                              'cys4'='FY4-*cys4Δ*',
-                                              'yll'='FY4-*yll058wΔ*',
-                                              'BY4742'='BY4742',
-                                              'BY4741'='BY4741',
-                                              'met5del'='FY4-*met5Δ*',
-                                              'met10del'='FY4-*met10Δ*'))) +
   theme_linedraw() +
   theme(plot.title = element_blank(),
+        panel.background = element_rect(fill = pinningpanelbg, color = 'transparent'),
         axis.title.x = element_blank(),
         axis.title.y = element_text(size = titles),
         axis.text.x = ggtext::element_markdown(size = txt),#, angle = 30, vjust = 1, hjust = 1),
@@ -1302,83 +1178,109 @@ figS8a <- data.jm.2 %>%
         strip.text = ggtext::element_markdown(size = txt, colour = 'white',
                                               margin = margin(1,0,0.1,0, "mm")))
 
-
-figS8b <- data.bis %>%
-  filter(Strain %in% c('FY4-yllD')) %>%
-  ggplot(aes(x = Condition, y = HS)) +
-  stat_summary(data = data.bis %>%
-                 filter(Strain %in% c('FY4-yllD')) %>%
-                 group_by(Condition, Strain) %>%
-                 summarise(HS = mean(HS, na.rm = T), .groups = 'keep'),
-               aes(fill = round(HS)), col = 'white', alpha = 0.9, size = 1,
+figS8b <- h2s.col %>%
+  filter(strain %in% c('FY4-*yll058wΔ*')) %>%
+  ggplot(aes(x = condition, y = relative_color_intensity)) +
+  stat_summary(data = h2s.col.sum %>%
+                 filter(strain %in% c('FY4-*yll058wΔ*')),
+               aes(fill = relative_color_intensity), col = 'transparent', alpha = 1, size = 1,
                fun = mean, geom = "bar") +
   stat_summary(fun.data = mean_cl_normal, geom = "errorbar", fun.args = list(mult = 1)) +
-  scale_y_continuous(breaks = seq(0,10,1)) +
-  scale_fill_gradient(low = "#D7CCC8", high = "#5D4037", guide = 'none') +
-  labs(y = 'Relative Hydrogen Sulfide',
-       x = 'Strains') +
-  scale_x_discrete(labels = c('BiGGY' = 'BiGGY',
-                              'SD-Met-Cys+Bi' = 'SD-Met+Glu+Bi')) +
-  facet_wrap(.~Strain, labeller = labeller(Strain= c('FY4'='FY4',
-                                                     'FY4-met12D'='FY4-*met12Δ*',
-                                                     'FY4-str3D'='FY4-*str3Δ*',
-                                                     'FY4-met3D'='FY4-*met3Δ*',
-                                                     'FY4-met15D'='FY4-*met15Δ*',
-                                                     'FY4-met2D'='FY4-*met2Δ*',
-                                                     'FY4-met6D'='FY4-*met6Δ*',
-                                                     'FY4-met13D'='FY4-*met13Δ*',
-                                                     'FY4-cys4D'='FY4-*cys4Δ*',
-                                                     'FY4-yllD'='FY4-*yll058wΔ*',
-                                                     'BY4742'='BY4742',
-                                                     'BY4741'='BY4741',
-                                                     'FY4-met5D' = 'FY4-*met5Δ*',
-                                                     'FY4-met10D' = 'FY4-*met10Δ*'))) +
+  stat_compare_means(method = 'kruskal', size = 2, angle = 270, hjust = 1) +
+  scale_fill_gradient2(high = "#5D4037", low = "white", guide = "none") +
+  labs(y = 'Color Intensity (~H<sub>2</sub>S levels)',
+       x = '') +
+  scale_x_discrete(limits = c('BiGGY','SD-Met-Cys+Glu+Bi'),
+                   labels = c('BiGGY','SD-Met\n-Cys+Glu\n+Bi'),
+                   position = 'top') +
   theme_linedraw() +
-  theme(plot.title = element_blank(),#element_text(size = titles, face = 'bold', hjust = 0.5),
-        axis.title = element_text(size = titles),
-        axis.title.x = element_blank(),
+  theme(plot.title = element_blank(), #element_text(size = titles, face = 'bold', hjust = 0.5),
+        plot.margin = margin(5,0,5,15),
+        axis.title.y = element_blank(),
+        axis.title.x = ggtext::element_markdown(size = titles),
         axis.text = element_text(size = txt),
-        axis.text.x = ggtext::element_markdown(size = txt),#, angle = 30, vjust = 1, hjust = 1),
-        axis.ticks.x = element_blank(),
+        axis.text.x = ggtext::element_markdown(size = txt),
         legend.title = element_text(size = titles),
         legend.text = element_text(size = txt),
         legend.position = 'bottom',
         legend.key.size = unit(3, "mm"),
         legend.box.spacing = unit(0.5,"mm"),
-        strip.text = ggtext::element_markdown(size = txt,
-                                              margin = margin(1,0,0.1,0, "mm"))) +
-  coord_cartesian(ylim = c(1,7))
+        strip.text = ggtext::element_markdown(size = txt, colour = 'black',
+                                              margin = margin(0.1,0,0.1,0, "mm"))) +
+  coord_flip(ylim = c(0,500))
 
-figS8c <- readPNG(sprintf('%sFigS8C.png',outsidepanels))
-figS8c <- ggplot() + 
-  background_image(figS8c) +
-  theme(plot.margin = margin(t=10, l=0, r=0, b=10, unit = "mm"),
-        plot.background = element_blank())
-
-figS8 <- plot_grid(plot_grid(figS8a, figS8b, 
-                             nrow = 1, rel_widths = c(1,1),
-                             align = 'h', axis = 'tb',
-                             labels = c('A','B'),
-                             label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
-                   plot_grid(figS8c, NULL, 
-                             nrow = 1, rel_widths = c(1,1)),
-                   ncol = 1, rel_heights = c(1,1),
-                   labels = c('','C'),
-                   label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
+figS8 <- annotate_figure(plot_grid(figS8a, figS8b, NULL,
+                   ncol = 3, rel_widths = c(0.9,1,0.5),
+                   align = 'h',
+                   labels = c('A','B',''),
+                   label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold'),
+                   top = text_grob(expression(paste("FY4-",italic("yll058wΔ"))), size = titles))
 ggsave(sprintf("%s/FigureS8.jpg",fig_path), figS8,
-       height = one.5c, width = two.c, units = 'mm',
+       height = one.c, width = two.c, units = 'mm',
        bg = 'white',
        dpi = 300)
 
 
-##### FIGURE S9: Simulated growth utilizing the consensus, genome-scale S. cerevisiae metabolic model shows that a 
-##### low-efficiency homocysteine synthase can support growth.
+##### FIGURE S9: Coomassie-stained SDS-PAGE gel showing the final fractions that contained the recombinantly-expressed,
+##### purified protein used in the in vitro homocysteine biosynthesis assay. 
+
+##### FIGURE S10: Yll058w catalyzes homocysteine biosynthesis but less efficient than Met15. 
 data.bioc %>%
   filter(`Time (min)` == 15) %>%
   group_by(Sample) %>%
   summarize(uM = median(uM, na.rm = T), .groups = 'keep')
 
-figS9a <- data.mdl.2 %>%
+figS10a <- data.bioc %>%
+  # filter(outlier == FALSE) %>%
+  ggplot(aes(x = `Time (min)`, y = uM)) +
+  stat_summary(aes(group = Sample, fill = Sample), fun.data=mean_se, fun.args = list(mult=1), geom="ribbon",
+               alpha = 0.4) +
+  stat_summary(aes(group = Sample, col = Sample), fun=mean, geom="line", lwd = 0.7) +
+  geom_segment(aes(x = 15.3, y = 8, xend = 15.3, yend = 119), size = 0.5) +
+  annotate("text", x = 15.6, y = 30, 
+           label = "p == 4.46~X~10^-5",
+           angle = 270, size = 2,
+           parse = TRUE) +
+  geom_segment(aes(x = 16, y = 8, xend = 16, yend = 12), size = 0.5) +
+  annotate("text", x = 16.3, y = 9.8, 
+           label = "p == 0.00018",
+           angle = 270, size = 2,
+           parse = TRUE) +
+  stat_summary(aes(group = Sample), fun=mean, geom="point", size =2) +
+  stat_summary(aes(group = Sample, col = Sample), fun=mean, geom="point", size = 0.5) +
+  labs(x = 'Time (minutes)',
+       y = 'Homocysteine (μM)') +
+  scale_color_manual(name = 'Sample',
+                     values = c('Met15' = "#330099", #6600CC
+                                'Yll058w' = "#CC33FF",
+                                'None' = "#CC99CC"),
+                     guide = 'none') +
+  scale_fill_manual(name = 'Sample',
+                    values = c('Met15' = "#330099",
+                               'Yll058w' = "#CC33FF",
+                               'None' = "#CC99CC")) +
+  scale_y_continuous(trans = 'log2') +
+  theme_linedraw() +
+  theme(
+    # plot.margin = margin(0,7,5,2),
+    plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
+    axis.title = element_text(size = titles),
+    # axis.title.x = element_text(margin = margin(-2,0,0,0)),
+    axis.text = element_text(size = txt),
+    legend.title = element_blank(),
+    legend.text = element_text(size = txt),
+    legend.position = 'bottom',
+    legend.key.size = unit(3, "mm"),
+    legend.box.spacing = unit(0.5,"mm"),
+    legend.margin = margin(0,0,-5,0),
+    strip.text = element_text(size = txt,
+                              face = 'bold',
+                              margin = margin(0.1,0,0.1,0, "mm"))) +
+  coord_cartesian(xlim = c(0,16),
+                  ylim = c(5,125)) +
+  guides(fill = guide_legend(override.aes=list(shape = 15, alpha = 1)))
+
+figS10b <- data.mdl.2 %>%
   ggplot(aes(x = log(Yll058w_Met15,10), y = Biomass_Flux)) +
   geom_line(aes(col = Model), lwd = 1) +
   geom_point(size = 2) +
@@ -1408,61 +1310,85 @@ figS9a <- data.mdl.2 %>%
   guides(color = guide_legend(nrow = 2, byrow=F, order = 1,
                               override.aes = list(shape = 15, size = 3, alpha = 1)))
 
-# figS9b <- data.mdl.2 %>%
-#   filter(Model == 'D') %>%
-#   ggplot(aes(x = HS_Flux, y = Biomass_Flux)) +
-#   geom_line(aes(col = Model), lwd = 1) +
-#   geom_point(size = 2) +
-#   geom_point(aes(col = Model), size = 0.5) +
-#   geom_vline(xintercept = 0.0584647860*13.4/120, linetype = 'dashed', col = 'red', lwd = 1) +
-#   geom_hline(yintercept = 0.326*13.4/120, linetype = 'dashed', col = 'red', lwd = 1) +
-#   scale_x_reverse() +
-#   scale_color_manual(name = 'Model with',
-#                      values = c('C' = '#333333',
-#                                 'D' = '#999999'),
-#                      labels = c('C'='Hypothesized YLL058W reaction<br/>w/ all *MET15* reactions',
-#                                 'D'='Hypothesized YLL058W reaction<br/>w/o all *MET15* reactions')) +
-#   labs(x = 'Simulated Flux Through Homocysteine\nProducing Reaction',
-#        y = 'Simulated Biomass Flux\n("Growth")') +
-#   theme_linedraw() +
-#   theme(plot.title = element_text(size = titles + 2, face = 'bold', hjust = 0.5),
-#         axis.title = element_text(size = titles),
-#         axis.text = element_text(size = txt),
-#         legend.title = element_text(size = titles),
-#         legend.text = ggtext::element_markdown(size = txt),
-#         legend.position = 'bottom',
-#         legend.key.size = unit(3, "mm"),
-#         legend.box.spacing = unit(0.5,"mm"),
-#         strip.text = element_text(size = txt,
-#                                   face = 'bold',
-#                                   margin = margin(0.1,0,0.1,0, "mm"))) +
-#   guides(color = guide_legend(nrow = 2, byrow=F, order = 1,
-#                               override.aes = list(shape = 15, size = 3, alpha = 1)))
-# 
-# figS9 <- ggpubr::ggarrange(figS9a, figS9b,
-#           nrow = 1, ncol = 2,
-#           labels = c('A','B'),
-#           widths = c(1,1),
-#           font.label = list(face = 'bold', size = lbls, family = "sans"),
-#           hjust=-1,
-#           common.legend = T, legend = 'bottom',
-#           align = 'hv')
-# ggsave(sprintf("%s/FigureS9.jpg",fig_path), figS9,
-#        height = one.c, width = two.c, units = 'mm',
-#        bg = 'white',
-#        dpi = 300)
-ggsave(sprintf("%s/FigureS9.jpg",fig_path), figS9a,
-       height = one.c, width = one.c, units = 'mm',
+figS10 <- plot_grid(figS10a, figS10b,
+                   ncol = 1, rel_heights = c(1,1),
+                   align = 'v',
+                   labels = c('A','B'),
+                   label_size = lbls, label_fontfamily = 'sans', label_fontface = 'bold')
+ggsave(sprintf("%s/FigureS10.jpg",fig_path), figS10,
+       height = two.c, width = two.c, units = 'mm',
        bg = 'white',
        dpi = 300)
 
-##### FIGURE S10: Coomassie-stained SDS-PAGE gel showing the final fractions that contained the recombinantly-expressed, 
-##### purified protein used in the in vitro homocysteine biosynthesis assay
+##### FIGURE S11: A growth defect of met15Δ cells grown with ethanol is seen in the presence and absence of organosulfurs in the media
+figS11 <- merge(data.res.gc[str_detect(data.res.gc$orf_name, 'FY'),],
+                strain.labs.res, by = 'orf_name') %>%
+  filter(expt_rep %in% c("1","2"), condition != 'SD+Met-Ura+Glu') %>% 
+  ggplot(aes(x = Time, y = rel_cs)) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult=1),
+               aes(group = orf_name, fill = met_aux), geom="ribbon", alpha = 0.4) +
+  stat_summary(aes(group = orf_name, col = met_aux, linetype = pet), fun=mean, geom="line", lwd =0.7) +
+  geom_text_repel(data = merge(data.res.gc[str_detect(data.res.gc$orf_name, 'FY') &
+                                             data.res.gc$Time == max(data.res.gc$Time),],
+                               strain.labs.res, by = 'orf_name') %>%
+                    filter(expt_rep %in% c("1","2"), condition != 'SD+Met-Ura+Glu') %>%
+                    group_by(orf_name, condition, Time, base, methionine, carbon, cysteine, labels, met_aux, pet) %>%
+                    summarize(rel_cs = mean(rel_cs, na.rm = T), .groups = 'keep'),
+                  aes(x = Time, y = rel_cs, label = labels),
+                  parse = T, size = 2.2, min.segment.length = 10) +
+  facet_grid(~carbon*methionine,
+             labeller = labeller(methionine = c('+Met' = 'SD+Met-Cys',
+                                                '-Met' = 'SD-Met-Cys'))) +
+  scale_color_manual(name = 'Presumed Auxotroph',
+                     values = c('Prototroph' = '#FFC107',
+                                'Presumed Auxotroph' = '#536DFE',
+                                'Uracil-Leucine' = '#E040FB',
+                                'Methionine-Uracil-Leucine' = '#FF5722'),
+                     limits = c('Presumed Auxotroph','Prototroph'),
+                     labels = c('Prototroph'='No',
+                                'Presumed Auxotroph'='Yes',
+                                'Uracil-Leucine',
+                                'Methionine-Uracil-Leucine')) +
+  scale_fill_manual(name = 'Auxotrophy',
+                    values = c('Prototroph' = '#FFC107',
+                               'Presumed Auxotroph' = '#536DFE'),
+                    limits = c('Prototroph','Presumed Auxotroph'),
+                    guide = 'none') +
+  scale_linetype_manual(name = 'Petite',
+                        values = c('Yes' = 'dotdash',
+                                   'No' = 'solid'),
+                        limits = c('Yes','No')) +
+  scale_y_continuous(breaks = seq(-1,2,0.2)) +
+  labs(x = 'Time (hours)', y= 'Relative Colony Size') +
+  coord_cartesian(xlim = c(0,350),
+                  ylim = c(0,1.3)) +
+  theme_linedraw() +
+  theme(plot.margin = margin(1,5,1,5),
+        plot.title = element_blank(),
+        panel.background = element_rect(fill = pinningpanelbg, color = 'transparent'),
+        axis.title = element_text(size = titles),
+        axis.text = element_text(size = txt),
+        legend.margin = margin(0,0,0,0),
+        legend.title = element_text(size = titles),
+        legend.text = element_text(size = txt),
+        legend.position = 'bottom',
+        legend.direction = 'horizontal',
+        legend.key.size = unit(3, "mm"),
+        legend.box.spacing = unit(0.5,"mm"),
+        strip.text = element_text(size = txt,
+                                  margin = margin(0.1,0,0.1,0, "mm"))) +
+  guides(color = guide_legend(nrow=1, byrow=TRUE, order = 1,
+                              override.aes = list(size = 3)),
+         linetype = guide_legend(nrow=1, byrow=TRUE, order = 2, length = 2))
 
+ggsave(sprintf("%s/FigureS11.jpg",fig_path), figS11,
+       height = 67, width = two.c, units = 'mm',
+       bg = 'white',
+       dpi = 300)
 
-##### FIGURE S11: Titration of the H2S chelator Fe-EDTA.
+##### FIGURE S12: Titration of the H2S chelator Fe-EDTA.
 unique(data.chelator.dose$Media_ID)
-figS11 <- data.chelator.dose %>%
+figS12 <- data.chelator.dose %>%
   filter(Hours == 53, petite == 'No') %>%
   ggplot(aes(x = Media_ID, y = OD,
              fill = as.factor(Media_ID))) +
@@ -1477,12 +1403,19 @@ figS11 <- data.chelator.dose %>%
                                'SD-Met+Glu+0.096M FeEDTA' = '#6AA3A0',
                                'SD-Met+Glu+0.136M FeEDTA' = '#138F87'),
                     guide = 'none') +
+  scale_x_discrete(labels = c('SD+Met+Glu' = 'SD+Met-Cys+Glu',
+                              'SD-Met+Glu' = 'SD-Met-Cys+Glu',
+                              'SD-Met+Glu+0.024M FeEDTA' = 'SD-Met-Cys+Glu+0.024M FeEDTA',
+                              'SD-Met+Glu+0.048M FeEDTA' = 'SD-Met-Cys+Glu+0.048M FeEDTA',
+                              'SD-Met+Glu+0.096M FeEDTA' = 'SD-Met-Cys+Glu+0.096M FeEDTA',
+                              'SD-Met+Glu+0.136M FeEDTA' = 'SD-Met-Cys+Glu+0.136M FeEDTA')) +
   facet_grid(.~Strain, scales = 'free_x', space = 'free_x',
              labeller = labeller(Strain = c('FY4' = 'FY4',
                                             'FY4-met15del' = 'FY4-*met15Δ*'))) +
   labs(y = 'OD<sub>600</sub> at Saturation') +
   theme_linedraw() +
-  theme(plot.title = element_blank(),
+  theme(plot.margin = margin(5,5,5,15),
+        plot.title = element_blank(),
         panel.background = element_rect(fill = flaskpanelbg, color = 'transparent'),
         axis.title.x = element_blank(),
         axis.title.y = ggtext::element_markdown(size = txt),
@@ -1496,7 +1429,7 @@ figS11 <- data.chelator.dose %>%
         strip.text.x = ggtext::element_markdown(size = txt,
                                                 margin = margin(1,0,0.1,0, "mm"))) +
   coord_cartesian(ylim = c(0,6.5))
-ggsave(sprintf("%s/FigureS11.jpg",fig_path), figS11,
+ggsave(sprintf("%s/FigureS12.jpg",fig_path), figS12,
        height = one.c, width = two.c, units = 'mm',
        bg = 'white',
        dpi = 300)
