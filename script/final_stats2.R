@@ -212,4 +212,3 @@ for (o1 in unique(data.pv2.temp$orf_name)) {
 data.pv2.stats$p.adj <- adjust_pvalue(data.pv2.stats$p, method = 'BH')
 write.csv(data.pv2.stats, file = 'results/final/stats/plasmid_validation2.csv',row.names = F)
 
-
